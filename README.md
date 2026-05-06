@@ -33,7 +33,7 @@ Herramientas necesarias antes de instalar el proyecto.
 
 ## Scripts disponibles
 
-Tabla con los comandos principales del proyecto.
+Tabla con los comandos disponibles del proyecto.
 
 | Comando    | Descripción                                           |
 | ---------- | ----------------------------------------------------- |
