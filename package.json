@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "Un sistema gestor de pedidos, el cual un dueño va a poder almacenar productos, clientes y getionar los pedidos de esos clientes por estado",
   "scripts": {
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "migration-create": "sequelize-cli migration:create --name"
   },
   "keywords": [],
   "type": "module",
