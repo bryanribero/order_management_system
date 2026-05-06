@@ -35,9 +35,9 @@ Herramientas necesarias antes de instalar el proyecto.
 
 Tabla con los comandos disponibles del proyecto.
 
-| Comando                        | Descripción                                                         |
-| ------------------------------ | ------------------------------------------------------------------- |
-| `pnpm dev`                     | Inicia el servidor en modo desarrollo usando Nodemon.               |
-| `pnpm migration-create --name` | Crea una nueva migración con Sequelize CLI.                         |
-| `pnpm run migrate-dev`         | Ejecuta las migraciones pendientes en el entorno de desarrollo.     |
-| `pnpm run undo-migrate-dev`    | Revierte la última migración ejecutada en el entorno de desarrollo. |
+| Comando                 | Descripción                                                         |
+| ----------------------- | ------------------------------------------------------------------- |
+| `pnpm dev`              | Inicia el servidor en modo desarrollo usando Nodemon.               |
+| `pnpm migration-create` | Crea una nueva migración con Sequelize CLI.                         |
+| `pnpm migrate-dev`      | Ejecuta las migraciones pendientes en el entorno de desarrollo.     |
+| `pnpm undo-migrate-dev` | Revierte la última migración ejecutada en el entorno de desarrollo. |
