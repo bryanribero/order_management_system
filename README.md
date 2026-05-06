@@ -28,3 +28,13 @@ Herramientas necesarias antes de instalar el proyecto.
 - Node.js
 - pnpm
 - PostgreSQL
+
+<br>
+
+## Scripts disponibles
+
+Tabla con los comandos principales del proyecto.
+
+| Comando    | Descripción                                           |
+| ---------- | ----------------------------------------------------- |
+| `pnpm dev` | Inicia el servidor en modo desarrollo usando Nodemon. |
