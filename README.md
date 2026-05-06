@@ -6,7 +6,7 @@ Sistema gestor de pedidos orientado a pequeños comercios o emprendimientos, dis
 
 <br>
 
-## Tecnologías utilizadas
+## Tecnologías principales
 
 - JavaScript
 - Node.js
