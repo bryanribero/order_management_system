@@ -4,7 +4,9 @@
   "description": "Un sistema gestor de pedidos, el cual un dueño va a poder almacenar productos, clientes y getionar los pedidos de esos clientes por estado",
   "scripts": {
     "dev": "nodemon server.js",
-    "migration-create": "sequelize-cli migration:create --name"
+    "migration-create": "sequelize-cli migration:create --name",
+    "run migrate-dev": "cross-env NODE_ENV=dev sequelize-cli db:migrate --env development",
+    "run undo-migrate-dev": "cross-env NODE_ENV=dev sequelize-cli db:migrate:undo --env development"
   },
   "keywords": [],
   "type": "module",
