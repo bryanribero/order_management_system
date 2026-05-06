@@ -6,7 +6,8 @@
     "dev": "nodemon server.js",
     "migration-create": "sequelize-cli migration:create --name",
     "migrate-dev": "cross-env NODE_ENV=dev sequelize-cli db:migrate --env development",
-    "undo-migrate-dev": "cross-env NODE_ENV=dev sequelize-cli db:migrate:undo --env development"
+    "undo-migrate-dev": "cross-env NODE_ENV=dev sequelize-cli db:migrate:undo --env development",
+    "all-undo-migrate-dev": "cross-env NODE_ENV=dev sequelize-cli db:migrate:undo:all --env development"
   },
   "keywords": [],
   "type": "module",
