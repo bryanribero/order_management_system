@@ -19,7 +19,7 @@ module.exports = {
           key: 'id_user',
         },
         onUpdate: 'CASCADE',
-        onDelete: 'RESTRICT',
+        onDelete: 'CASCADE',
       },
       token_hash: {
         type: Sequelize.TEXT,

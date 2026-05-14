@@ -18,7 +18,7 @@ module.exports = {
           key: 'id_user',
         },
         onUpdate: 'CASCADE',
-        onDelete: 'RESTRICT',
+        onDelete: 'CASCADE',
       },
       sku: {
         type: Sequelize.TEXT,
@@ -77,7 +77,10 @@ module.exports = {
 
     await queryInterface.addIndex('products', ['id_user', 'sku'], {
       unique: true,
-      name: 'products_id_user_sku_unique',
+      name: 'products_id_user_sku_active_unique',
+      where: {
+        deleted_at: null,
+      },
     })
   },
 
