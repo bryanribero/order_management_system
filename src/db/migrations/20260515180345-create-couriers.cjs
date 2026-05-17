@@ -48,6 +48,14 @@ module.exports = {
         allowNull: true,
       },
     })
+
+    await queryInterface.addIndex('couriers', ['id_user', 'name'], {
+      unique: true,
+      name: 'couriers_id_user_name_unique',
+      where: {
+        deleted_at: null,
+      },
+    })
   },
 
   async down(queryInterface) {
