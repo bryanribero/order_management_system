@@ -23,7 +23,7 @@ module.exports = {
       },
       id_courier: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
         references: {
           model: 'couriers',
           key: 'id_courier',
