@@ -41,7 +41,7 @@ module.exports = {
         allowNull: false,
         defaultValue: 1,
       },
-      sub_total: {
+      subtotal: {
         type: Sequelize.DECIMAL(10, 2),
         allowNull: false,
         defaultValue: 0,
@@ -81,11 +81,11 @@ module.exports = {
     })
 
     await queryInterface.addConstraint('order_items', {
-      fields: ['sub_total'],
+      fields: ['subtotal'],
       type: 'check',
-      name: 'check_order_items_sub_total_non_negative',
+      name: 'check_order_items_subtotal_non_negative',
       where: {
-        sub_total: {
+        subtotal: {
           [Sequelize.Op.gte]: 0,
         },
       },
