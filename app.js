@@ -1,9 +1,11 @@
+import 'env.js'
 import express from 'express'
 import cors from 'cors'
 import helmet from 'helmet'
 import { limiterGlobal } from './src/middlewares/rate.js'
 import { errorHandler } from './src/middlewares/errorHandler.js'
-import usersRouter from './src/rutes/users.routes.js'
+import usersRoutes from './src/rutes/users.routes.js'
+import authRoutes from './src/rutes/auth.routes.js'
 
 const app = express()
 
@@ -21,11 +23,9 @@ app.use(
 
 app.use(helmet())
 
-app.get('/saludo', (req, res) => {
-  res.send('hola')
-})
+app.use('/api/auth', authRoutes)
 
-app.use('/api/users', usersRouter)
+app.use('/api/users', usersRoutes)
 
 app.use((req, res) => {
   res.status(404).json({
