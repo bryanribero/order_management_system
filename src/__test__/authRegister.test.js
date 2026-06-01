@@ -11,7 +11,7 @@ afterEach(async () => {
 
 describe('POST /register', () => {
   const endpoint = '/api/auth/register'
-  it('Debe crear un nuevo usuario', async () => {
+  it('Debe crear un usuario con rol owner aunque se envie otro rol', async () => {
     const dataUser = {
       email: `prueba-${crypto.randomUUID()}@hotmail.com`,
       password: '12345678',
@@ -28,6 +28,17 @@ describe('POST /register', () => {
       email: dataUser.email,
       role: 'owner',
     })
+  })
+
+  it('Debe mostrar error si el body está vacío', async () => {
+    const response = await request(app).post(endpoint).send({})
+
+    expect(response.status).toBe(400)
+    expect(response.body.success).toBe(false)
+    expect(response.body.errors.messages).toContain('El email es obligatorio')
+    expect(response.body.errors.messages).toContain(
+      'La contraseña es obligatoria'
+    )
   })
 
   it('Debe mostrar error si el email ya está en uso', async () => {
