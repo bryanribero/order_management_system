@@ -35,6 +35,8 @@ describe('POST /register', () => {
       email: dataUser.email,
       role: 'owner',
     })
+
+    expect(response.body.user.password).toBeUndefined()
   })
 
   it('Debe mostrar error si el body está vacío', async () => {
