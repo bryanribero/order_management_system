@@ -2,6 +2,13 @@ import app from '../../app.js'
 import request from 'supertest'
 import User from '../db/models/User.js'
 
+beforeEach(async () => {
+  await User.destroy({
+    where: {},
+    force: true,
+  })
+})
+
 afterEach(async () => {
   await User.destroy({
     where: {},
