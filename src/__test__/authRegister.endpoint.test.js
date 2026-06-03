@@ -1,19 +1,17 @@
 import app from '../../app.js'
 import request from 'supertest'
 import User from '../db/models/User.js'
-
-beforeEach(async () => {
-  await User.destroy({
-    where: {},
-    force: true,
-  })
-})
+import sequelize from '../db/database.js'
 
 afterEach(async () => {
   await User.destroy({
     where: {},
     force: true,
   })
+})
+
+afterAll(async () => {
+  await sequelize.close()
 })
 
 describe('POST /register', () => {
@@ -43,10 +41,20 @@ describe('POST /register', () => {
     const response = await request(app).post(endpoint).send({})
 
     expect(response.status).toBe(400)
-    expect(response.body.success).toBe(false)
-    expect(response.body.errors.messages).toContain('El email es obligatorio')
-    expect(response.body.errors.messages).toContain(
-      'La contraseña es obligatoria'
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        success: false,
+        errors: expect.arrayContaining([
+          expect.objectContaining({
+            field: 'email',
+            message: 'El email es obligatorio',
+          }),
+          expect.objectContaining({
+            field: 'password',
+            message: 'La contraseña es obligatoria',
+          }),
+        ]),
+      })
     )
   })
 
@@ -67,8 +75,16 @@ describe('POST /register', () => {
     })
 
     expect(response.status).toBe(409)
-    expect(response.body.success).toBe(false)
-    expect(response.body.errors.messages).toContain('El email ya está en uso')
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        success: false,
+        errors: expect.arrayContaining([
+          expect.objectContaining({
+            message: 'El email ya está en uso',
+          }),
+        ]),
+      })
+    )
     expect(countEmail).toBe(1)
   })
 
@@ -81,9 +97,16 @@ describe('POST /register', () => {
     const response = await request(app).post(endpoint).send(dataUser)
 
     expect(response.status).toBe(400)
-    expect(response.body.success).toBe(false)
-    expect(response.body.errors.messages).toContain(
-      'El email ingresado no es válido'
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        success: false,
+        errors: expect.arrayContaining([
+          expect.objectContaining({
+            field: 'email',
+            message: 'El email ingresado no es válido',
+          }),
+        ]),
+      })
     )
   })
 
@@ -96,8 +119,17 @@ describe('POST /register', () => {
     const response = await request(app).post(endpoint).send(dataUser)
 
     expect(response.status).toBe(400)
-    expect(response.body.success).toBe(false)
-    expect(response.body.errors.messages).toContain('El email es obligatorio')
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        success: false,
+        errors: expect.arrayContaining([
+          expect.objectContaining({
+            field: 'email',
+            message: 'El email es obligatorio',
+          }),
+        ]),
+      })
+    )
   })
 
   it('Debe mostrar error si no se envía el email', async () => {
@@ -108,8 +140,17 @@ describe('POST /register', () => {
     const response = await request(app).post(endpoint).send(dataUser)
 
     expect(response.status).toBe(400)
-    expect(response.body.success).toBe(false)
-    expect(response.body.errors.messages).toContain('El email es obligatorio')
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        success: false,
+        errors: expect.arrayContaining([
+          expect.objectContaining({
+            field: 'email',
+            message: 'El email es obligatorio',
+          }),
+        ]),
+      })
+    )
   })
 
   it('Debe mostrar error si la contraseña tiene menos de 8 caracteres', async () => {
@@ -121,9 +162,16 @@ describe('POST /register', () => {
     const response = await request(app).post(endpoint).send(dataUser)
 
     expect(response.status).toBe(400)
-    expect(response.body.success).toBe(false)
-    expect(response.body.errors.messages).toContain(
-      'La contraseña debe de contener entre 8 y 16 caracteres'
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        success: false,
+        errors: expect.arrayContaining([
+          expect.objectContaining({
+            field: 'password',
+            message: 'La contraseña debe tener al menos 8 caracteres',
+          }),
+        ]),
+      })
     )
   })
 
@@ -136,9 +184,16 @@ describe('POST /register', () => {
     const response = await request(app).post(endpoint).send(dataUser)
 
     expect(response.status).toBe(400)
-    expect(response.body.success).toBe(false)
-    expect(response.body.errors.messages).toContain(
-      'La contraseña debe de contener entre 8 y 16 caracteres'
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        success: false,
+        errors: expect.arrayContaining([
+          expect.objectContaining({
+            field: 'password',
+            message: 'La contraseña debe de contener hasta 16 caracteres',
+          }),
+        ]),
+      })
     )
   })
 
@@ -151,9 +206,16 @@ describe('POST /register', () => {
     const response = await request(app).post(endpoint).send(dataUser)
 
     expect(response.status).toBe(400)
-    expect(response.body.success).toBe(false)
-    expect(response.body.errors.messages).toContain(
-      'La contraseña es obligatoria'
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        success: false,
+        errors: expect.arrayContaining([
+          expect.objectContaining({
+            field: 'password',
+            message: 'La contraseña es obligatoria',
+          }),
+        ]),
+      })
     )
   })
 
@@ -165,9 +227,60 @@ describe('POST /register', () => {
     const response = await request(app).post(endpoint).send(dataUser)
 
     expect(response.status).toBe(400)
-    expect(response.body.success).toBe(false)
-    expect(response.body.errors.messages).toContain(
-      'La contraseña es obligatoria'
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        success: false,
+        errors: expect.arrayContaining([
+          expect.objectContaining({
+            field: 'password',
+            message: 'La contraseña es obligatoria',
+          }),
+        ]),
+      })
+    )
+  })
+
+  it('Debe mostrar un error para la contraseña cuando no sea de tipo string', async () => {
+    const dataUser = {
+      email: `prueba-${crypto.randomUUID()}@hotmail.com`,
+      password: 123456768,
+    }
+
+    const response = await request(app).post(endpoint).send(dataUser)
+
+    expect(response.status).toBe(400)
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        success: false,
+        errors: expect.arrayContaining([
+          expect.objectContaining({
+            field: 'password',
+            message: 'La contraseña debe ser texto',
+          }),
+        ]),
+      })
+    )
+  })
+
+  it('Debe mostrar un error para la contraseñas con muchos espacios', async () => {
+    const dataUser = {
+      email: `prueba-${crypto.randomUUID()}@hotmail.com`,
+      password: '   ',
+    }
+
+    const response = await request(app).post(endpoint).send(dataUser)
+
+    expect(response.status).toBe(400)
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        success: false,
+        errors: expect.arrayContaining([
+          expect.objectContaining({
+            field: 'password',
+            message: 'La contraseña no puede contener espacios',
+          }),
+        ]),
+      })
     )
   })
 })

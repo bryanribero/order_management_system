@@ -1,11 +1,16 @@
 import User from '../db/models/User.js'
 import { comparePassword, registerNewUser } from '../services/auth.service.js'
+import sequelize from '../db/database.js'
 
 afterEach(async () => {
   await User.destroy({
     where: {},
     force: true,
   })
+})
+
+afterAll(async () => {
+  await sequelize.close()
 })
 
 describe('Auth Service - registerNewUser', () => {

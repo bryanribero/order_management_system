@@ -1,9 +1,34 @@
 import rateLimit from 'express-rate-limit'
 
-export const limiterGlobal = rateLimit({
-  windowMs: 5 * 60 * 1000,
+const isTest = process.env.NODE_ENV === 'test'
+
+export const globalRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000,
   limit: 100,
   message: {
-    error: 'Demasiadas solicitudes, intenta nuevamente más tarde.',
+    success: false,
+    errors: [
+      {
+        message: 'Demasiadas peticiones, intenta nuevamente más tarde.',
+      },
+    ],
   },
+  standardHeaders: true,
+  legacyHeaders: false,
+})
+
+export const registerRateLimit = rateLimit({
+  windowMs: isTest ? 1000 : 10 * 60 * 1000,
+  limit: isTest ? 2 : 10,
+  message: {
+    success: false,
+    errors: [
+      {
+        message:
+          'Demasiados intentos de registro. Intenta nuevamente más tarde.',
+      },
+    ],
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
 })

@@ -24,6 +24,14 @@ describe('Funciones de password', () => {
 
       expect(hash1).not.toBe(hash2)
     })
+
+    it('Lanza un TypeError cuando la contraseña no es un string', async () => {
+      const password = 12345678
+
+      await expect(hashPassword(password)).rejects.toThrow(
+        'La contraseña debe de ser un string'
+      )
+    })
   })
 
   describe('comparePassword', () => {
@@ -36,13 +44,23 @@ describe('Funciones de password', () => {
       expect(result).toBe(true)
     })
 
-    it('debe de devolver false si la contraseña no coincide con el hash', async () => {
+    it('Debe de devolver false si la contraseña no coincide con el hash', async () => {
       const password = 'holaPrueba'
       const hash = await hashPassword(password)
 
       const result = await comparePassword('contraseñaIncorrecta', hash)
 
       expect(result).toBe(false)
+    })
+
+    it('Lanza un TypeError cuando la contraseña no es un string', async () => {
+      const password = 12345678
+
+      const hash = hashPassword(String(password))
+
+      await expect(comparePassword(password, hash)).rejects.toThrow(
+        'La contraseña debe de ser un string'
+      )
     })
   })
 })
