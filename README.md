@@ -4,6 +4,8 @@
 
 Sistema gestor de pedidos orientado a pequeños comercios o emprendimientos, diseñado para administrar clientes, productos, repartidores y órdenes desde una API centralizada. Permite registrar pedidos con múltiples elementos, asignar responsables de entrega, controlar estados como pendiente, cancelado o completado, y conservar un historial confiable de las operaciones realizadas.
 
+<br>
+
 ## Objetivos
 
 El objetivo principal del proyecto es proporcionar una API REST para la gestión de pedidos en pequeños comercios o emprendimientos.
@@ -18,6 +20,8 @@ Las funcionalidades principales incluyen:
 - Control de estados de pedidos.
 - Registro histórico de operaciones.
 
+<br>
+
 ## Tecnologías principales
 
 - JavaScript
@@ -30,6 +34,8 @@ Las funcionalidades principales incluyen:
 - ESLint
 - Prettier
 - pnpm
+
+<br>
 
 ## Arquitectura del proyecto
 
@@ -52,6 +58,8 @@ src/
 └── validators/
 ```
 
+<br>
+
 ## Requisitos previos
 
 Herramientas necesarias antes de instalar el proyecto:
@@ -60,6 +68,8 @@ Herramientas necesarias antes de instalar el proyecto:
 - pnpm
 - PostgreSQL
 
+<br>
+
 ## Instalación
 
 Una vez clonado el repositorio, instalar las dependencias del proyecto:
@@ -67,6 +77,8 @@ Una vez clonado el repositorio, instalar las dependencias del proyecto:
 ```bash
 pnpm install
 ```
+
+<br>
 
 ## Variables de entorno
 
@@ -103,6 +115,8 @@ JWT_ACCESS_SECRET="Clave secreta para firmar y verificar tokens de acceso para p
 JWT_REFRESH_SECRET="Clave secreta para firmar y verificar tokens de refresco para pruebas"
 ```
 
+<br>
+
 ## Ejecución del proyecto
 
 Para ejecutar el proyecto en modo desarrollo:
@@ -119,6 +133,8 @@ http://localhost:3000
 
 El puerto puede configurarse mediante la variable de entorno `PORT`.
 
+<br>
+
 ## Scripts disponibles
 
 Tabla con los comandos disponibles del proyecto.
@@ -134,6 +150,8 @@ Tabla con los comandos disponibles del proyecto.
 | `pnpm undo-migrate-test`     | Revierte la última migración ejecutada en el entorno de pruebas.       |
 | `pnpm all-undo-migrate-dev`  | Revierte todas las migraciones ejecutadas en el entorno de desarrollo. |
 | `pnpm all-undo-migrate-test` | Revierte todas las migraciones ejecutadas en el entorno de pruebas.    |
+
+<br>
 
 ## Base de datos
 
@@ -161,6 +179,8 @@ Para ejecutar los seeders:
 pnpm seed-{entorno}
 ```
 
+<br>
+
 ## Pruebas
 
 El proyecto utiliza Jest y Supertest para realizar pruebas automatizadas sobre la API.
@@ -179,6 +199,8 @@ pnpm test
 
 > **Nota:** para ejecutar una prueba específica, puede indicarse el nombre del archivo luego de `pnpm test`.
 
+<br>
+
 ## Seguridad
 
 El proyecto implementa diferentes medidas de seguridad para proteger la API y los datos almacenados.
@@ -190,6 +212,8 @@ El proyecto implementa diferentes medidas de seguridad para proteger la API y lo
 - Configuración de CORS.
 - Validación de datos utilizando Express Validator.
 - Manejo centralizado de errores.
+
+<br>
 
 ## Documentación de la API
 
