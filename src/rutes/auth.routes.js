@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { registerController } from '../controllers/auth.controller.js'
-import { creatUserValidation } from '../middlewares/registerValidation.js'
+import { creatUserValidation } from '../validators/registerValidation.js'
 import { validateFields } from '../middlewares/validateFields.js'
 import { registerRateLimit } from '../middlewares/rate.js'
 

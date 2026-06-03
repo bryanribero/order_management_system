@@ -5,6 +5,12 @@ import helmet from 'helmet'
 import { globalRateLimit } from './src/middlewares/rate.js'
 import { errorHandler } from './src/middlewares/errorHandler.js'
 import authRoutes from './src/rutes/auth.routes.js'
+import fs from 'fs'
+import YAML from 'yaml'
+import swaggerUi from 'swagger-ui-express'
+
+const swaggerFile = fs.readFileSync('./docs/swagger.yml', 'utf-8')
+const swaggerDocument = YAML.parse(swaggerFile)
 
 const app = express()
 
@@ -21,6 +27,8 @@ app.use(
 )
 
 app.use(helmet())
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
 app.use('/api/auth', authRoutes)
 
