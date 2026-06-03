@@ -18,8 +18,8 @@ export const globalRateLimit = rateLimit({
 })
 
 export const registerRateLimit = rateLimit({
-  windowMs: isTest ? 1000 : 10 * 60 * 1000,
-  limit: isTest ? 2 : 10,
+  windowMs: 10 * 60 * 1000,
+  limit: isTest ? 25 : 10,
   message: {
     success: false,
     errors: [

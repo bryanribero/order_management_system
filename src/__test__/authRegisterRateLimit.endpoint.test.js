@@ -23,7 +23,7 @@ describe('POST /auth/register - rate limit', () => {
       password: '1233424234',
     }
 
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 25; i++) {
       await request(app)
         .post(endpoint)
         .send({
