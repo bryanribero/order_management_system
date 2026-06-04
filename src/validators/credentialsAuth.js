@@ -1,6 +1,6 @@
 import { body } from 'express-validator'
 
-export const creatUserValidation = [
+export const credentials = [
   body('email')
     .trim()
     .exists({ checkFalsy: true })
@@ -18,12 +18,15 @@ export const creatUserValidation = [
     .isString()
     .withMessage('La contraseña debe ser texto')
     .bail()
-    .custom((value) => value.trim().length > 0)
+    .matches(/^\S+$/)
     .withMessage('La contraseña no puede contener espacios')
     .bail()
     .isLength({ min: 8 })
     .withMessage('La contraseña debe tener al menos 8 caracteres')
     .bail()
     .isLength({ max: 16 })
-    .withMessage('La contraseña debe de contener hasta 16 caracteres'),
+    .withMessage('La contraseña debe de contener hasta 16 caracteres')
+    .bail()
+    .matches(/[A-Z]/)
+    .withMessage('La contraseña debe contener al menos una letra mayúscula'),
 ]

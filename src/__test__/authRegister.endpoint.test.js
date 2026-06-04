@@ -19,7 +19,7 @@ describe('POST /register', () => {
   it('Debe crear un usuario con rol owner aunque se envie otro rol', async () => {
     const dataUser = {
       email: `prueba-${crypto.randomUUID()}@hotmail.com`,
-      password: '12345678',
+      password: '123G5678',
       role: 'admin',
     }
 
@@ -61,7 +61,7 @@ describe('POST /register', () => {
   it('Debe mostrar error si el email ya está en uso', async () => {
     const dataUser = {
       email: `prueba-${crypto.randomUUID()}@hotmail.com`,
-      password: '12345678',
+      password: '123G5678',
     }
 
     await request(app).post(endpoint).send(dataUser)
@@ -91,7 +91,7 @@ describe('POST /register', () => {
   it('Debe mostrar error si el email tiene un formato inválido', async () => {
     const dataUser = {
       email: `correo-invalido`,
-      password: '12345678',
+      password: '12G45678',
     }
 
     const response = await request(app).post(endpoint).send(dataUser)
@@ -113,7 +113,7 @@ describe('POST /register', () => {
   it('Debe mostrar error si el email está vacío', async () => {
     const dataUser = {
       email: ``,
-      password: '12345678',
+      password: '123G5678',
     }
 
     const response = await request(app).post(endpoint).send(dataUser)
@@ -134,7 +134,7 @@ describe('POST /register', () => {
 
   it('Debe mostrar error si no se envía el email', async () => {
     const dataUser = {
-      password: '12345678',
+      password: '1G345678',
     }
 
     const response = await request(app).post(endpoint).send(dataUser)
@@ -178,7 +178,7 @@ describe('POST /register', () => {
   it('Debe mostrar error si la contraseña tiene más de 16 caracteres', async () => {
     const dataUser = {
       email: `prueba-${crypto.randomUUID()}@hotmail.com`,
-      password: 'holapruebadeerrorDeContraseña',
+      password: 'hoLapruebadeerrorDeContraseña',
     }
 
     const response = await request(app).post(endpoint).send(dataUser)
@@ -278,6 +278,28 @@ describe('POST /register', () => {
           expect.objectContaining({
             field: 'password',
             message: 'La contraseña no puede contener espacios',
+          }),
+        ]),
+      })
+    )
+  })
+
+  it('Debe mostrar un error cuando la contraseña no contiene una letra mayúscula', async () => {
+    const dataUser = {
+      email: `prueba-${crypto.randomUUID()}@hotmail.com`,
+      password: 'holaesunaprueba',
+    }
+
+    const response = await request(app).post(endpoint).send(dataUser)
+
+    expect(response.status).toBe(400)
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        success: false,
+        errors: expect.arrayContaining([
+          expect.objectContaining({
+            field: 'password',
+            message: 'La contraseña debe contener al menos una letra mayúscula',
           }),
         ]),
       })
