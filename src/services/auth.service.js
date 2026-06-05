@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt'
 import User from '../db/models/User.js'
 import { UniqueConstraintError } from 'sequelize'
+import { ConflictError } from '../errors/ConflictError.js'
 
 export async function hashPassword(password) {
   const SALT_ROUNDS = 10
@@ -40,10 +41,7 @@ export async function registerNewUser({ email, password }) {
     }
   } catch (err) {
     if (err instanceof UniqueConstraintError) {
-      const conflictError = new Error('El email ya está en uso')
-      conflictError.status = 409
-
-      throw conflictError
+      throw ConflictError('El email ya está en uso')
     }
     throw err
   }

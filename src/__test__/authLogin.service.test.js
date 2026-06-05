@@ -50,4 +50,32 @@ describe('loginUser', () => {
     expect(accessPayload.exp - accessPayload.iat).toBe(60 * 60)
     expect(refreshPayload.exp - refreshPayload.iat).toBe(7 * 24 * 60 * 60)
   })
+
+  it('Debe dar error si el email no coincide con ningun usuario', async () => {
+    const dataUser = {
+      email: `noExiste@hotmail.com`,
+      password: `testeoLogin`,
+    }
+
+    await expect(loginUser(dataUser)).rejects.toMatchObject({
+      message: 'Credenciales inválidas',
+      status: 401,
+    })
+  })
+
+  it('Debe dar error si las credenciales de password estan mal', async () => {
+    const dataUser = {
+      email: `test-${crypto.randomUUID()}@hotmail.com`,
+      password: 'passwordtest123',
+    }
+
+    await registerNewUser(dataUser)
+
+    await expect(
+      loginUser({ email: dataUser.email, password: 'otracontraseña' })
+    ).rejects.toMatchObject({
+      message: 'Credenciales inválidas',
+      status: 401,
+    })
+  })
 })

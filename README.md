@@ -44,6 +44,7 @@ El proyecto sigue una arquitectura basada en capas, con separación de responsab
 ```txt
 docs/
 src/
+├── errors/
 ├── controllers/
 ├── services/
 ├── middlewares/
