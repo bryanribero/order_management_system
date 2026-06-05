@@ -7,22 +7,18 @@ export async function hashPassword(password) {
   const SALT_ROUNDS = 10
 
   if (typeof password !== 'string') {
-    throw new TypeError('La contraseña debe de ser un string')
+    throw new TypeError('La contraseña debe ser un string')
   }
 
-  const hash = await bcrypt.hash(password, SALT_ROUNDS)
-
-  return hash
+  return bcrypt.hash(password, SALT_ROUNDS)
 }
 
 export async function comparePassword(password, hash) {
   if (typeof password !== 'string') {
-    throw new TypeError('La contraseña debe de ser un string')
+    throw new TypeError('La contraseña debe ser un string')
   }
 
-  const isValidPassword = await bcrypt.compare(password, hash)
-
-  return isValidPassword
+  return bcrypt.compare(password, hash)
 }
 
 export async function registerNewUser({ email, password }) {
@@ -41,7 +37,7 @@ export async function registerNewUser({ email, password }) {
     }
   } catch (err) {
     if (err instanceof UniqueConstraintError) {
-      throw ConflictError('El email ya está en uso')
+      throw new ConflictError('El email ya está en uso')
     }
     throw err
   }

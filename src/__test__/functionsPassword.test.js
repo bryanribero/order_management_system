@@ -29,7 +29,7 @@ describe('Funciones de password', () => {
       const password = 12345678
 
       await expect(hashPassword(password)).rejects.toThrow(
-        'La contraseña debe de ser un string'
+        'La contraseña debe ser un string'
       )
     })
   })
@@ -59,7 +59,7 @@ describe('Funciones de password', () => {
       const hash = hashPassword(String(password))
 
       await expect(comparePassword(password, hash)).rejects.toThrow(
-        'La contraseña debe de ser un string'
+        'La contraseña debe ser un string'
       )
     })
   })

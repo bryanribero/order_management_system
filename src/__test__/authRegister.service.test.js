@@ -35,7 +35,7 @@ describe('Auth Service - registerNewUser', () => {
   it('Debe guardar una contraseña hasheada que coincida con la original', async () => {
     const dataUser = {
       email: `prueba-${crypto.randomUUID()}@hotmail.com`,
-      password: 12345678,
+      password: '12345678',
     }
 
     const newUser = await registerNewUser(dataUser)
@@ -59,8 +59,8 @@ describe('Auth Service - registerNewUser', () => {
     await registerNewUser(dataUser)
 
     await expect(registerNewUser(dataUser)).rejects.toMatchObject({
-      status: 409,
       message: 'El email ya está en uso',
+      status: 409,
     })
   })
 })
