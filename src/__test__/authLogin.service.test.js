@@ -17,7 +17,7 @@ afterAll(async () => {
 describe('loginUser', () => {
   it('debería autenticar un usuario y devolver un access token y refresh token válidos', async () => {
     const dataUser = {
-      email: `Test-${crypto.randomUUID}@hotmail.com`,
+      email: `Test-${crypto.randomUUID()}@hotmail.com`,
       password: `testeoLogin`,
     }
 
@@ -38,11 +38,11 @@ describe('loginUser', () => {
 
     const refreshPayload = jwt.verify(
       response.refreshToken,
-      process.env.JJWT_REFRESH_SECRET
+      process.env.JWT_REFRESH_SECRET
     )
 
     expect(accessPayload.id_user).toBeDefined()
-    expect(accessPayload.email).toBe(dataUser.email)
+    expect(accessPayload.email).toBe(dataUser.email.trim().toLocaleLowerCase())
     expect(accessPayload.role).toBe('owner')
 
     expect(refreshPayload.id_user).toBeDefined()

@@ -125,6 +125,138 @@ paths:
                     success: false
                     errors:
                       - message: Error interno del servidor
+  /api/auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Iniciar sesion
+      description: Autentica un usuario registrado con email y password. Si las credenciales son validas, devuelve un access token con duracion de 1 hora y un refresh token con duracion de 7 dias.
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            examples:
+              validCredentials:
+                summary: Credenciales validas
+                value:
+                  email: usuario@example.com
+                  password: passwordTest
+      responses:
+        '200':
+          description: Inicio de sesion exitoso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginSuccessResponse'
+              examples:
+                loggedIn:
+                  summary: Login exitoso
+                  value:
+                    success: true
+                    message: Inicio de sesion exitoso
+                    accessToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                    refreshToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        '400':
+          description: Error de validacion del cuerpo de la peticion o JSON invalido.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ValidationErrorResponse'
+                  - $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                emptyBody:
+                  summary: Body vacio
+                  value:
+                    success: false
+                    errors:
+                      - field: email
+                        message: El email es obligatorio
+                      - field: password
+                        message: La contraseña es obligatoria
+                invalidEmail:
+                  summary: Email invalido
+                  value:
+                    success: false
+                    errors:
+                      - field: email
+                        message: El email ingresado no es valido
+                passwordWithSpaces:
+                  summary: Password con espacios
+                  value:
+                    success: false
+                    errors:
+                      - field: password
+                        message: La contraseña no puede contener espacios
+                shortPassword:
+                  summary: Password demasiado corto
+                  value:
+                    success: false
+                    errors:
+                      - field: password
+                        message: La contraseña debe tener al menos 8 caracteres
+                longPassword:
+                  summary: Password demasiado largo
+                  value:
+                    success: false
+                    errors:
+                      - field: password
+                        message: La contraseña debe de contener hasta 16 caracteres
+                passwordWithoutUppercase:
+                  summary: Password sin mayuscula
+                  value:
+                    success: false
+                    errors:
+                      - field: password
+                        message: La contraseña debe contener al menos una letra mayuscula
+                malformedJson:
+                  summary: JSON invalido
+                  value:
+                    success: false
+                    errors:
+                      - message: JSON invalido o mal formado
+        '401':
+          description: El email no existe o el password no coincide.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                invalidCredentials:
+                  summary: Credenciales invalidas
+                  value:
+                    success: false
+                    errors:
+                      - message: Credenciales invalidas
+        '429':
+          description: Se supero el limite de intentos de login.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                rateLimit:
+                  summary: Limite de login superado
+                  value:
+                    success: false
+                    errors:
+                      - message: Demasiados intentos de registro. Intenta nuevamente mas tarde.
+        '500':
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                internalError:
+                  summary: Error interno
+                  value:
+                    success: false
+                    errors:
+                      - message: Error interno del servidor
 
 components:
   schemas:
@@ -154,6 +286,24 @@ components:
           readOnly: true
           description: Este campo es ignorado durante el registro; el servidor asigna owner por defecto.
           example: owner
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      additionalProperties: true
+      properties:
+        email:
+          type: string
+          format: email
+          description: Email del usuario registrado.
+          example: usuario@example.com
+        password:
+          type: string
+          minLength: 8
+          maxLength: 16
+          description: Password del usuario. Debe ser texto, no puede contener espacios y debe incluir al menos una letra mayuscula.
+          example: passwordTest
     User:
       type: object
       required:
@@ -190,6 +340,28 @@ components:
           example: Usuario creado correctamente!
         user:
           $ref: '#/components/schemas/User'
+    LoginSuccessResponse:
+      type: object
+      required:
+        - success
+        - message
+        - accessToken
+        - refreshToken
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Inicio de sesion exitoso
+        accessToken:
+          type: string
+          description: JWT de acceso valido por 1 hora.
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        refreshToken:
+          type: string
+          description: JWT de refresco valido por 7 dias.
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
     ValidationErrorResponse:
       type: object
       required:

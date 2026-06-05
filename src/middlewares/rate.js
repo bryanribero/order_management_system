@@ -32,3 +32,16 @@ export const registerRateLimit = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 })
+
+export const loginRateLimit = rateLimit({
+  windowMs: 10 * 60 * 1000,
+  limit: isTest ? 25 : 10,
+  message: {
+    success: false,
+    errors: [
+      {
+        message: 'Demasiados intentos de login. Intenta nuevamente más tarde.',
+      },
+    ],
+  },
+})
