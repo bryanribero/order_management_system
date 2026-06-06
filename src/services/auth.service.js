@@ -91,3 +91,28 @@ export async function loginUser({ email, password }) {
     refreshToken,
   }
 }
+
+export function generateTokens(payload) {
+  if (payload?.id_user == null || !payload?.email || !payload?.role) {
+    throw new Error('Payload inválido')
+  }
+
+  const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {
+    expiresIn: '1h',
+  })
+
+  const refreshToken = jwt.sign(
+    {
+      id_user: payload.id_user,
+    },
+    process.env.JWT_REFRESH_SECRET,
+    {
+      expiresIn: '7d',
+    }
+  )
+
+  return {
+    accessToken,
+    refreshToken,
+  }
+}

@@ -2,6 +2,9 @@ import sequelize from '../db/database.js'
 import User from '../db/models/User.js'
 import { loginUser, registerNewUser } from '../services/auth.service.js'
 import jwt from 'jsonwebtoken'
+import RefreshToken from '../db/models/RefreshToken.js'
+import crypto from 'crypto'
+import { Op } from 'sequelize'
 
 afterEach(async () => {
   await User.destroy({
@@ -77,5 +80,54 @@ describe('loginUser', () => {
       message: 'Credenciales inválidas',
       status: 401,
     })
+  })
+
+  it('Debe de coincidir el refreshToken dado con el token guardado en la base de datos', async () => {
+    const dataUser = {
+      email: `test-${crypto.randomUUID()}@hotmail.com`,
+      password: 'pasSwordtest123',
+    }
+
+    const user = await registerNewUser(dataUser)
+
+    const userLogin = await loginUser(dataUser)
+
+    const refreshTokenDB = await RefreshToken.findOne({
+      where: {
+        id_user: user.id_user,
+      },
+    })
+
+    const hashedRefreshToken = crypto
+      .createHash('sha256')
+      .update(userLogin.refreshToken)
+      .digest('hex')
+
+    expect(refreshTokenDB).not.toBeNull()
+    expect(hashedRefreshToken).toBe(refreshTokenDB.token_hash)
+  })
+
+  it('debería revocar el refresh token anterior al generar uno nuevo para el mismo usuario', async () => {
+    const dataUser = {
+      email: `test-${crypto.randomUUID()}@hotmail.com`,
+      password: 'pasSwordtest123',
+    }
+    const user = await registerNewUser(dataUser)
+
+    await loginUser(dataUser)
+
+    await loginUser(dataUser)
+
+    const refreshTokenRevoked = await RefreshToken.findOne({
+      where: {
+        id_user: user.id_user,
+        revoked_at: {
+          [Op.not]: null,
+        },
+      },
+    })
+
+    expect(refreshTokenRevoked).not.toBeNull()
+    expect(refreshTokenRevoked.revoked_at).toBeInstanceOf(Date)
   })
 })
