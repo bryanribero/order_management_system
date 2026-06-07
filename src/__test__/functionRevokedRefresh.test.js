@@ -24,11 +24,13 @@ describe('revokedOldRefreshToken', () => {
     const token1 = await RefreshToken.create({
       id_user: user.id_user,
       token_hash: 'Hash-token1',
+      expires_at: Date.now() + 7 * 24 * 60 * 60 * 1000,
     })
 
     const token2 = await RefreshToken.create({
       id_user: user.id_user,
       token_hash: 'Hash-token2',
+      expires_at: Date.now() + 7 * 24 * 60 * 60 * 1000,
     })
 
     expect(token1.revoked_at).toBeNull()

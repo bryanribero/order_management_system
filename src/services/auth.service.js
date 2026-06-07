@@ -1,9 +1,10 @@
 import bcrypt from 'bcrypt'
 import User from '../db/models/User.js'
-import { UniqueConstraintError } from 'sequelize'
+import { UniqueConstraintError, where } from 'sequelize'
 import { ConflictError } from '../errors/ConflictError.js'
 import { AuthError } from '../errors/AuthError.js'
 import jwt from 'jsonwebtoken'
+import RefreshToken from '../db/models/RefreshToken.js'
 
 export async function hashPassword(password) {
   const SALT_ROUNDS = 10
@@ -115,4 +116,23 @@ export function generateTokens(payload) {
     accessToken,
     refreshToken,
   }
+}
+
+export async function revokedOldRefreshToken(idUser, transaction) {
+  if (idUser == null || idUser == undefined || !Number.isInteger(idUser)) {
+    throw new Error('idUser es inválido')
+  }
+
+  await RefreshToken.update(
+    {
+      revoked_at: new Date(),
+    },
+    {
+      where: {
+        id_user: idUser,
+        revoked_at: null,
+      },
+      transaction,
+    }
+  )
 }
