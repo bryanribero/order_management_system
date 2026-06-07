@@ -32,4 +32,8 @@ describe('hashRefreshToken', () => {
   it('debería lanzar un error si refreshToken no es un String', () => {
     expect(() => hashRefreshToken(122)).toThrow()
   })
+
+  it('debería lanzar un error si refreshToken está vacío', () => {
+    expect(() => hashRefreshToken('')).toThrow()
+  })
 })

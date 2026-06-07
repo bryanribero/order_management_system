@@ -5,6 +5,7 @@ import { ConflictError } from '../errors/ConflictError.js'
 import { AuthError } from '../errors/AuthError.js'
 import jwt from 'jsonwebtoken'
 import RefreshToken from '../db/models/RefreshToken.js'
+import crypto from 'crypto'
 
 export async function hashPassword(password) {
   const SALT_ROUNDS = 10
@@ -135,4 +136,14 @@ export async function revokedOldRefreshToken(idUser, transaction) {
       transaction,
     }
   )
+}
+
+export function hashRefreshToken(token) {
+  if (typeof token != 'string' || !token.trim()) {
+    throw new Error('refreshToken inválido')
+  }
+
+  const hashed = crypto.createHash('sha256').update(token).digest('hex')
+
+  return hashed
 }
