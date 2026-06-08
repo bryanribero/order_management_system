@@ -47,6 +47,8 @@ src/
 ├── errors/
 ├── controllers/
 ├── services/
+│   └──/auth
+│       └──/utils
 ├── middlewares/
 ├── routes/
 ├── db/
@@ -55,7 +57,6 @@ src/
 │   ├── migrations/
 │   └── seeders/
 ├── __test__/
-├── utils/
 └── validators/
 ```
 
