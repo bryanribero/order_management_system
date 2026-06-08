@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken'
 import RefreshToken from '../../../db/models/RefreshToken.js'
 import crypto from 'crypto'
+import { AuthError } from '../../../errors/AuthError.js'
 
 export async function revokedOldRefreshToken(idUser, transaction) {
   if (idUser == null || idUser == undefined || !Number.isInteger(idUser)) {
@@ -73,4 +74,17 @@ export async function createRefreshToken(idUser, refreshToken, transaction) {
       transaction,
     }
   )
+}
+
+export function verifyToken(token, typeToken) {
+  try {
+    return typeToken === 'access'
+      ? jwt.verify(token, process.env.JWT_ACCESS_SECRET)
+      : jwt.verify(token, process.env.JWT_REFRESH_SECRET)
+  } catch (err) {
+    if (err.name === 'TokenExpiredError') {
+      throw new AuthError('Token expirado')
+    }
+    throw new AuthError('Token inválido')
+  }
 }
