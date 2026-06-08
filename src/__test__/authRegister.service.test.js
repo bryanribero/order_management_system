@@ -1,5 +1,6 @@
 import User from '../db/models/User.js'
-import { comparePassword, registerNewUser } from '../services/auth.service.js'
+import { registerNewUser } from '../services/auth/auth.service.js'
+import { comparePassword } from '../services/auth/utils/passwords.utils.js'
 import sequelize from '../db/database.js'
 
 afterEach(async () => {

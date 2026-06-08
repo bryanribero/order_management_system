@@ -1,6 +1,6 @@
 import sequelize from '../db/database.js'
 import User from '../db/models/User.js'
-import { generateTokens } from '../services/auth.service.js'
+import { generateTokens } from '../services/auth/utils/tokens.utils.js'
 import jwt from 'jsonwebtoken'
 
 afterEach(async () => {

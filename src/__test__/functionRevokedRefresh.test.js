@@ -1,6 +1,6 @@
 import sequelize from '../db/database.js'
 import User from '../db/models/User.js'
-import { revokedOldRefreshToken } from '../services/auth.service.js'
+import { revokedOldRefreshToken } from '../services/auth/utils/tokens.utils.js'
 import RefreshToken from '../db/models/RefreshToken.js'
 
 afterEach(async () => {

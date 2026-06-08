@@ -17,7 +17,7 @@ paths:
       tags:
         - Auth
       summary: Registrar un nuevo usuario
-      description: Crea un usuario nuevo. El rol se asigna por defecto como owner aunque se envie otro rol en el cuerpo de la peticion.
+      description: Crea un usuario nuevo con email y password. El password debe ser texto, no puede contener espacios, debe tener entre 8 y 16 caracteres e incluir al menos una letra mayúscula. El rol se asigna por defecto como owner aunque se envie otro rol en el cuerpo de la peticion.
       operationId: registerUser
       requestBody:
         required: true
@@ -30,7 +30,7 @@ paths:
                 summary: Usuario valido
                 value:
                   email: usuario@example.com
-                  password: '12345678'
+                  password: '123G5678'
       responses:
         '201':
           description: Usuario creado correctamente.
@@ -72,7 +72,7 @@ paths:
                     success: false
                     errors:
                       - field: email
-                        message: El email ingresado no es valido
+                        message: El email ingresado no es válido
                 invalidPasswordType:
                   summary: Password no es texto
                   value:
@@ -80,12 +80,40 @@ paths:
                     errors:
                       - field: password
                         message: La contraseña debe ser texto
+                passwordWithSpaces:
+                  summary: Password con espacios
+                  value:
+                    success: false
+                    errors:
+                      - field: password
+                        message: La contraseña no puede contener espacios
+                shortPassword:
+                  summary: Password demasiado corto
+                  value:
+                    success: false
+                    errors:
+                      - field: password
+                        message: La contraseña debe tener al menos 8 caracteres
+                longPassword:
+                  summary: Password demasiado largo
+                  value:
+                    success: false
+                    errors:
+                      - field: password
+                        message: La contraseña debe de contener hasta 16 caracteres
+                passwordWithoutUppercase:
+                  summary: Password sin mayuscula
+                  value:
+                    success: false
+                    errors:
+                      - field: password
+                        message: La contraseña debe contener al menos una letra mayúscula
                 malformedJson:
                   summary: JSON invalido
                   value:
                     success: false
                     errors:
-                      - message: JSON invalido o mal formado
+                      - message: JSON inválido o mal formado
         '409':
           description: El email ya se encuentra registrado.
           content:
@@ -98,7 +126,7 @@ paths:
                   value:
                     success: false
                     errors:
-                      - message: El email ya esta en uso
+                      - message: El email ya está en uso
         '429':
           description: Se supero el limite de intentos de registro.
           content:
@@ -111,7 +139,7 @@ paths:
                   value:
                     success: false
                     errors:
-                      - message: Demasiados intentos de registro. Intenta nuevamente mas tarde.
+                      - message: Demasiados intentos de registro. Intenta nuevamente más tarde.
         '500':
           description: Error interno del servidor.
           content:
@@ -156,7 +184,7 @@ paths:
                   summary: Login exitoso
                   value:
                     success: true
-                    message: Inicio de sesion exitoso
+                    message: Inicio de sesión exitoso
                     accessToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
                     refreshToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
         '400':
@@ -183,7 +211,7 @@ paths:
                     success: false
                     errors:
                       - field: email
-                        message: El email ingresado no es valido
+                        message: El email ingresado no es válido
                 passwordWithSpaces:
                   summary: Password con espacios
                   value:
@@ -211,13 +239,13 @@ paths:
                     success: false
                     errors:
                       - field: password
-                        message: La contraseña debe contener al menos una letra mayuscula
+                        message: La contraseña debe contener al menos una letra mayúscula
                 malformedJson:
                   summary: JSON invalido
                   value:
                     success: false
                     errors:
-                      - message: JSON invalido o mal formado
+                      - message: JSON inválido o mal formado
         '401':
           description: El email no existe o el password no coincide.
           content:
@@ -230,7 +258,7 @@ paths:
                   value:
                     success: false
                     errors:
-                      - message: Credenciales invalidas
+                      - message: Credenciales inválidas
         '429':
           description: Se supero el limite de intentos de login.
           content:
@@ -243,7 +271,7 @@ paths:
                   value:
                     success: false
                     errors:
-                      - message: Demasiados intentos de registro. Intenta nuevamente mas tarde.
+                      - message: Demasiados intentos de login. Intenta nuevamente más tarde.
         '500':
           description: Error interno del servidor.
           content:
@@ -276,8 +304,9 @@ components:
           type: string
           minLength: 8
           maxLength: 16
-          description: Contraseña del usuario. Debe ser texto y no puede estar vacia.
-          example: '12345678'
+          pattern: '^\S+$'
+          description: Contraseña del usuario. Debe ser texto, no puede contener espacios y debe incluir al menos una letra mayúscula.
+          example: '123G5678'
         role:
           type: string
           enum:
@@ -302,7 +331,8 @@ components:
           type: string
           minLength: 8
           maxLength: 16
-          description: Password del usuario. Debe ser texto, no puede contener espacios y debe incluir al menos una letra mayuscula.
+          pattern: '^\S+$'
+          description: Password del usuario. Debe ser texto, no puede contener espacios y debe incluir al menos una letra mayúscula.
           example: passwordTest
     User:
       type: object
@@ -353,7 +383,7 @@ components:
           example: true
         message:
           type: string
-          example: Inicio de sesion exitoso
+          example: Inicio de sesión exitoso
         accessToken:
           type: string
           description: JWT de acceso valido por 1 hora.

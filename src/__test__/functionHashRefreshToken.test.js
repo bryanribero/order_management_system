@@ -1,6 +1,6 @@
 import sequelize from '../db/database.js'
 import User from '../db/models/User.js'
-import { hashRefreshToken } from '../services/auth.service.js'
+import { hashRefreshToken } from '../services/auth/utils/tokens.utils.js'
 import crypto from 'crypto'
 
 afterEach(async () => {

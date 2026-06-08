@@ -2,7 +2,7 @@ import sequelize from '../db/database'
 import User from '../db/models/User.js'
 import app from '../../app.js'
 import request from 'supertest'
-import { registerNewUser } from '../services/auth.service.js'
+import { registerNewUser } from '../services/auth/auth.service.js'
 
 afterEach(async () => {
   await User.destroy({

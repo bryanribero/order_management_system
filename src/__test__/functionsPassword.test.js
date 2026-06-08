@@ -1,4 +1,7 @@
-import { hashPassword, comparePassword } from '../services/auth.service.js'
+import {
+  hashPassword,
+  comparePassword,
+} from '../services/auth/utils/passwords.utils.js'
 
 describe('Funciones de password', () => {
   describe('hashPassword', () => {

@@ -1,10 +1,11 @@
 import sequelize from '../db/database.js'
 import User from '../db/models/User.js'
-import { loginUser, registerNewUser } from '../services/auth.service.js'
+import { loginUser, registerNewUser } from '../services/auth/auth.service.js'
 import jwt from 'jsonwebtoken'
 import RefreshToken from '../db/models/RefreshToken.js'
 import crypto from 'crypto'
 import { Op } from 'sequelize'
+import { hashRefreshToken } from '../services/auth/utils/tokens.utils.js'
 
 afterEach(async () => {
   await User.destroy({
@@ -98,13 +99,10 @@ describe('loginUser', () => {
       },
     })
 
-    const hashedRefreshToken = crypto
-      .createHash('sha256')
-      .update(userLogin.refreshToken)
-      .digest('hex')
+    const hashedRefreshToken = hashRefreshToken(userLogin.refreshToken)
 
     expect(refreshTokenDB).not.toBeNull()
-    expect(hashedRefreshToken).toBe(refreshTokenDB.token_hash)
+    expect(refreshTokenDB.token_hash).toBe(hashedRefreshToken)
   })
 
   it('debería revocar el refresh token anterior al generar uno nuevo para el mismo usuario', async () => {
