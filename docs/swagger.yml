@@ -2,14 +2,14 @@ openapi: 3.0.3
 info:
   title: Order Management System API
   version: 1.0.0
-  description: API para gestionar pedidos, productos, clientes, repartidores y autenticacion.
+  description: API para gestionar pedidos, productos, clientes, repartidores y autenticación.
 servers:
   - url: http://localhost:3000
     description: Servidor local
 
 tags:
   - name: Auth
-    description: Endpoints de autenticacion y registro de usuarios.
+    description: Endpoints de autenticación y registro de usuarios.
 
 paths:
   /api/auth/register:
@@ -17,7 +17,7 @@ paths:
       tags:
         - Auth
       summary: Registrar un nuevo usuario
-      description: Crea un usuario nuevo con email y password. El password debe ser texto, no puede contener espacios, debe tener entre 8 y 16 caracteres e incluir al menos una letra mayúscula. El rol se asigna por defecto como owner aunque se envie otro rol en el cuerpo de la peticion.
+      description: Crea un usuario nuevo con email y password. El password debe ser texto, no puede contener espacios, debe tener entre 8 y 16 caracteres e incluir al menos una letra mayúscula. El rol se asigna por defecto como owner aunque se envíe otro rol en el cuerpo de la petición.
       operationId: registerUser
       requestBody:
         required: true
@@ -27,7 +27,7 @@ paths:
               $ref: '#/components/schemas/RegisterRequest'
             examples:
               validUser:
-                summary: Usuario valido
+                summary: Usuario válido
                 value:
                   email: usuario@example.com
                   password: '123G5678'
@@ -49,7 +49,7 @@ paths:
                       email: usuario@example.com
                       role: owner
         '400':
-          description: Error de validacion del cuerpo de la peticion o JSON invalido.
+          description: Error de validación del cuerpo de la petición o JSON inválido.
           content:
             application/json:
               schema:
@@ -58,7 +58,7 @@ paths:
                   - $ref: '#/components/schemas/GenericErrorResponse'
               examples:
                 emptyBody:
-                  summary: Body vacio
+                  summary: Body vacío
                   value:
                     success: false
                     errors:
@@ -67,7 +67,7 @@ paths:
                       - field: password
                         message: La contraseña es obligatoria
                 invalidEmail:
-                  summary: Email invalido
+                  summary: Email inválido
                   value:
                     success: false
                     errors:
@@ -100,16 +100,16 @@ paths:
                     success: false
                     errors:
                       - field: password
-                        message: La contraseña debe de contener hasta 16 caracteres
+                        message: La contraseña debe contener hasta 16 caracteres
                 passwordWithoutUppercase:
-                  summary: Password sin mayuscula
+                  summary: Password sin mayúscula
                   value:
                     success: false
                     errors:
                       - field: password
                         message: La contraseña debe contener al menos una letra mayúscula
                 malformedJson:
-                  summary: JSON invalido
+                  summary: JSON inválido
                   value:
                     success: false
                     errors:
@@ -128,14 +128,14 @@ paths:
                     errors:
                       - message: El email ya está en uso
         '429':
-          description: Se supero el limite de intentos de registro.
+          description: Se superó el límite de intentos de registro.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericErrorResponse'
               examples:
                 rateLimit:
-                  summary: Limite de registros superado
+                  summary: Límite de registros superado
                   value:
                     success: false
                     errors:
@@ -157,8 +157,8 @@ paths:
     post:
       tags:
         - Auth
-      summary: Iniciar sesion
-      description: Autentica un usuario registrado con email y password. Si las credenciales son validas, devuelve un access token con duracion de 1 hora y un refresh token con duracion de 7 dias.
+      summary: Iniciar sesión
+      description: Autentica un usuario registrado con email y password. Si las credenciales son válidas, devuelve un access token con duración de 1 hora y un refresh token con duración de 7 días.
       operationId: loginUser
       requestBody:
         required: true
@@ -168,13 +168,13 @@ paths:
               $ref: '#/components/schemas/LoginRequest'
             examples:
               validCredentials:
-                summary: Credenciales validas
+                summary: Credenciales válidas
                 value:
                   email: usuario@example.com
                   password: passwordTest
       responses:
         '200':
-          description: Inicio de sesion exitoso.
+          description: Inicio de sesión exitoso.
           content:
             application/json:
               schema:
@@ -188,7 +188,7 @@ paths:
                     accessToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
                     refreshToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
         '400':
-          description: Error de validacion del cuerpo de la peticion o JSON invalido.
+          description: Error de validación del cuerpo de la petición o JSON inválido.
           content:
             application/json:
               schema:
@@ -197,7 +197,7 @@ paths:
                   - $ref: '#/components/schemas/GenericErrorResponse'
               examples:
                 emptyBody:
-                  summary: Body vacio
+                  summary: Body vacío
                   value:
                     success: false
                     errors:
@@ -206,7 +206,7 @@ paths:
                       - field: password
                         message: La contraseña es obligatoria
                 invalidEmail:
-                  summary: Email invalido
+                  summary: Email inválido
                   value:
                     success: false
                     errors:
@@ -232,16 +232,16 @@ paths:
                     success: false
                     errors:
                       - field: password
-                        message: La contraseña debe de contener hasta 16 caracteres
+                        message: La contraseña debe contener hasta 16 caracteres
                 passwordWithoutUppercase:
-                  summary: Password sin mayuscula
+                  summary: Password sin mayúscula
                   value:
                     success: false
                     errors:
                       - field: password
                         message: La contraseña debe contener al menos una letra mayúscula
                 malformedJson:
-                  summary: JSON invalido
+                  summary: JSON inválido
                   value:
                     success: false
                     errors:
@@ -254,20 +254,20 @@ paths:
                 $ref: '#/components/schemas/GenericErrorResponse'
               examples:
                 invalidCredentials:
-                  summary: Credenciales invalidas
+                  summary: Credenciales inválidas
                   value:
                     success: false
                     errors:
                       - message: Credenciales inválidas
         '429':
-          description: Se supero el limite de intentos de login.
+          description: Se superó el límite de intentos de login.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericErrorResponse'
               examples:
                 rateLimit:
-                  summary: Limite de login superado
+                  summary: Límite de login superado
                   value:
                     success: false
                     errors:
@@ -285,8 +285,73 @@ paths:
                     success: false
                     errors:
                       - message: Error interno del servidor
+  /api/auth/logout:
+    post:
+      tags:
+        - Auth
+      summary: Cerrar sesión
+      description: Revoca los refresh tokens activos del usuario autenticado. Requiere un access token válido en el encabezado Authorization con el esquema Bearer.
+      operationId: logoutUser
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Sesión cerrada correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogoutSuccessResponse'
+              examples:
+                loggedOut:
+                  summary: Logout exitoso
+                  value:
+                    success: true
+                    message: Sesión cerrada correctamente
+        '401':
+          description: No se envió un access token válido o el encabezado Authorization es inválido.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                missingToken:
+                  summary: Token requerido
+                  value:
+                    success: false
+                    errors:
+                      - message: Token requerido
+                invalidHeader:
+                  summary: Encabezado inválido
+                  value:
+                    success: false
+                    errors:
+                      - message: Encabezado Authorization inválido
+                invalidToken:
+                  summary: Token inválido
+                  value:
+                    success: false
+                    errors:
+                      - message: Token inválido
+        '500':
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                internalError:
+                  summary: Error interno
+                  value:
+                    success: false
+                    errors:
+                      - message: Error interno del servidor
 
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     RegisterRequest:
       type: object
@@ -298,7 +363,7 @@ components:
         email:
           type: string
           format: email
-          description: Email unico del usuario.
+          description: Email único del usuario.
           example: usuario@example.com
         password:
           type: string
@@ -386,12 +451,24 @@ components:
           example: Inicio de sesión exitoso
         accessToken:
           type: string
-          description: JWT de acceso valido por 1 hora.
+          description: JWT de acceso válido por 1 hora.
           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
         refreshToken:
           type: string
-          description: JWT de refresco valido por 7 dias.
+          description: JWT de refresco válido por 7 días.
           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+    LogoutSuccessResponse:
+      type: object
+      required:
+        - success
+        - message
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Sesión cerrada correctamente
     ValidationErrorResponse:
       type: object
       required:
