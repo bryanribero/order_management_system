@@ -1,6 +1,7 @@
 import { verifyAccessToken } from '../middlewares/verifyAccessToken.js'
 import { generateTokens } from '../services/auth/utils/tokens.utils.js'
 import jwt from 'jsonwebtoken'
+import { jest } from '@jest/globals'
 
 describe('verifyAccessToken', () => {
   it('debería permitir el acceso cuando el access token es válido', () => {
@@ -13,7 +14,7 @@ describe('verifyAccessToken', () => {
     const { accessToken } = generateTokens(payload)
 
     const req = {
-      headers: { authorization: `bearer ${accessToken}` },
+      headers: { authorization: `Bearer ${accessToken}` },
     }
 
     const res = {
@@ -49,9 +50,31 @@ describe('verifyAccessToken', () => {
     expect(req.user).toBeUndefined()
   })
 
+  it('debería llamar a next con un error si authorization no tiene un formato válido', () => {
+    const req = {
+      headers: {
+        authorization: 'token-random',
+      },
+    }
+
+    const res = {}
+
+    const next = jest.fn()
+
+    verifyAccessToken(req, res, next)
+
+    expect(next).toHaveBeenCalledWith(expect.any(Error))
+
+    const error = next.mock.calls[0][0]
+
+    expect(error.message).toBe('Encabezado Authorization inválido')
+    expect(next).toHaveBeenCalledTimes(1)
+    expect(req.user).toBeUndefined()
+  })
+
   it('debería llamar a next con un error si el access token es inválido', () => {
     const req = {
-      headers: { authorization: `bearer token-invalido` },
+      headers: { authorization: `Bearer token-invalido` },
     }
 
     const res = {}
@@ -81,7 +104,7 @@ describe('verifyAccessToken', () => {
     })
 
     const req = {
-      headers: { authorization: `bearer ${token}` },
+      headers: { authorization: `Bearer ${token}` },
     }
 
     const res = {}
