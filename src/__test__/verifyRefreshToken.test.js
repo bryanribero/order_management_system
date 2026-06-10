@@ -40,13 +40,13 @@ describe('POST /auth/refresh', () => {
 
     const next = jest.fn()
 
-    verifyRefreshToken(req, res, next)
+    await verifyRefreshToken(req, res, next)
 
     expect(req.user).toMatchObject({ id_user })
     expect(next).toHaveBeenCalledTimes(1)
   })
 
-  it('debería llamar a next con un error si no existe el header Authorization', () => {
+  it('debería llamar a next con un error si no existe el header Authorization', async () => {
     const req = {
       headers: {},
     }
@@ -55,7 +55,7 @@ describe('POST /auth/refresh', () => {
 
     const next = jest.fn()
 
-    verifyRefreshToken(req, res, next)
+    await verifyRefreshToken(req, res, next)
 
     expect(next).toHaveBeenCalledWith(expect.any(Error))
 
@@ -66,7 +66,7 @@ describe('POST /auth/refresh', () => {
     expect(req.user).toBeUndefined()
   })
 
-  it('debería llamar a next con un error si authorization no tiene un formato válido', () => {
+  it('debería llamar a next con un error si authorization no tiene un formato válido', async () => {
     const req = {
       headers: {
         authorization: 'token-random',
@@ -77,7 +77,7 @@ describe('POST /auth/refresh', () => {
 
     const next = jest.fn()
 
-    verifyRefreshToken(req, res, next)
+    await verifyRefreshToken(req, res, next)
 
     expect(next).toHaveBeenCalledWith(expect.any(Error))
 
@@ -88,7 +88,7 @@ describe('POST /auth/refresh', () => {
     expect(req.user).toBeUndefined()
   })
 
-  it('debería llamar a next con un error si el refresh token es inválido', () => {
+  it('debería llamar a next con un error si el refresh token es inválido', async () => {
     const req = {
       headers: { authorization: `Bearer token-invalido` },
     }
@@ -97,7 +97,7 @@ describe('POST /auth/refresh', () => {
 
     const next = jest.fn()
 
-    verifyRefreshToken(req, res, next)
+    await verifyRefreshToken(req, res, next)
 
     expect(next).toHaveBeenCalledWith(expect.any(Error))
 
@@ -108,7 +108,7 @@ describe('POST /auth/refresh', () => {
     expect(req.user).toBeUndefined()
   })
 
-  it('debería llamar a next con un error si el refresh token expiró', () => {
+  it('debería llamar a next con un error si el refresh token expiró', async () => {
     const payload = {
       id_user: 1,
       email: `test-${crypto.randomUUID()}@hotmail.com`,
@@ -127,13 +127,82 @@ describe('POST /auth/refresh', () => {
 
     const next = jest.fn()
 
-    verifyRefreshToken(req, res, next)
+    await verifyRefreshToken(req, res, next)
 
     expect(next).toHaveBeenCalledWith(expect.any(Error))
 
     const error = next.mock.calls[0][0]
 
     expect(error.message).toBe('Token expirado')
+    expect(next).toHaveBeenCalledTimes(1)
+    expect(req.user).toBeUndefined()
+  })
+
+  it('debería llamar a next con un error si el refresh token no coincide con el token válido de la base de datos', async () => {
+    const payload = {
+      id_user: 1,
+      email: `test-${crypto.randomUUID()}@hotmail.com`,
+      role: 'owner',
+    }
+
+    const token = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {
+      expiresIn: '1h',
+    })
+
+    const dataUser = {
+      email: `test-${crypto.randomUUID()}@hotmail.com`,
+      password: '1234567A',
+    }
+
+    await registerNewUser(dataUser)
+
+    await loginUser(dataUser)
+
+    const req = {
+      headers: { authorization: `Bearer ${token}` },
+    }
+
+    const res = {}
+
+    const next = jest.fn()
+
+    await verifyRefreshToken(req, res, next)
+
+    expect(next).toHaveBeenCalledWith(expect.any(Error))
+
+    const error = next.mock.calls[0][0]
+
+    expect(error.message).toBe('Token revocado')
+    expect(next).toHaveBeenCalledTimes(1)
+    expect(req.user).toBeUndefined()
+  })
+
+  it('debería llamar a next con un error si no hay un refresh token en la base de datos válido', async () => {
+    const payload = {
+      id_user: 1,
+      email: `test-${crypto.randomUUID()}@hotmail.com`,
+      role: 'owner',
+    }
+
+    const token = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {
+      expiresIn: '1h',
+    })
+
+    const req = {
+      headers: { authorization: `Bearer ${token}` },
+    }
+
+    const res = {}
+
+    const next = jest.fn()
+
+    await verifyRefreshToken(req, res, next)
+
+    expect(next).toHaveBeenCalledWith(expect.any(Error))
+
+    const error = next.mock.calls[0][0]
+
+    expect(error.message).toBe('Token revocado')
     expect(next).toHaveBeenCalledTimes(1)
     expect(req.user).toBeUndefined()
   })
