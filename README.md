@@ -31,8 +31,6 @@ Las funcionalidades principales incluyen:
 - Sequelize
 - JWT
 - Jest
-- ESLint
-- Prettier
 - pnpm
 
 <br>
