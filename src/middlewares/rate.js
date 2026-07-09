@@ -19,7 +19,7 @@ export const globalRateLimit = rateLimit({
 
 export const registerRateLimit = rateLimit({
   windowMs: 10 * 60 * 1000,
-  limit: isTest ? 25 : 10,
+  limit: isTest ? 24 : 10,
   message: {
     success: false,
     errors: [
@@ -35,12 +35,26 @@ export const registerRateLimit = rateLimit({
 
 export const loginRateLimit = rateLimit({
   windowMs: 10 * 60 * 1000,
-  limit: isTest ? 25 : 10,
+  limit: isTest ? 100 : 10,
   message: {
     success: false,
     errors: [
       {
         message: 'Demasiados intentos de login. Intenta nuevamente más tarde.',
+      },
+    ],
+  },
+})
+
+export const refreshRateLimit = rateLimit({
+  windowMs: 10 * 60 * 1000,
+  limit: isTest ? 100 : 5,
+  message: {
+    success: false,
+    errors: [
+      {
+        message:
+          'Demasiados intentos de Refresh. Intenta nuevamente más tarde.',
       },
     ],
   },

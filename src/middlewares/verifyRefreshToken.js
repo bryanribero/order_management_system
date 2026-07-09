@@ -3,7 +3,7 @@ import { AuthError } from '../errors/AuthError.js'
 import {
   hashRefreshToken,
   verifyToken,
-} from '../services/auth/utils/tokens.utils'
+} from '../services/auth/utils/tokens.utils.js'
 
 export async function verifyRefreshToken(req, res, next) {
   const authHeader = req.headers.authorization

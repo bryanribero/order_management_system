@@ -1,4 +1,8 @@
-import { loginUser, registerNewUser } from '../services/auth/auth.service.js'
+import {
+  loginUser,
+  refreshService,
+  registerNewUser,
+} from '../services/auth/auth.service.js'
 import { revokedOldRefreshToken } from '../services/auth/utils/tokens.utils.js'
 
 export async function registerController(req, res, next) {
@@ -37,6 +41,21 @@ export async function logoutController(req, res, next) {
     res.status(200).json({
       success: true,
       message: 'Sesión cerrada correctamente',
+    })
+  } catch (err) {
+    next(err)
+  }
+}
+
+export async function refreshController(req, res, next) {
+  try {
+    const { accessToken, refreshToken } = await refreshService(req.user)
+
+    res.status(200).json({
+      success: true,
+      message: 'Tokens renovados correctamente',
+      accessToken,
+      refreshToken,
     })
   } catch (err) {
     next(err)

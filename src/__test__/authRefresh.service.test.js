@@ -10,6 +10,11 @@ import { verifyToken } from '../services/auth/utils/tokens.utils.js'
 import crypto from 'crypto'
 
 afterEach(async () => {
+  await RefreshToken.destroy({
+    where: {},
+    force: true,
+  })
+
   await User.destroy({
     where: {},
     force: true,
@@ -20,8 +25,8 @@ afterAll(async () => {
   await sequelize.close()
 })
 
-describe('refreshService', () => {
-  it('debería devolver nuevos tokens', async () => {
+describe('POST /auth/refresh - refreshService', () => {
+  it('debería verificar el refresh token activo y devolver nuevos tokens', async () => {
     const dataUser = {
       email: `test-${crypto.randomUUID()}@hotmail.com`,
       password: '1234567A',
@@ -35,6 +40,7 @@ describe('refreshService', () => {
 
     const result = await refreshService(payload)
 
+    expect(result.refreshToken).not.toBe(refreshToken)
     expect(result).toEqual({
       accessToken: expect.any(String),
       refreshToken: expect.any(String),
@@ -64,6 +70,52 @@ describe('refreshService', () => {
     )
 
     expect(oldRefreshTokenDB.revoked_at).not.toBeNull()
+  })
+
+  it('debería rechazar si el refresh token activo está expirado', async () => {
+    const dataUser = {
+      email: `test-${crypto.randomUUID()}@hotmail.com`,
+      password: '1234567A',
+    }
+
+    const user = await registerNewUser(dataUser)
+
+    const { refreshToken } = await loginUser(dataUser)
+
+    const payload = verifyToken(refreshToken, 'refresh')
+
+    await RefreshToken.update(
+      {
+        expires_at: new Date(Date.now() - 1000),
+      },
+      {
+        where: {
+          id_user: user.id_user,
+          revoked_at: null,
+        },
+      }
+    )
+
+    await expect(refreshService(payload)).rejects.toMatchObject({
+      message: 'Token expirado',
+      status: 401,
+    })
+  })
+
+  it('debería rechazar si no existe un refresh token activo para el usuario', async () => {
+    const dataUser = {
+      email: `test-${crypto.randomUUID()}@hotmail.com`,
+      password: '1234567A',
+    }
+
+    const user = await registerNewUser(dataUser)
+
+    await expect(
+      refreshService({ id_user: user.id_user })
+    ).rejects.toMatchObject({
+      message: 'Token revocado',
+      status: 401,
+    })
   })
 
   it('debería almacenar el hash del nuevo refresh token', async () => {

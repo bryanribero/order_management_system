@@ -34,6 +34,7 @@ export function generateTokens(payload) {
   const refreshToken = jwt.sign(
     {
       id_user: payload.id_user,
+      jti: crypto.randomUUID(),
     },
     process.env.JWT_REFRESH_SECRET,
     {
@@ -64,10 +65,12 @@ export async function createRefreshToken(idUser, refreshToken, transaction) {
 
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
 
+  const hashedRefreshToken = hashRefreshToken(refreshToken)
+
   return await RefreshToken.create(
     {
       id_user: idUser,
-      token_hash: refreshToken,
+      token_hash: hashedRefreshToken,
       expires_at: expiresAt,
     },
     {

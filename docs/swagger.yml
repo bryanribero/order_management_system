@@ -345,6 +345,93 @@ paths:
                     success: false
                     errors:
                       - message: Error interno del servidor
+  /api/auth/refresh:
+    post:
+      tags:
+        - Auth
+      summary: Renovar tokens
+      description: Genera un nuevo access token y un nuevo refresh token usando un refresh token válido en el encabezado Authorization con el esquema Bearer. Al renovar, el refresh token anterior queda revocado.
+      operationId: refreshTokens
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Tokens renovados correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefreshSuccessResponse'
+              examples:
+                refreshed:
+                  summary: Refresh exitoso
+                  value:
+                    success: true
+                    message: Tokens renovados correctamente
+                    accessToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                    refreshToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        '401':
+          description: No se envió un refresh token válido, el encabezado Authorization es inválido, el token expiró o el token fue revocado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                missingToken:
+                  summary: Token requerido
+                  value:
+                    success: false
+                    errors:
+                      - message: Token requerido
+                invalidHeader:
+                  summary: Encabezado inválido
+                  value:
+                    success: false
+                    errors:
+                      - message: Encabezado Authorization inválido
+                invalidToken:
+                  summary: Token inválido
+                  value:
+                    success: false
+                    errors:
+                      - message: Token inválido
+                expiredToken:
+                  summary: Token expirado
+                  value:
+                    success: false
+                    errors:
+                      - message: Token expirado
+                revokedToken:
+                  summary: Token revocado
+                  value:
+                    success: false
+                    errors:
+                      - message: Token revocado
+        '429':
+          description: Se superó el límite de intentos de renovación de tokens.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                rateLimit:
+                  summary: Límite de refresh superado
+                  value:
+                    success: false
+                    errors:
+                      - message: Demasiados intentos de Refresh. Intenta nuevamente más tarde.
+        '500':
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                internalError:
+                  summary: Error interno
+                  value:
+                    success: false
+                    errors:
+                      - message: Error interno del servidor
 
 components:
   securitySchemes:
@@ -456,6 +543,28 @@ components:
         refreshToken:
           type: string
           description: JWT de refresco válido por 7 días.
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+    RefreshSuccessResponse:
+      type: object
+      required:
+        - success
+        - message
+        - accessToken
+        - refreshToken
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Tokens renovados correctamente
+        accessToken:
+          type: string
+          description: Nuevo JWT de acceso válido por 1 hora.
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        refreshToken:
+          type: string
+          description: Nuevo JWT de refresco válido por 7 días.
           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
     LogoutSuccessResponse:
       type: object

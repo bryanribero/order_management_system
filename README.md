@@ -159,7 +159,7 @@ Tabla con los comandos disponibles del proyecto.
 
 El proyecto utiliza PostgreSQL como sistema de gestión de base de datos y Sequelize como ORM.
 
-La administración del esquema de la base de datos, así como la ejecución de migraciones y seeders, se realiza mediante Sequelize CLI.
+La administración del esquema de la base de datos y la ejecución de migraciones se realiza mediante Sequelize CLI.
 
 ### Entornos de desarrollo y pruebas
 
@@ -173,12 +173,6 @@ Para ejecutar las migraciones:
 
 ```bash
 pnpm migrate-{entorno}
-```
-
-Para ejecutar los seeders:
-
-```bash
-pnpm seed-{entorno}
 ```
 
 <br>
@@ -199,7 +193,7 @@ Para ejecutar las pruebas:
 pnpm test
 ```
 
-> **Nota:** para ejecutar una prueba específica, puede indicarse el nombre del archivo luego de `pnpm test`.
+> **Nota:** para ejecutar una prueba específica, puede indicarse el nombre del archivo luego de `pnpm test`. Por ejemplo: `pnpm test -- authRefresh.endpoint.test.js`.
 
 <br>
 
@@ -232,3 +226,18 @@ Los archivos relacionados con la documentación se encuentran en:
 ```txt
 ./docs/swagger.yml
 ```
+
+<br>
+
+## Endpoints de autenticación
+
+Los endpoints de autenticación disponibles actualmente son:
+
+| Método | Endpoint             | Descripción                                                                  |
+| ------ | -------------------- | ---------------------------------------------------------------------------- |
+| POST   | `/api/auth/register` | Registra un usuario nuevo.                                                   |
+| POST   | `/api/auth/login`    | Autentica un usuario y devuelve `accessToken` y `refreshToken`.              |
+| POST   | `/api/auth/logout`   | Cierra la sesión revocando los refresh tokens activos del usuario.           |
+| POST   | `/api/auth/refresh`  | Renueva el `accessToken` y el `refreshToken` usando un refresh token válido. |
+
+Los endpoints protegidos utilizan el encabezado `Authorization` con el esquema `Bearer`.

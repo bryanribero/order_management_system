@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt'
 import User from '../../db/models/User.js'
+import RefreshToken from '../../db/models/RefreshToken.js'
 import { UniqueConstraintError } from 'sequelize'
 import { ConflictError } from '../../errors/ConflictError.js'
 import { AuthError } from '../../errors/AuthError.js'
@@ -8,7 +9,6 @@ import sequelize from '../../db/database.js'
 import {
   createRefreshToken,
   generateTokens,
-  hashRefreshToken,
   revokedOldRefreshToken,
 } from './utils/tokens.utils.js'
 
@@ -64,9 +64,50 @@ export async function loginUser({ email, password }) {
 
     const tokens = generateTokens(payload)
 
-    const hashedRefreshToken = hashRefreshToken(tokens.refreshToken)
+    await createRefreshToken(user.id_user, tokens.refreshToken, t)
 
-    await createRefreshToken(user.id_user, hashedRefreshToken, t)
+    return tokens
+  })
+}
+
+export async function refreshService(payload) {
+  if (!Number.isInteger(payload?.id_user)) {
+    throw new AuthError('Token inválido')
+  }
+
+  const user = await User.findByPk(payload.id_user)
+
+  if (!user) {
+    throw new AuthError()
+  }
+
+  const activeRefreshToken = await RefreshToken.findOne({
+    where: {
+      id_user: user.id_user,
+      revoked_at: null,
+    },
+  })
+
+  if (!activeRefreshToken) {
+    throw new AuthError('Token revocado')
+  }
+
+  if (activeRefreshToken.expires_at <= new Date()) {
+    throw new AuthError('Token expirado')
+  }
+
+  const tokenPayload = {
+    id_user: user.id_user,
+    email: user.email,
+    role: user.role,
+  }
+
+  return sequelize.transaction(async (t) => {
+    await revokedOldRefreshToken(user.id_user, t)
+
+    const tokens = generateTokens(tokenPayload)
+
+    await createRefreshToken(user.id_user, tokens.refreshToken, t)
 
     return tokens
   })

@@ -3,3 +3,6 @@
 .env
 .env.dev
 .env.test
+
+.pnpm-store
+.agents
