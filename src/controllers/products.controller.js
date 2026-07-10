@@ -16,7 +16,7 @@ export async function createProductsController(req, res, next) {
         id_product: result.id_product,
         sku: result.sku,
         name: result.name,
-        price: String(result.price),
+        price: result.price,
         stock: result.stock,
       },
     })

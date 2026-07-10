@@ -256,6 +256,8 @@ Los endpoints de productos disponibles actualmente son:
 
 Los endpoints de productos requieren un `accessToken` válido en el encabezado `Authorization` con el esquema `Bearer`.
 
+<br>
+
 El endpoint `GET /api/products` acepta los siguientes query params opcionales:
 
 | Query param | Descripción                                                | Valor por defecto | Límite |
