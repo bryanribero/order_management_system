@@ -21,3 +21,21 @@ export async function createProduct(id_user, { sku, name, price, stock }) {
     throw err
   }
 }
+
+export async function getUserProducts(idUser, { page, limit }) {
+  const safePage = Math.max(page, 1)
+  const maxLimit = 50
+  const limitSafe = Math.min(limit, maxLimit)
+
+  const offset = (safePage - 1) * limitSafe
+
+  const products = await Product.findAll({
+    where: {
+      id_user: idUser,
+    },
+    limit: limitSafe,
+    offset: offset,
+  })
+
+  return products
+}
