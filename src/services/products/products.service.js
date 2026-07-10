@@ -29,13 +29,20 @@ export async function getUserProducts(idUser, { page, limit }) {
 
   const offset = (safePage - 1) * limitSafe
 
-  const products = await Product.findAll({
-    where: {
-      id_user: idUser,
-    },
-    limit: limitSafe,
-    offset: offset,
-  })
+  try {
+    const products = await Product.findAll({
+      where: {
+        id_user: idUser,
+      },
+      limit: limitSafe,
+      offset: offset,
+    })
 
-  return products
+    return products
+  } catch (err) {
+    const error = new Error('Error interno en la base de datos')
+    error.status = 500
+    error.cause = err
+    throw error
+  }
 }
