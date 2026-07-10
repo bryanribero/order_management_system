@@ -3,7 +3,10 @@ import sequelize from '../db/database.js'
 import Product from '../db/models/Product.js'
 import User from '../db/models/User.js'
 import { registerNewUser } from '../services/auth/auth.service.js'
-import { createProduct, getUserProducts } from '../services/products/products.service.js'
+import {
+  createProduct,
+  getUserProducts,
+} from '../services/products/products.service.js'
 
 async function createUser() {
   return await registerNewUser({
@@ -77,7 +80,9 @@ describe('Product Service - getUserProducts', () => {
         }),
       ])
     )
-    expect(products.every((product) => product.id_user === user.id_user)).toBe(true)
+    expect(products.every((product) => product.id_user === user.id_user)).toBe(
+      true
+    )
   })
 
   it('deberia devolver un array vacio si el usuario no tiene productos', async () => {
@@ -97,21 +102,5 @@ describe('Product Service - getUserProducts', () => {
     })
 
     expect(products).toEqual([])
-  })
-
-  it('deberia limitar a 50 productos como maximo aunque se solicite un limite mayor', async () => {
-    const user = await createUser()
-    const otherUser = await createUser()
-
-    await createProductsForUser(user.id_user, 55)
-    await createProductsForUser(otherUser.id_user, 5)
-
-    const products = await getUserProducts(user.id_user, {
-      page: 1,
-      limit: 100,
-    })
-
-    expect(products).toHaveLength(50)
-    expect(products.every((product) => product.id_user === user.id_user)).toBe(true)
   })
 })

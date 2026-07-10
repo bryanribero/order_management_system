@@ -1,4 +1,7 @@
-import { createProduct } from '../services/products/products.service.js'
+import {
+  createProduct,
+  getUserProducts,
+} from '../services/products/products.service.js'
 
 export async function createProductsController(req, res, next) {
   const idUser = req.user.id_user
@@ -16,6 +19,22 @@ export async function createProductsController(req, res, next) {
         price: String(result.price),
         stock: result.stock,
       },
+    })
+  } catch (err) {
+    next(err)
+  }
+}
+
+export async function getUserProductsController(req, res, next) {
+  const idUser = req.user.id_user
+
+  const pagination = req.query
+  try {
+    const result = await getUserProducts(idUser, pagination)
+
+    res.status(200).json({
+      success: true,
+      products: result,
     })
   } catch (err) {
     next(err)

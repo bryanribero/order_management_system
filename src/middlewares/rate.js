@@ -61,7 +61,7 @@ export const refreshRateLimit = rateLimit({
 })
 
 export const createProductsRateLimit = rateLimit({
-  windowMs:  60 * 1000,
+  windowMs: 60 * 1000,
   limit: isTest ? 100 : 20,
   message: {
     success: false,
@@ -69,6 +69,20 @@ export const createProductsRateLimit = rateLimit({
       {
         message:
           'Demasiadas peticiones de productos. Intenta nuevamente más tarde.',
+      },
+    ],
+  },
+})
+
+export const getProductsRateLimit = rateLimit({
+  windowMs: 60 * 1000,
+  limit: isTest ? 100 : 20,
+  message: {
+    success: false,
+    errors: [
+      {
+        message:
+          'Demasiadas solicitudes para obtener productos. Intenta nuevamente más tarde.',
       },
     ],
   },

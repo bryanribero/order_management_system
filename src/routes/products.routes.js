@@ -1,9 +1,18 @@
 import { Router } from 'express'
 import { verifyAccessToken } from '../middlewares/verifyAccessToken.js'
-import { createProductsController } from '../controllers/products.controller.js'
-import { createProductValidator } from '../validators/products.validator.js'
+import {
+  createProductsController,
+  getUserProductsController,
+} from '../controllers/products.controller.js'
+import {
+  createProductValidator,
+  paginationProductValidator,
+} from '../validators/products.validator.js'
 import { validateFields } from '../middlewares/validateFields.js'
-import { createProductsRateLimit } from '../middlewares/rate.js'
+import {
+  createProductsRateLimit,
+  getProductsRateLimit,
+} from '../middlewares/rate.js'
 
 const router = Router()
 
@@ -14,6 +23,15 @@ router.post(
   createProductValidator,
   validateFields,
   createProductsController
+)
+
+router.get(
+  '/',
+  getProductsRateLimit,
+  verifyAccessToken,
+  paginationProductValidator,
+  validateFields,
+  getUserProductsController
 )
 
 export default router

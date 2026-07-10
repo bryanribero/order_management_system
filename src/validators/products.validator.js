@@ -1,4 +1,4 @@
-import { body } from 'express-validator'
+import { body, query } from 'express-validator'
 
 export const createProductValidator = [
   body('name')
@@ -31,4 +31,24 @@ export const createProductValidator = [
     .bail()
     .isInt({ gt: -1 })
     .withMessage('El stock del producto no puede ser negativo'),
+]
+
+export const paginationProductValidator = [
+  query('page')
+    .optional()
+    .isInt()
+    .withMessage('La página debe ser un número entero')
+    .bail()
+    .isInt({ min: 1 })
+    .withMessage('La página debe ser mayor o igual a 1')
+    .toInt(),
+
+  query('limit')
+    .optional()
+    .isInt()
+    .withMessage('El límite debe ser un número entero')
+    .bail()
+    .isInt({ min: 1, max: 50 })
+    .withMessage('El límite debe estar entre 1 y 50')
+    .toInt(),
 ]
