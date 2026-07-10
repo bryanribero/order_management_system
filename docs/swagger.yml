@@ -435,6 +435,148 @@ paths:
                     errors:
                       - message: Error interno del servidor
   /api/products:
+    get:
+      tags:
+        - Products
+      summary: Obtener productos
+      description: Obtiene los productos asociados al usuario autenticado. Permite paginar la respuesta con los query params page y limit. El límite máximo permitido es 50.
+      operationId: getUserProducts
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          required: false
+          description: Número de página a consultar. Si no se envía, el servicio utiliza la página 1.
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+            example: 1
+        - name: limit
+          in: query
+          required: false
+          description: Cantidad de productos por página. Si no se envía, el servicio utiliza 20. El máximo permitido es 50.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+            example: 20
+      responses:
+        '200':
+          description: Productos obtenidos correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUserProductsSuccessResponse'
+              examples:
+                withProducts:
+                  summary: Productos encontrados
+                  value:
+                    success: true
+                    products:
+                      - id_product: 1
+                        sku: SKU-001
+                        name: Café molido
+                        price: '125.50'
+                        stock: 12
+                      - id_product: 2
+                        sku: null
+                        name: Caja de té
+                        price: '80.00'
+                        stock: 5
+                empty:
+                  summary: Sin productos
+                  value:
+                    success: true
+                    products: []
+        '400':
+          description: Error de validación de los query params.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+              examples:
+                invalidPage:
+                  summary: Página inválida
+                  value:
+                    success: false
+                    errors:
+                      - field: page
+                        message: La página debe ser un número entero
+                invalidPageMin:
+                  summary: Página menor a uno
+                  value:
+                    success: false
+                    errors:
+                      - field: page
+                        message: La página debe ser mayor o igual a 1
+                invalidLimit:
+                  summary: Límite inválido
+                  value:
+                    success: false
+                    errors:
+                      - field: limit
+                        message: El límite debe ser un número entero
+                invalidLimitRange:
+                  summary: Límite fuera de rango
+                  value:
+                    success: false
+                    errors:
+                      - field: limit
+                        message: El límite debe estar entre 1 y 50
+        '401':
+          description: No se envió un access token válido o el encabezado Authorization es inválido.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                missingToken:
+                  summary: Token requerido
+                  value:
+                    success: false
+                    errors:
+                      - message: Token requerido
+                invalidHeader:
+                  summary: Encabezado inválido
+                  value:
+                    success: false
+                    errors:
+                      - message: Encabezado Authorization inválido
+                invalidToken:
+                  summary: Token inválido
+                  value:
+                    success: false
+                    errors:
+                      - message: Token inválido
+        '429':
+          description: Se superó el límite de solicitudes para obtener productos.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                rateLimit:
+                  summary: Límite de obtención de productos superado
+                  value:
+                    success: false
+                    errors:
+                      - message: Demasiadas solicitudes para obtener productos. Intenta nuevamente más tarde.
+        '500':
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                internalError:
+                  summary: Error interno
+                  value:
+                    success: false
+                    errors:
+                      - message: Error interno del servidor
     post:
       tags:
         - Products
@@ -773,6 +915,19 @@ components:
           example: Producto creado correctamente
         product:
           $ref: '#/components/schemas/Product'
+    GetUserProductsSuccessResponse:
+      type: object
+      required:
+        - success
+        - products
+      properties:
+        success:
+          type: boolean
+          example: true
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/Product'
     RefreshSuccessResponse:
       type: object
       required:
