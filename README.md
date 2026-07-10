@@ -45,8 +45,9 @@ src/
 ├── errors/
 ├── controllers/
 ├── services/
-│   └──/auth
-│       └──/utils
+│   ├── auth/
+│   │   └── utils/
+│   └── products/
 ├── middlewares/
 ├── routes/
 ├── db/
@@ -225,6 +226,8 @@ Los archivos relacionados con la documentación se encuentran en:
 ./docs/swagger.yml
 ```
 
+El archivo de Swagger se mantiene en UTF-8 y los cuerpos JSON se documentan con `application/json; charset=utf-8` para evitar problemas con caracteres especiales.
+
 <br>
 
 ## Endpoints de autenticación
@@ -239,3 +242,15 @@ Los endpoints de autenticación disponibles actualmente son:
 | POST   | `/api/auth/refresh`  | Renueva el `accessToken` y el `refreshToken` usando un refresh token válido. |
 
 Los endpoints protegidos utilizan el encabezado `Authorization` con el esquema `Bearer`.
+
+<br>
+
+## Endpoints de productos
+
+Los endpoints de productos disponibles actualmente son:
+
+| Método | Endpoint        | Descripción                                                        |
+| ------ | --------------- | ------------------------------------------------------------------ |
+| POST   | `/api/products` | Crea un producto asociado al usuario autenticado. El SKU es opcional. |
+
+El endpoint de creación de productos requiere un `accessToken` válido en el encabezado `Authorization` con el esquema `Bearer`.

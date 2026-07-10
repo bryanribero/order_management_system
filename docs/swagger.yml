@@ -10,6 +10,8 @@ servers:
 tags:
   - name: Auth
     description: Endpoints de autenticación y registro de usuarios.
+  - name: Products
+    description: Endpoints para gestionar productos del usuario autenticado.
 
 paths:
   /api/auth/register:
@@ -22,7 +24,7 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          application/json; charset=utf-8:
             schema:
               $ref: '#/components/schemas/RegisterRequest'
             examples:
@@ -35,7 +37,7 @@ paths:
         '201':
           description: Usuario creado correctamente.
           content:
-            application/json:
+            application/json; charset=utf-8:
               schema:
                 $ref: '#/components/schemas/RegisterSuccessResponse'
               examples:
@@ -51,7 +53,7 @@ paths:
         '400':
           description: Error de validación del cuerpo de la petición o JSON inválido.
           content:
-            application/json:
+            application/json; charset=utf-8:
               schema:
                 oneOf:
                   - $ref: '#/components/schemas/ValidationErrorResponse'
@@ -117,7 +119,7 @@ paths:
         '409':
           description: El email ya se encuentra registrado.
           content:
-            application/json:
+            application/json; charset=utf-8:
               schema:
                 $ref: '#/components/schemas/GenericErrorResponse'
               examples:
@@ -130,7 +132,7 @@ paths:
         '429':
           description: Se superó el límite de intentos de registro.
           content:
-            application/json:
+            application/json; charset=utf-8:
               schema:
                 $ref: '#/components/schemas/GenericErrorResponse'
               examples:
@@ -143,7 +145,7 @@ paths:
         '500':
           description: Error interno del servidor.
           content:
-            application/json:
+            application/json; charset=utf-8:
               schema:
                 $ref: '#/components/schemas/GenericErrorResponse'
               examples:
@@ -163,7 +165,7 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          application/json; charset=utf-8:
             schema:
               $ref: '#/components/schemas/LoginRequest'
             examples:
@@ -176,7 +178,7 @@ paths:
         '200':
           description: Inicio de sesión exitoso.
           content:
-            application/json:
+            application/json; charset=utf-8:
               schema:
                 $ref: '#/components/schemas/LoginSuccessResponse'
               examples:
@@ -190,7 +192,7 @@ paths:
         '400':
           description: Error de validación del cuerpo de la petición o JSON inválido.
           content:
-            application/json:
+            application/json; charset=utf-8:
               schema:
                 oneOf:
                   - $ref: '#/components/schemas/ValidationErrorResponse'
@@ -249,7 +251,7 @@ paths:
         '401':
           description: El email no existe o el password no coincide.
           content:
-            application/json:
+            application/json; charset=utf-8:
               schema:
                 $ref: '#/components/schemas/GenericErrorResponse'
               examples:
@@ -262,7 +264,7 @@ paths:
         '429':
           description: Se superó el límite de intentos de login.
           content:
-            application/json:
+            application/json; charset=utf-8:
               schema:
                 $ref: '#/components/schemas/GenericErrorResponse'
               examples:
@@ -275,7 +277,7 @@ paths:
         '500':
           description: Error interno del servidor.
           content:
-            application/json:
+            application/json; charset=utf-8:
               schema:
                 $ref: '#/components/schemas/GenericErrorResponse'
               examples:
@@ -298,7 +300,7 @@ paths:
         '200':
           description: Sesión cerrada correctamente.
           content:
-            application/json:
+            application/json; charset=utf-8:
               schema:
                 $ref: '#/components/schemas/LogoutSuccessResponse'
               examples:
@@ -310,7 +312,7 @@ paths:
         '401':
           description: No se envió un access token válido o el encabezado Authorization es inválido.
           content:
-            application/json:
+            application/json; charset=utf-8:
               schema:
                 $ref: '#/components/schemas/GenericErrorResponse'
               examples:
@@ -335,7 +337,7 @@ paths:
         '500':
           description: Error interno del servidor.
           content:
-            application/json:
+            application/json; charset=utf-8:
               schema:
                 $ref: '#/components/schemas/GenericErrorResponse'
               examples:
@@ -358,7 +360,7 @@ paths:
         '200':
           description: Tokens renovados correctamente.
           content:
-            application/json:
+            application/json; charset=utf-8:
               schema:
                 $ref: '#/components/schemas/RefreshSuccessResponse'
               examples:
@@ -372,7 +374,7 @@ paths:
         '401':
           description: No se envió un refresh token válido, el encabezado Authorization es inválido, el token expiró o el token fue revocado.
           content:
-            application/json:
+            application/json; charset=utf-8:
               schema:
                 $ref: '#/components/schemas/GenericErrorResponse'
               examples:
@@ -409,7 +411,7 @@ paths:
         '429':
           description: Se superó el límite de intentos de renovación de tokens.
           content:
-            application/json:
+            application/json; charset=utf-8:
               schema:
                 $ref: '#/components/schemas/GenericErrorResponse'
               examples:
@@ -422,7 +424,160 @@ paths:
         '500':
           description: Error interno del servidor.
           content:
-            application/json:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                internalError:
+                  summary: Error interno
+                  value:
+                    success: false
+                    errors:
+                      - message: Error interno del servidor
+  /api/products:
+    post:
+      tags:
+        - Products
+      summary: Crear producto
+      description: Crea un producto asociado al usuario autenticado. El SKU es opcional, pero si se envía no puede repetirse para el mismo usuario.
+      operationId: createProduct
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/CreateProductRequest'
+            examples:
+              withSku:
+                summary: Producto con SKU
+                value:
+                  sku: SKU-001
+                  name: Café molido
+                  price: '125.50'
+                  stock: 12
+              withoutSku:
+                summary: Producto sin SKU
+                value:
+                  name: Caja de té
+                  price: '80.00'
+                  stock: 5
+      responses:
+        '201':
+          description: Producto creado correctamente.
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/CreateProductSuccessResponse'
+              examples:
+                created:
+                  summary: Creación exitosa
+                  value:
+                    success: true
+                    message: Producto creado correctamente
+                    product:
+                      id_product: 1
+                      sku: SKU-001
+                      name: Café molido
+                      price: '125.50'
+                      stock: 12
+        '400':
+          description: Error de validación del cuerpo de la petición o JSON inválido.
+          content:
+            application/json; charset=utf-8:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ValidationErrorResponse'
+                  - $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                emptyBody:
+                  summary: Body vacío
+                  value:
+                    success: false
+                    errors:
+                      - field: name
+                        message: El nombre del producto es obligatorio
+                      - field: price
+                        message: El precio del producto es obligatorio
+                      - field: stock
+                        message: El stock del producto es obligatorio
+                invalidPrice:
+                  summary: Precio inválido
+                  value:
+                    success: false
+                    errors:
+                      - field: price
+                        message: El precio del producto debe ser decimal
+                invalidPriceMin:
+                  summary: Precio menor o igual a cero
+                  value:
+                    success: false
+                    errors:
+                      - field: price
+                        message: El precio del producto debe ser mayor a 0
+                invalidStock:
+                  summary: Stock inválido
+                  value:
+                    success: false
+                    errors:
+                      - field: stock
+                        message: El stock del producto debe ser entero
+                invalidStockMin:
+                  summary: Stock negativo
+                  value:
+                    success: false
+                    errors:
+                      - field: stock
+                        message: El stock del producto no puede ser negativo
+                malformedJson:
+                  summary: JSON inválido
+                  value:
+                    success: false
+                    errors:
+                      - message: JSON inválido o mal formado
+        '401':
+          description: No se envió un access token válido o el encabezado Authorization es inválido.
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                missingToken:
+                  summary: Token requerido
+                  value:
+                    success: false
+                    errors:
+                      - message: Token requerido
+                invalidHeader:
+                  summary: Encabezado inválido
+                  value:
+                    success: false
+                    errors:
+                      - message: Encabezado Authorization inválido
+                invalidToken:
+                  summary: Token inválido
+                  value:
+                    success: false
+                    errors:
+                      - message: Token inválido
+        '409':
+          description: El SKU ya existe para el usuario autenticado.
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                duplicatedSku:
+                  summary: SKU duplicado
+                  value:
+                    success: false
+                    errors:
+                      - message: El SKU ya está en uso para este usuario
+        '500':
+          description: Error interno del servidor.
+          content:
+            application/json; charset=utf-8:
               schema:
                 $ref: '#/components/schemas/GenericErrorResponse'
               examples:
@@ -507,6 +662,65 @@ components:
             - admin
             - owner
           example: owner
+    Product:
+      type: object
+      required:
+        - id_product
+        - name
+        - price
+        - stock
+      properties:
+        id_product:
+          type: integer
+          format: int32
+          example: 1
+        sku:
+          type: string
+          nullable: true
+          example: SKU-001
+        name:
+          type: string
+          example: Café molido
+        price:
+          type: string
+          pattern: '^\d+(\.\d{1,2})?$'
+          example: '125.50'
+        stock:
+          type: integer
+          minimum: 0
+          example: 12
+    CreateProductRequest:
+      type: object
+      required:
+        - name
+        - price
+        - stock
+      additionalProperties: true
+      properties:
+        sku:
+          type: string
+          nullable: true
+          description: Código opcional del producto. No puede repetirse para el mismo usuario.
+          example: SKU-001
+        name:
+          type: string
+          minLength: 1
+          maxLength: 50
+          description: Nombre del producto.
+          example: Café molido
+        price:
+          oneOf:
+            - type: string
+              pattern: '^\d+(\.\d+)?$'
+            - type: number
+              format: float
+          description: Precio decimal del producto. Debe ser mayor a 0.
+          example: '125.50'
+        stock:
+          type: integer
+          minimum: 0
+          description: Stock inicial del producto. No puede ser negativo.
+          example: 12
     RegisterSuccessResponse:
       type: object
       required:
@@ -544,6 +758,21 @@ components:
           type: string
           description: JWT de refresco válido por 7 días.
           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+    CreateProductSuccessResponse:
+      type: object
+      required:
+        - success
+        - message
+        - product
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Producto creado correctamente
+        product:
+          $ref: '#/components/schemas/Product'
     RefreshSuccessResponse:
       type: object
       required:

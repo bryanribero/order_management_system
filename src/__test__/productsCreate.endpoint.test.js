@@ -13,6 +13,7 @@ async function createAuthenticatedUser() {
   }
 
   const user = await registerNewUser(dataUser)
+
   const { accessToken } = await loginUser(dataUser)
 
   return {

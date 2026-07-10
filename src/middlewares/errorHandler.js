@@ -1,5 +1,7 @@
 export function errorHandler(err, req, res, _next) {
-  console.log(err)
+  if (process.env.NODE_ENV !== 'test') {
+    console.error(err)
+  }
 
   if (err instanceof SyntaxError && err.status == 400 && 'body' in err) {
     return res.status(400).json({
