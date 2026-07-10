@@ -226,7 +226,7 @@ Los archivos relacionados con la documentación se encuentran en:
 ./docs/swagger.yml
 ```
 
-El archivo de Swagger se mantiene en UTF-8 y los cuerpos JSON se documentan con `application/json; charset=utf-8` para evitar problemas con caracteres especiales.
+El archivo de Swagger se mantiene en UTF-8 para evitar problemas con caracteres especiales.
 
 <br>
 
