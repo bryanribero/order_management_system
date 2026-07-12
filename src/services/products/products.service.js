@@ -1,6 +1,7 @@
 import Product from '../../db/models/Product.js'
 import { ConflictError } from '../../errors/ConflictError.js'
 import { UniqueConstraintError } from 'sequelize'
+import { NotFoundError } from '../../errors/NotFoundError.js'
 
 export async function createProduct(id_user, { sku, name, price, stock }) {
   try {
@@ -28,20 +29,26 @@ export async function getUserProducts(idUser, { page, limit }) {
 
   const offset = (safePage - 1) * safeLimit
 
-  try {
-    const products = await Product.findAll({
-      where: {
-        id_user: idUser,
-      },
-      limit: safeLimit,
-      offset: offset,
-    })
+  const products = await Product.findAll({
+    where: {
+      id_user: idUser,
+    },
+    limit: safeLimit,
+    offset: offset,
+  })
 
-    return products
-  } catch (err) {
-    const error = new Error('Error interno en la base de datos')
-    error.status = 500
-    error.cause = err
-    throw error
+  return products
+}
+
+export async function getUserProductById(idUser, idProduct) {
+  const product = await Product.findOne({
+    where: { id_product: idProduct, id_user: idUser },
+    attributes: ['id_product', 'id_user', 'sku', 'name', 'price', 'stock'],
+  })
+
+  if (!product) {
+    throw new NotFoundError('Producto no encontrado')
   }
+
+  return product
 }

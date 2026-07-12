@@ -249,10 +249,11 @@ Los endpoints protegidos utilizan el encabezado `Authorization` con el esquema `
 
 Los endpoints de productos disponibles actualmente son:
 
-| Método | Endpoint        | Descripción                                                           |
-| ------ | --------------- | --------------------------------------------------------------------- |
-| POST   | `/api/products` | Crea un producto asociado al usuario autenticado. El SKU es opcional. |
-| GET    | `/api/products` | Obtiene los productos del usuario autenticado con paginación.         |
+| Método | Endpoint            | Descripción                                                           |
+| ------ | ------------------- | --------------------------------------------------------------------- |
+| POST   | `/api/products`     | Crea un producto asociado al usuario autenticado. El SKU es opcional. |
+| GET    | `/api/products`     | Obtiene los productos del usuario autenticado con paginación.         |
+| GET    | `/api/products/:id` | Obtiene un producto del usuario autenticado por su identificador.     |
 
 Los endpoints de productos requieren un `accessToken` válido en el encabezado `Authorization` con el esquema `Bearer`.
 
@@ -264,3 +265,11 @@ El endpoint `GET /api/products` acepta los siguientes query params opcionales:
 | ----------- | ---------------------------------------------------------- | ----------------- | ------ |
 | `page`      | Número de página a consultar. Debe ser mayor o igual a 1.  | `1`               | -      |
 | `limit`     | Cantidad de productos por página. Debe estar entre 1 y 50. | `20`              | `50`   |
+
+<br>
+
+El endpoint `GET /api/products/:id` acepta el siguiente path param:
+
+| Path param | Descripción                                                              |
+| ---------- | ------------------------------------------------------------------------ |
+| `id`       | Identificador del producto. Debe ser un número entero mayor o igual a 1. |

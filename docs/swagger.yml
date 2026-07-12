@@ -729,6 +729,128 @@ paths:
                     success: false
                     errors:
                       - message: Error interno del servidor
+  /api/products/{id}:
+    get:
+      tags:
+        - Products
+      summary: Obtener producto por identificador
+      description: Obtiene un producto del usuario autenticado usando su identificador. Si el producto no existe o pertenece a otro usuario, devuelve Producto no encontrado.
+      operationId: getUserProductById
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Identificador del producto. Debe ser un número entero mayor o igual a 1.
+          schema:
+            type: integer
+            minimum: 1
+            example: 1
+      responses:
+        '200':
+          description: Producto obtenido correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUserProductByIdSuccessResponse'
+              examples:
+                found:
+                  summary: Producto encontrado
+                  value:
+                    success: true
+                    product:
+                      id_product: 1
+                      id_user: 1
+                      sku: null
+                      name: Producto de prueba
+                      price: '100.00'
+                      stock: 20
+        '400':
+          description: Error de validación del parámetro id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+              examples:
+                invalidId:
+                  summary: Identificador inválido
+                  value:
+                    success: false
+                    errors:
+                      - field: id
+                        message: El identificador debe ser un número entero
+                invalidIdMin:
+                  summary: Identificador menor a uno
+                  value:
+                    success: false
+                    errors:
+                      - field: id
+                        message: El identificador debe ser mayor o igual a 1
+        '401':
+          description: No se envió un access token válido o el encabezado Authorization es inválido.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                missingToken:
+                  summary: Token requerido
+                  value:
+                    success: false
+                    errors:
+                      - message: Token requerido
+                invalidHeader:
+                  summary: Encabezado inválido
+                  value:
+                    success: false
+                    errors:
+                      - message: Encabezado Authorization inválido
+                invalidToken:
+                  summary: Token inválido
+                  value:
+                    success: false
+                    errors:
+                      - message: Token inválido
+        '404':
+          description: El producto no existe o no pertenece al usuario autenticado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                notFound:
+                  summary: Producto no encontrado
+                  value:
+                    success: false
+                    errors:
+                      - message: Producto no encontrado
+        '429':
+          description: Se superó el límite de solicitudes para obtener productos.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                rateLimit:
+                  summary: Límite de obtención de productos superado
+                  value:
+                    success: false
+                    errors:
+                      - message: Demasiadas solicitudes para obtener productos. Intenta nuevamente más tarde.
+        '500':
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                internalError:
+                  summary: Error interno
+                  value:
+                    success: false
+                    errors:
+                      - message: Error interno del servidor
 
 components:
   securitySchemes:
@@ -831,6 +953,38 @@ components:
           type: integer
           minimum: 0
           example: 12
+    ProductReadById:
+      type: object
+      required:
+        - id_product
+        - id_user
+        - name
+        - price
+        - stock
+      properties:
+        id_product:
+          type: integer
+          format: int32
+          example: 1
+        id_user:
+          type: integer
+          format: int32
+          example: 1
+        sku:
+          type: string
+          nullable: true
+          example: null
+        name:
+          type: string
+          example: Producto de prueba
+        price:
+          type: string
+          pattern: '^\d+(\.\d{1,2})?$'
+          example: '100.00'
+        stock:
+          type: integer
+          minimum: 0
+          example: 20
     CreateProductRequest:
       type: object
       required:
@@ -928,6 +1082,17 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Product'
+    GetUserProductByIdSuccessResponse:
+      type: object
+      required:
+        - success
+        - product
+      properties:
+        success:
+          type: boolean
+          example: true
+        product:
+          $ref: '#/components/schemas/ProductReadById'
     RefreshSuccessResponse:
       type: object
       required:

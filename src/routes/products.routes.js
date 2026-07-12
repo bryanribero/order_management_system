@@ -2,11 +2,13 @@ import { Router } from 'express'
 import { verifyAccessToken } from '../middlewares/verifyAccessToken.js'
 import {
   createProductsController,
+  getUserProductByIdController,
   getUserProductsController,
 } from '../controllers/products.controller.js'
 import {
   createProductValidator,
   paginationProductValidator,
+  paramsProductValidator,
 } from '../validators/products.validator.js'
 import { validateFields } from '../middlewares/validateFields.js'
 import {
@@ -32,6 +34,15 @@ router.get(
   paginationProductValidator,
   validateFields,
   getUserProductsController
+)
+
+router.get(
+  '/:id',
+  getProductsRateLimit,
+  verifyAccessToken,
+  paramsProductValidator,
+  validateFields,
+  getUserProductByIdController
 )
 
 export default router

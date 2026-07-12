@@ -1,5 +1,6 @@
 import {
   createProduct,
+  getUserProductById,
   getUserProducts,
 } from '../services/products/products.service.js'
 
@@ -35,6 +36,23 @@ export async function getUserProductsController(req, res, next) {
     res.status(200).json({
       success: true,
       products: result,
+    })
+  } catch (err) {
+    next(err)
+  }
+}
+
+export async function getUserProductByIdController(req, res, next) {
+  const idUser = req.user.id_user
+
+  const idProduct = req.params.id
+
+  try {
+    const result = await getUserProductById(idUser, idProduct)
+
+    res.status(200).json({
+      success: true,
+      product: result
     })
   } catch (err) {
     next(err)
