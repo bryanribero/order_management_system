@@ -29,6 +29,10 @@ export async function deleteUser(idUser, password) {
     },
   })
 
+  if (!user) {
+    throw new NotFoundError('Usuario no encontrado')
+  }
+
   const passwordIsValid = await comparePassword(password, user.password)
 
   if (!passwordIsValid) {

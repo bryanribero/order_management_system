@@ -261,6 +261,19 @@ Los endpoints de productos requieren un `accessToken` válido en el encabezado `
 
 <br>
 
+## Endpoints de usuarios
+
+Los endpoints de usuario disponibles actualmente son:
+
+| Método | Endpoint            | Descripción                                                          |
+| ------ | ------------------- | -------------------------------------------------------------------- |
+| PATCH  | `/api/users`        | Actualiza el email y/o contraseña del usuario autenticado.           |
+| POST   | `/api/users/delete` | Elimina el usuario autenticado cuando se envía la contraseña actual. |
+
+Ambos endpoints requieren un `accessToken` válido en el encabezado `Authorization` con el esquema `Bearer`.
+
+<br>
+
 El endpoint `GET /api/products` acepta los siguientes query params opcionales:
 
 | Query param | Descripción                                                | Valor por defecto | Límite |

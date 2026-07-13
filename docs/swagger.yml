@@ -12,6 +12,8 @@ tags:
     description: Endpoints de autenticación y registro de usuarios.
   - name: Products
     description: Endpoints para gestionar productos del usuario autenticado.
+  - name: Users
+    description: Endpoints para actualizar y eliminar el usuario autenticado.
 
 paths:
   /api/auth/register:
@@ -421,6 +423,164 @@ paths:
                     success: false
                     errors:
                       - message: Demasiados intentos de Refresh. Intenta nuevamente más tarde.
+        '500':
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                internalError:
+                  summary: Error interno
+                  value:
+                    success: false
+                    errors:
+                      - message: Error interno del servidor
+  /api/users:
+    patch:
+      tags:
+        - Users
+      summary: Actualizar usuario autenticado
+      description: Actualiza el email y/o contraseña del usuario autenticado. Requiere un access token válido enviado en el encabezado Authorization con el esquema Bearer.
+      operationId: updateUser
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+            examples:
+              updateUser:
+                summary: Actualización de usuario
+                value:
+                  email: usuario-actualizado@example.com
+                  password: NewPass123
+      responses:
+        '204':
+          description: Usuario actualizado correctamente. Sin contenido en la respuesta.
+        '400':
+          description: Error de validación del cuerpo de la petición.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ValidationErrorResponse'
+                  - $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                invalidBody:
+                  summary: Body inválido
+                  value:
+                    success: false
+                    errors:
+                      - message: Debe enviar al menos el email o la contraseña
+        '401':
+          description: No se envió un access token válido o el encabezado Authorization es inválido.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                missingToken:
+                  summary: Token requerido
+                  value:
+                    success: false
+                    errors:
+                      - message: Token requerido
+                invalidHeader:
+                  summary: Encabezado inválido
+                  value:
+                    success: false
+                    errors:
+                      - message: Encabezado Authorization inválido
+                invalidToken:
+                  summary: Token inválido
+                  value:
+                    success: false
+                    errors:
+                      - message: Token inválido
+        '500':
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                internalError:
+                  summary: Error interno
+                  value:
+                    success: false
+                    errors:
+                      - message: Error interno del servidor
+  /api/users/delete:
+    post:
+      tags:
+        - Users
+      summary: Eliminar usuario autenticado
+      description: Elimina el usuario autenticado cuando la contraseña enviada es correcta. Requiere un access token válido en el encabezado Authorization con el esquema Bearer.
+      operationId: deleteUser
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteUserRequest'
+            examples:
+              deleteUser:
+                summary: Eliminar usuario
+                value:
+                  password: 1234567A
+      responses:
+        '204':
+          description: Usuario eliminado correctamente. Sin contenido en la respuesta.
+        '400':
+          description: Error de validación del cuerpo de la petición.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+              examples:
+                missingPassword:
+                  summary: Falta password
+                  value:
+                    success: false
+                    errors:
+                      - field: password
+                        message: La contraseña es obligatoria
+        '401':
+          description: Password incorrecto o token inválido.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                wrongPassword:
+                  summary: Password incorrecto
+                  value:
+                    success: false
+                    errors:
+                      - message: Password incorrecto
+                missingToken:
+                  summary: Token requerido
+                  value:
+                    success: false
+                    errors:
+                      - message: Token requerido
+                invalidHeader:
+                  summary: Encabezado inválido
+                  value:
+                    success: false
+                    errors:
+                      - message: Encabezado Authorization inválido
+                invalidToken:
+                  summary: Token inválido
+                  value:
+                    success: false
+                    errors:
+                      - message: Token inválido
         '500':
           description: Error interno del servidor.
           content:
