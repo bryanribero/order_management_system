@@ -7,7 +7,7 @@ export function validateFields(req, res, next) {
     return res.status(400).json({
       success: false,
       errors: errors.array().map((error) => ({
-        field: error.path,
+        field: error.path || 'body',
         message: error.msg,
       })),
     })

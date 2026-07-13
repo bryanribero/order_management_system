@@ -73,3 +73,17 @@ export const ProductsRateLimit = rateLimit({
     ],
   },
 })
+
+export const userRateLimit = rateLimit({
+  windowMs: 60 * 1000,
+  limit: isTest ? 100 : 10,
+  message: {
+    success: false,
+    errors: [
+      {
+        message:
+          'Demasiadas peticiones de usuario. Intenta nuevamente más tarde.',
+      },
+    ],
+  },
+})
