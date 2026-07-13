@@ -63,7 +63,7 @@ export const paramsProductValidator = [
     .toInt(),
 ]
 
-export const queryUpdateProductValidator = [
+export const queryProductValidator = [
   query('word')
     .notEmpty()
     .withMessage(

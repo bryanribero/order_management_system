@@ -986,6 +986,149 @@ paths:
                     success: false
                     errors:
                       - message: Error interno del servidor
+    patch:
+      tags:
+        - Products
+      summary: Actualizar producto por identificador
+      description: Actualiza un producto del usuario autenticado usando su identificador. Si el producto no existe o pertenece a otro usuario, devuelve Producto no encontrado.
+      operationId: updateProductById
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Identificador del producto. Debe ser un número entero mayor o igual a 1.
+          schema:
+            type: integer
+            minimum: 1
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProductRequest'
+            examples:
+              updateFields:
+                summary: Campos a actualizar
+                value:
+                  name: Café en grano
+                  price: '150.00'
+                  stock: 8
+      responses:
+        '200':
+          description: Producto actualizado correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateProductSuccessResponse'
+              examples:
+                updated:
+                  summary: Actualización exitosa
+                  value:
+                    success: true
+                    message: Producto actualizado correctamente
+                    product:
+                      - id_product: 1
+                        id_user: 1
+                        sku: SKU-001
+                        name: Café en grano
+                        price: '150.00'
+                        stock: 8
+        '400':
+          description: Error de validación del parámetro id o JSON inválido.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ValidationErrorResponse'
+                  - $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                invalidId:
+                  summary: Identificador inválido
+                  value:
+                    success: false
+                    errors:
+                      - field: id
+                        message: El identificador debe ser un número entero
+                invalidIdMin:
+                  summary: Identificador menor a uno
+                  value:
+                    success: false
+                    errors:
+                      - field: id
+                        message: El identificador debe ser mayor o igual a 1
+                malformedJson:
+                  summary: JSON inválido
+                  value:
+                    success: false
+                    errors:
+                      - message: JSON inválido o mal formado
+        '401':
+          description: No se envió un access token válido o el encabezado Authorization es inválido.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                missingToken:
+                  summary: Token requerido
+                  value:
+                    success: false
+                    errors:
+                      - message: Token requerido
+                invalidHeader:
+                  summary: Encabezado inválido
+                  value:
+                    success: false
+                    errors:
+                      - message: Encabezado Authorization inválido
+                invalidToken:
+                  summary: Token inválido
+                  value:
+                    success: false
+                    errors:
+                      - message: Token inválido
+        '404':
+          description: El producto no existe o no pertenece al usuario autenticado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                notFound:
+                  summary: Producto no encontrado
+                  value:
+                    success: false
+                    errors:
+                      - message: Producto no encontrado
+        '429':
+          description: Se superó el límite de solicitudes para actualizar productos.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                rateLimit:
+                  summary: Límite de actualización de productos superado
+                  value:
+                    success: false
+                    errors:
+                      - message: Demasiadas solicitudes para actualizar productos. Intenta nuevamente más tarde.
+        '500':
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                internalError:
+                  summary: Error interno
+                  value:
+                    success: false
+                    errors:
+                      - message: Error interno del servidor
 
 components:
   securitySchemes:

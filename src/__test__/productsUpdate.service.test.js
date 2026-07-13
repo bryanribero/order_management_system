@@ -6,6 +6,7 @@ import { registerNewUser } from '../services/auth/auth.service.js'
 import {
   createProduct,
   updateProduct,
+  updateProductById,
 } from '../services/products/products.service.js'
 
 async function createUser() {
@@ -99,6 +100,74 @@ describe('Product Service - updateProduct', () => {
 
     await expect(
       updateProduct(user.id_user, word, {
+        name: 'Producto actualizado',
+        price: '250.00',
+        stock: 10,
+      })
+    ).rejects.toMatchObject({
+      message: 'Producto no encontrado',
+      status: 404,
+    })
+
+    const productDB = await Product.findByPk(otherUserProduct.id_product)
+
+    expect(productDB.name).toBe('Producto privado')
+    expect(productDB.price).toBe('200.00')
+    expect(productDB.stock).toBe(5)
+  })
+})
+
+describe('Product Service - updateProductById', () => {
+  it('deberia actualizar un producto del usuario indicado usando el id del producto', async () => {
+    const user = await createUser()
+
+    const product = await createProduct(user.id_user, {
+      sku: `SKU-${crypto.randomUUID()}`,
+      name: 'Café molido',
+      price: '125.50',
+      stock: 12,
+    })
+
+    const updatedProduct = await updateProductById(
+      user.id_user,
+      product.id_product,
+      {
+        name: 'Café en grano',
+        price: '150.00',
+        stock: 8,
+      }
+    )
+
+    expect(updatedProduct[0]).toMatchObject({
+      id_product: product.id_product,
+      id_user: user.id_user,
+      sku: product.sku,
+      name: 'Café en grano',
+      price: '150.00',
+      stock: 8,
+    })
+
+    const productDB = await Product.findByPk(product.id_product)
+
+    expect(productDB).not.toBeNull()
+    expect(productDB.name).toBe('Café en grano')
+    expect(productDB.price).toBe('150.00')
+    expect(productDB.stock).toBe(8)
+  })
+
+  it('deberia devolver not found si el id del producto no pertenece al usuario indicado', async () => {
+    const user = await createUser()
+    const otherUser = await createUser()
+
+    const otherUserProduct = await createProduct(otherUser.id_user, {
+      sku: `SKU-${crypto.randomUUID()}`,
+      name: 'Producto privado',
+      price: '200.00',
+      stock: 5,
+    })
+
+    await expect(
+      updateProductById(user.id_user, otherUserProduct.id_product, {
         name: 'Producto actualizado',
         price: '250.00',
         stock: 10,

@@ -253,6 +253,7 @@ Los endpoints de productos disponibles actualmente son:
 | GET    | `/api/products`     | Obtiene los productos del usuario autenticado con paginación.         |
 | PATCH  | `/api/products`     | Actualiza productos del usuario autenticado filtrando por nombre.     |
 | GET    | `/api/products/:id` | Obtiene un producto del usuario autenticado por su identificador.     |
+| PATCH  | `/api/products/:id` | Actualiza un producto del usuario autenticado por su identificador.   |
 
 Los endpoints de productos requieren un `accessToken` válido en el encabezado `Authorization` con el esquema `Bearer`.
 
@@ -277,25 +278,21 @@ El endpoint `GET /api/products/:id` acepta el siguiente path param:
 
 El endpoint `PATCH /api/products` acepta el siguiente query param obligatorio:
 
-| Query param | Descripción                                                                 |
-| ----------- | --------------------------------------------------------------------------- |
-| `word`      | Texto utilizado para filtrar productos por nombre. No puede estar vacío.    |
+| Query param | Descripción                                                              |
+| ----------- | ------------------------------------------------------------------------ |
+| `word`      | Texto utilizado para filtrar productos por nombre. No puede estar vacío. |
 
-El body de `PATCH /api/products` contiene los campos que se quieren actualizar:
+El endpoint `PATCH /api/products/:id` acepta el siguiente path param:
 
-| Campo   | Descripción                              |
-| ------- | ---------------------------------------- |
-| `sku`   | Nuevo código opcional del producto.      |
-| `name`  | Nuevo nombre del producto.               |
-| `price` | Nuevo precio decimal del producto.       |
-| `stock` | Nuevo stock del producto.                |
+| Path param | Descripción                                                              |
+| ---------- | ------------------------------------------------------------------------ |
+| `id`       | Identificador del producto. Debe ser un número entero mayor o igual a 1. |
 
-Respuestas principales de `PATCH /api/products`:
+El body de `PATCH /api/products` y `PATCH /api/products/:id` contiene los campos que se quieren actualizar:
 
-| Estado | Descripción                                                                  |
-| ------ | ---------------------------------------------------------------------------- |
-| `200`  | Devuelve los productos actualizados.                                          |
-| `400`  | El query param `word` no fue enviado, está vacío o el JSON es inválido.       |
-| `401`  | No se envió un access token válido.                                           |
-| `404`  | No se encontró ningún producto del usuario autenticado que coincida con `word`. |
-| `429`  | Se superó el límite de solicitudes para productos.                            |
+| Campo   | Descripción                         |
+| ------- | ----------------------------------- |
+| `sku`   | Nuevo código opcional del producto. |
+| `name`  | Nuevo nombre del producto.          |
+| `price` | Nuevo precio decimal del producto.  |
+| `stock` | Nuevo stock del producto.           |

@@ -3,6 +3,8 @@ import {
   getUserProductById,
   getUserProducts,
   updateProduct,
+  updateProductById,
+  deleteProducts,
 } from '../services/products/products.service.js'
 
 export async function createProductsController(req, res, next) {
@@ -70,8 +72,43 @@ export async function updateProductController(req, res, next) {
 
     res.status(200).json({
       success: true,
+      message: 'Productos actualizado correctamente',
+      products: result,
+    })
+  } catch (err) {
+    next(err)
+  }
+}
+
+export async function updateProductByIdController(req, res, next) {
+  const idProduct = req.params.id
+  const idUser = req.user.id_user
+  const setter = req.body
+
+  try {
+    const result = await updateProductById(idUser, idProduct, setter)
+
+    res.status(200).json({
+      success: true,
       message: 'Producto actualizado correctamente',
       product: result,
+    })
+  } catch (err) {
+    next(err)
+  }
+}
+
+export async function deleteProductsController(req, res, next) {
+  const filter = req.query.word
+  const idUser = req.user.id_user
+
+  try {
+    const result = await deleteProducts(idUser, filter)
+
+    res.status(200).json({
+      success: true,
+      message: 'Productos eliminados correctamente',
+      deletedCount: result,
     })
   } catch (err) {
     next(err)

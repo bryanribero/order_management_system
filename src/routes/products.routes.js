@@ -2,27 +2,26 @@ import { Router } from 'express'
 import { verifyAccessToken } from '../middlewares/verifyAccessToken.js'
 import {
   createProductsController,
+  deleteProductsController,
   getUserProductByIdController,
   getUserProductsController,
+  updateProductByIdController,
   updateProductController,
 } from '../controllers/products.controller.js'
 import {
   createProductValidator,
   paginationProductValidator,
   paramsProductValidator,
-  queryUpdateProductValidator,
+  queryProductValidator,
 } from '../validators/products.validator.js'
 import { validateFields } from '../middlewares/validateFields.js'
-import {
-  createProductsRateLimit,
-  getProductsRateLimit,
-} from '../middlewares/rate.js'
+import { ProductsRateLimit } from '../middlewares/rate.js'
 
 const router = Router()
 
 router.post(
   '/',
-  createProductsRateLimit,
+  ProductsRateLimit,
   verifyAccessToken,
   createProductValidator,
   validateFields,
@@ -31,7 +30,7 @@ router.post(
 
 router.get(
   '/',
-  getProductsRateLimit,
+  ProductsRateLimit,
   verifyAccessToken,
   paginationProductValidator,
   validateFields,
@@ -40,7 +39,7 @@ router.get(
 
 router.get(
   '/:id',
-  getProductsRateLimit,
+  ProductsRateLimit,
   verifyAccessToken,
   paramsProductValidator,
   validateFields,
@@ -49,11 +48,29 @@ router.get(
 
 router.patch(
   '/',
-  getProductsRateLimit,
+  ProductsRateLimit,
   verifyAccessToken,
-  queryUpdateProductValidator,
+  queryProductValidator,
   validateFields,
   updateProductController
+)
+
+router.patch(
+  '/:id',
+  ProductsRateLimit,
+  verifyAccessToken,
+  paramsProductValidator,
+  validateFields,
+  updateProductByIdController
+)
+
+router.delete(
+  '/',
+  ProductsRateLimit,
+  verifyAccessToken,
+  queryProductValidator,
+  validateFields,
+  deleteProductsController
 )
 
 export default router

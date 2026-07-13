@@ -59,7 +59,7 @@ export async function updateProduct(idUser, filter, setter) {
     where: {
       id_user: idUser,
       name: {
-        [Op.iLike]: `%${filter}%`,
+        [Op.iLike]: `${filter}%`,
       },
     },
     returning: true,
@@ -70,4 +70,37 @@ export async function updateProduct(idUser, filter, setter) {
   }
 
   return updatedProducts
+}
+
+export async function updateProductById(idUser, idProduct, setter) {
+  const [affectedRow, updatedProduct] = await Product.update(setter, {
+    where: {
+      id_user: idUser,
+      id_product: idProduct,
+    },
+    returning: true,
+  })
+
+  if (affectedRow === 0) {
+    throw new NotFoundError('Producto no encontrado')
+  }
+
+  return updatedProduct
+}
+
+export async function deleteProducts(idUser, filter) {
+  const deletedRows = await Product.destroy({
+    where: {
+      id_user: idUser,
+      name: {
+        [Op.iLike]: `${filter}%`,
+      },
+    },
+  })
+
+  if (deletedRows === 0) {
+    throw new NotFoundError('Producto no encontrado')
+  }
+
+  return deletedRows
 }
