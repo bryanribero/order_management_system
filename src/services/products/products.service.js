@@ -2,6 +2,7 @@ import Product from '../../db/models/Product.js'
 import { ConflictError } from '../../errors/ConflictError.js'
 import { UniqueConstraintError } from 'sequelize'
 import { NotFoundError } from '../../errors/NotFoundError.js'
+import { Op } from 'sequelize'
 
 export async function createProduct(id_user, { sku, name, price, stock }) {
   try {
@@ -51,4 +52,22 @@ export async function getUserProductById(idUser, idProduct) {
   }
 
   return product
+}
+
+export async function updateProduct(idUser, filter, setter) {
+  const [affectedRows, updatedProducts] = await Product.update(setter, {
+    where: {
+      id_user: idUser,
+      name: {
+        [Op.iLike]: `%${filter}%`,
+      },
+    },
+    returning: true,
+  })
+
+  if (affectedRows === 0) {
+    throw new NotFoundError('Producto no encontrado')
+  }
+
+  return updatedProducts
 }
