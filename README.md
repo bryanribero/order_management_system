@@ -243,24 +243,6 @@ Los endpoints protegidos utilizan el encabezado `Authorization` con el esquema `
 
 <br>
 
-## Endpoints de productos
-
-Los endpoints de productos disponibles actualmente son:
-
-| Método | Endpoint            | Descripción                                                           |
-| ------ | ------------------- | --------------------------------------------------------------------- |
-| POST   | `/api/products`     | Crea un producto asociado al usuario autenticado. El SKU es opcional. |
-| GET    | `/api/products`     | Obtiene los productos del usuario autenticado con paginación.         |
-| PATCH  | `/api/products`     | Actualiza productos del usuario autenticado filtrando por nombre.     |
-| DELETE | `/api/products`     | Elimina productos del usuario autenticado filtrando por nombre.       |
-| GET    | `/api/products/:id` | Obtiene un producto del usuario autenticado por su identificador.     |
-| PATCH  | `/api/products/:id` | Actualiza un producto del usuario autenticado por su identificador.   |
-| DELETE | `/api/products/:id` | Elimina un producto del usuario autenticado por su identificador.     |
-
-Los endpoints de productos requieren un `accessToken` válido en el encabezado `Authorization` con el esquema `Bearer`.
-
-<br>
-
 ## Endpoints de usuarios
 
 Los endpoints de usuario disponibles actualmente son:
@@ -274,7 +256,25 @@ Ambos endpoints requieren un `accessToken` válido en el encabezado `Authorizati
 
 <br>
 
-El endpoint `GET /api/products` acepta los siguientes query params opcionales:
+## Endpoints de productos
+
+Los endpoints de productos disponibles actualmente son:
+
+| Método | Endpoint            | Descripción                                                           |
+| ------ | ------------------- | --------------------------------------------------------------------- |
+| POST   | `/api/products`     | Crea un producto asociado al usuario autenticado. El SKU es opcional. |
+| GET    | `/api/products`     | Obtiene los productos del usuario autenticado con paginación.         |
+| GET    | `/api/products/:id` | Obtiene un producto del usuario autenticado por su identificador.     |
+| PATCH  | `/api/products`     | Actualiza productos del usuario autenticado filtrando por nombre.     |
+| PATCH  | `/api/products/:id` | Actualiza un producto del usuario autenticado por su identificador.   |
+| DELETE | `/api/products`     | Elimina productos del usuario autenticado filtrando por nombre.       |
+| DELETE | `/api/products/:id` | Elimina un producto del usuario autenticado por su identificador.     |
+
+Los endpoints de productos requieren un `accessToken` válido en el encabezado `Authorization` con el esquema `Bearer`.
+
+<br>
+
+### Query params para `GET /api/products`
 
 | Query param | Descripción                                                | Valor por defecto | Límite |
 | ----------- | ---------------------------------------------------------- | ----------------- | ------ |
@@ -283,7 +283,7 @@ El endpoint `GET /api/products` acepta los siguientes query params opcionales:
 
 <br>
 
-El endpoint `GET /api/products/:id` acepta el siguiente path param:
+### Path params para `/api/products/:id`
 
 | Path param | Descripción                                                              |
 | ---------- | ------------------------------------------------------------------------ |
@@ -291,19 +291,15 @@ El endpoint `GET /api/products/:id` acepta el siguiente path param:
 
 <br>
 
-El endpoint `PATCH /api/products` acepta el siguiente query param obligatorio:
+### Query params para `PATCH /api/products` y `DELETE /api/products`
 
 | Query param | Descripción                                                              |
 | ----------- | ------------------------------------------------------------------------ |
 | `word`      | Texto utilizado para filtrar productos por nombre. No puede estar vacío. |
 
-El endpoint `PATCH /api/products/:id` acepta el siguiente path param:
+<br>
 
-| Path param | Descripción                                                              |
-| ---------- | ------------------------------------------------------------------------ |
-| `id`       | Identificador del producto. Debe ser un número entero mayor o igual a 1. |
-
-El body de `PATCH /api/products` y `PATCH /api/products/:id` contiene los campos que se quieren actualizar:
+### Body para `PATCH /api/products` y `PATCH /api/products/:id`
 
 | Campo   | Descripción                         |
 | ------- | ----------------------------------- |
@@ -312,13 +308,7 @@ El body de `PATCH /api/products` y `PATCH /api/products/:id` contiene los campos
 | `price` | Nuevo precio decimal del producto.  |
 | `stock` | Nuevo stock del producto.           |
 
-<br>
-
-El endpoint `DELETE /api/products` acepta el siguiente query param obligatorio:
-
-| Query param | Descripción                                                              |
-| ----------- | ------------------------------------------------------------------------ |
-| `word`      | Texto utilizado para filtrar productos por nombre. No puede estar vacío. |
+| `word` | Texto utilizado para filtrar productos por nombre. No puede estar vacío. |
 
 El endpoint `DELETE /api/products/:id` acepta el siguiente path param:
 
