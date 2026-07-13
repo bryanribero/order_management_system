@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { verifyAccessToken } from '../middlewares/verifyAccessToken.js'
 import {
   createProductsController,
+  deletedProductByIdController,
   deleteProductsController,
   getUserProductByIdController,
   getUserProductsController,
@@ -71,6 +72,15 @@ router.delete(
   queryProductValidator,
   validateFields,
   deleteProductsController
+)
+
+router.delete(
+  '/:id',
+  ProductsRateLimit,
+  verifyAccessToken,
+  paramsProductValidator,
+  validateFields,
+  deletedProductByIdController
 )
 
 export default router

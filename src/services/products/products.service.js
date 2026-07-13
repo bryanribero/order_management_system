@@ -104,3 +104,16 @@ export async function deleteProducts(idUser, filter) {
 
   return deletedRows
 }
+
+export async function deleteProductsById(idUser, idProduct) {
+  const deletedRow = await Product.destroy({
+    where: {
+      id_user: idUser,
+      id_product: idProduct,
+    },
+  })
+
+  if (deletedRow === 0) {
+    throw new NotFoundError('Producto no encontrado')
+  }
+}

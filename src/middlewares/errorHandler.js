@@ -1,5 +1,5 @@
 export function errorHandler(err, req, res, _next) {
-  if (process.env.NODE_ENV !== 'test') {
+  if (process.env.NODE_ENV === 'dev') {
     console.error(err)
   }
 
