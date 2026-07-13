@@ -62,3 +62,11 @@ export const paramsProductValidator = [
     .withMessage('El identificador debe ser mayor o igual a 1')
     .toInt(),
 ]
+
+export const queryUpdateProductValidator = [
+  query('word')
+    .notEmpty()
+    .withMessage(
+      'El campo "word" es obligatorio y debe contener un valor para filtrar los productos.'
+    ),
+]

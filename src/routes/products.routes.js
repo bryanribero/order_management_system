@@ -4,11 +4,13 @@ import {
   createProductsController,
   getUserProductByIdController,
   getUserProductsController,
+  updateProductController,
 } from '../controllers/products.controller.js'
 import {
   createProductValidator,
   paginationProductValidator,
   paramsProductValidator,
+  queryUpdateProductValidator,
 } from '../validators/products.validator.js'
 import { validateFields } from '../middlewares/validateFields.js'
 import {
@@ -43,6 +45,15 @@ router.get(
   paramsProductValidator,
   validateFields,
   getUserProductByIdController
+)
+
+router.patch(
+  '/',
+  getProductsRateLimit,
+  verifyAccessToken,
+  queryUpdateProductValidator,
+  validateFields,
+  updateProductController
 )
 
 export default router

@@ -729,6 +729,141 @@ paths:
                     success: false
                     errors:
                       - message: Error interno del servidor
+    patch:
+      tags:
+        - Products
+      summary: Actualizar productos por filtro
+      description: Actualiza los productos del usuario autenticado cuyo nombre coincida parcialmente con el query param word. Devuelve los productos actualizados.
+      operationId: updateProduct
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: word
+          in: query
+          required: true
+          description: Texto utilizado para filtrar productos por nombre. Es obligatorio y no puede estar vacío.
+          schema:
+            type: string
+            example: Cafe
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProductRequest'
+            examples:
+              updateFields:
+                summary: Campos a actualizar
+                value:
+                  name: Cafe en grano
+                  price: '150.00'
+                  stock: 8
+      responses:
+        '200':
+          description: Producto actualizado correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateProductSuccessResponse'
+              examples:
+                updated:
+                  summary: Actualización exitosa
+                  value:
+                    success: true
+                    message: Producto actualizado correctamente
+                    product:
+                      - id_product: 1
+                        id_user: 1
+                        sku: SKU-001
+                        name: Cafe en grano
+                        price: '150.00'
+                        stock: 8
+        '400':
+          description: Error de validación del query param word o JSON inválido.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ValidationErrorResponse'
+                  - $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                missingWord:
+                  summary: Word obligatorio
+                  value:
+                    success: false
+                    errors:
+                      - field: word
+                        message: El campo "word" es obligatorio y debe contener un valor para filtrar los productos.
+                malformedJson:
+                  summary: JSON inválido
+                  value:
+                    success: false
+                    errors:
+                      - message: JSON inválido o mal formado
+        '401':
+          description: No se envió un access token válido o el encabezado Authorization es inválido.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                missingToken:
+                  summary: Token requerido
+                  value:
+                    success: false
+                    errors:
+                      - message: Token requerido
+                invalidHeader:
+                  summary: Encabezado inválido
+                  value:
+                    success: false
+                    errors:
+                      - message: Encabezado Authorization inválido
+                invalidToken:
+                  summary: Token inválido
+                  value:
+                    success: false
+                    errors:
+                      - message: Token inválido
+        '404':
+          description: No se encontró ningún producto del usuario autenticado que coincida con el filtro.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                notFound:
+                  summary: Producto no encontrado
+                  value:
+                    success: false
+                    errors:
+                      - message: Producto no encontrado
+        '429':
+          description: Se superó el límite de solicitudes para obtener o actualizar productos.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                rateLimit:
+                  summary: Límite de productos superado
+                  value:
+                    success: false
+                    errors:
+                      - message: Demasiadas solicitudes para obtener productos. Intenta nuevamente más tarde.
+        '500':
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                internalError:
+                  summary: Error interno
+                  value:
+                    success: false
+                    errors:
+                      - message: Error interno del servidor
   /api/products/{id}:
     get:
       tags:
@@ -1017,6 +1152,32 @@ components:
           minimum: 0
           description: Stock inicial del producto. No puede ser negativo.
           example: 12
+    UpdateProductRequest:
+      type: object
+      additionalProperties: true
+      properties:
+        sku:
+          type: string
+          nullable: true
+          description: Nuevo código opcional del producto.
+          example: SKU-001
+        name:
+          type: string
+          description: Nuevo nombre del producto.
+          example: Cafe en grano
+        price:
+          oneOf:
+            - type: string
+              pattern: '^\d+(\.\d+)?$'
+            - type: number
+              format: float
+          description: Nuevo precio decimal del producto.
+          example: '150.00'
+        stock:
+          type: integer
+          minimum: 0
+          description: Nuevo stock del producto.
+          example: 8
     RegisterSuccessResponse:
       type: object
       required:
@@ -1093,6 +1254,23 @@ components:
           example: true
         product:
           $ref: '#/components/schemas/ProductReadById'
+    UpdateProductSuccessResponse:
+      type: object
+      required:
+        - success
+        - message
+        - product
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Producto actualizado correctamente
+        product:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductReadById'
     RefreshSuccessResponse:
       type: object
       required:

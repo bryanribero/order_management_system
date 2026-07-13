@@ -2,6 +2,7 @@ import {
   createProduct,
   getUserProductById,
   getUserProducts,
+  updateProduct,
 } from '../services/products/products.service.js'
 
 export async function createProductsController(req, res, next) {
@@ -52,7 +53,25 @@ export async function getUserProductByIdController(req, res, next) {
 
     res.status(200).json({
       success: true,
-      product: result
+      product: result,
+    })
+  } catch (err) {
+    next(err)
+  }
+}
+
+export async function updateProductController(req, res, next) {
+  const filter = req.query.word
+  const idUser = req.user.id_user
+  const setter = req.body
+
+  try {
+    const result = await updateProduct(idUser, filter, setter)
+
+    res.status(200).json({
+      success: true,
+      message: 'Producto actualizado correctamente',
+      product: result,
     })
   } catch (err) {
     next(err)
