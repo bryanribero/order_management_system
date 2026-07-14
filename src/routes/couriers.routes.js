@@ -12,6 +12,7 @@ import { validateFields } from '../middlewares/validateFields.js'
 import { verifyAccessToken } from '../middlewares/verifyAccessToken.js'
 import {
   createCourierController,
+  deleteCourierByIdController,
   getCourierByIdController,
   getCouriersController,
   updateCourierByIdController,
@@ -54,6 +55,15 @@ router.patch(
   bodyUpdateCourierValidator,
   validateFields,
   updateCourierByIdController
+)
+
+router.delete(
+  '/:id',
+  courierRateLimit,
+  verifyAccessToken,
+  paramsValidator,
+  validateFields,
+  deleteCourierByIdController
 )
 
 export default router

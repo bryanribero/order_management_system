@@ -88,3 +88,20 @@ export async function updateCourierById(
     note: updatedCourier[0].note,
   }
 }
+
+export async function deleteCourierById(idUser, idCourier) {
+  const [affectedRow] = await Courier.update(
+    { deleted_at: Date.now() },
+    {
+      where: {
+        id_user: idUser,
+        id_courier: idCourier,
+        deleted_at: null,
+      },
+    }
+  )
+
+  if (affectedRow === 0) {
+    throw new NotFoundError('Courier no encontrado')
+  }
+}

@@ -1,5 +1,6 @@
 import {
   createCourier,
+  deleteCourierById,
   getCourierById,
   getCouriers,
   updateCourierById,
@@ -71,6 +72,19 @@ export async function updateCourierByIdController(req, res, next) {
       message: 'Courier actualizado correctamente',
       courier: result,
     })
+  } catch (err) {
+    next(err)
+  }
+}
+
+export async function deleteCourierByIdController(req, res, next) {
+  const idUser = req.user.id_user
+  const idCourier = req.params.id
+
+  try {
+    await deleteCourierById(idUser, idCourier)
+
+    res.status(204).end()
   } catch (err) {
     next(err)
   }
