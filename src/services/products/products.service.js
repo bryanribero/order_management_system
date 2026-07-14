@@ -33,6 +33,7 @@ export async function getUserProducts(idUser, { page, limit }) {
   const products = await Product.findAll({
     where: {
       id_user: idUser,
+      deleted_at: null,
     },
     limit: safeLimit,
     offset: offset,
@@ -43,7 +44,7 @@ export async function getUserProducts(idUser, { page, limit }) {
 
 export async function getUserProductById(idUser, idProduct) {
   const product = await Product.findOne({
-    where: { id_product: idProduct, id_user: idUser },
+    where: { id_product: idProduct, id_user: idUser, deleted_at: null },
     attributes: ['id_product', 'id_user', 'sku', 'name', 'price', 'stock'],
   })
 
@@ -58,6 +59,7 @@ export async function updateProduct(idUser, filter, setter) {
   const [affectedRows, updatedProducts] = await Product.update(setter, {
     where: {
       id_user: idUser,
+      deleted_at: null,
       name: {
         [Op.iLike]: `${filter}%`,
       },
@@ -77,6 +79,7 @@ export async function updateProductById(idUser, idProduct, setter) {
     where: {
       id_user: idUser,
       id_product: idProduct,
+      deleted_at: null,
     },
     returning: true,
   })
@@ -89,31 +92,39 @@ export async function updateProductById(idUser, idProduct, setter) {
 }
 
 export async function deleteProducts(idUser, filter) {
-  const deletedRows = await Product.destroy({
-    where: {
-      id_user: idUser,
-      name: {
-        [Op.iLike]: `${filter}%`,
+  const [affectedRows] = await Product.update(
+    { deleted_at: Date.now() },
+    {
+      where: {
+        id_user: idUser,
+        deleted_at: null,
+        name: {
+          [Op.iLike]: `${filter}%`,
+        },
       },
-    },
-  })
+    }
+  )
 
-  if (deletedRows === 0) {
+  if (affectedRows === 0) {
     throw new NotFoundError('Producto no encontrado')
   }
 
-  return deletedRows
+  return affectedRows
 }
 
 export async function deleteProductsById(idUser, idProduct) {
-  const deletedRow = await Product.destroy({
-    where: {
-      id_user: idUser,
-      id_product: idProduct,
-    },
-  })
+  const [affectedRow] = await Product.update(
+    { deleted_at: Date.now() },
+    {
+      where: {
+        id_user: idUser,
+        id_product: idProduct,
+        deleted_at: null,
+      },
+    }
+  )
 
-  if (deletedRow === 0) {
+  if (affectedRow === 0) {
     throw new NotFoundError('Producto no encontrado')
   }
 }

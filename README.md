@@ -260,15 +260,17 @@ Ambos endpoints requieren un `accessToken` válido en el encabezado `Authorizati
 
 Los endpoints de productos disponibles actualmente son:
 
-| Método | Endpoint            | Descripción                                                           |
-| ------ | ------------------- | --------------------------------------------------------------------- |
-| POST   | `/api/products`     | Crea un producto asociado al usuario autenticado. El SKU es opcional. |
-| GET    | `/api/products`     | Obtiene los productos del usuario autenticado con paginación.         |
-| GET    | `/api/products/:id` | Obtiene un producto del usuario autenticado por su identificador.     |
-| PATCH  | `/api/products`     | Actualiza productos del usuario autenticado filtrando por nombre.     |
-| PATCH  | `/api/products/:id` | Actualiza un producto del usuario autenticado por su identificador.   |
-| DELETE | `/api/products`     | Elimina productos del usuario autenticado filtrando por nombre.       |
-| DELETE | `/api/products/:id` | Elimina un producto del usuario autenticado por su identificador.     |
+| Método | Endpoint            | Descripción                                                                                   |
+| ------ | ------------------- | --------------------------------------------------------------------------------------------- |
+| POST   | `/api/products`     | Crea un producto asociado al usuario autenticado. El SKU es opcional.                         |
+| GET    | `/api/products`     | Obtiene los productos del usuario autenticado con paginación.                                 |
+| GET    | `/api/products/:id` | Obtiene un producto del usuario autenticado por su identificador.                             |
+| PATCH  | `/api/products`     | Actualiza productos del usuario autenticado filtrando por nombre.                             |
+| PATCH  | `/api/products/:id` | Actualiza un producto del usuario autenticado por su identificador.                           |
+| DELETE | `/api/products`     | Marca como eliminados lógicamente los productos del usuario autenticado filtrando por nombre. |
+| DELETE | `/api/products/:id` | Marca como eliminado lógicamente un producto del usuario autenticado por su identificador.    |
+
+Los productos eliminados lógicamente se excluyen de las consultas activas y no se eliminan físicamente de la base de datos.
 
 Los endpoints de productos requieren un `accessToken` válido en el encabezado `Authorization` con el esquema `Bearer`.
 

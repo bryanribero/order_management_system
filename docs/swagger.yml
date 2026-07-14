@@ -599,7 +599,7 @@ paths:
       tags:
         - Products
       summary: Obtener productos
-      description: Obtiene los productos asociados al usuario autenticado. Permite paginar la respuesta con los query params page y limit. El límite máximo permitido es 50.
+      description: Obtiene los productos activos asociados al usuario autenticado. Permite paginar la respuesta con los query params page y limit. El límite máximo permitido es 50. Los productos eliminados lógicamente se excluyen de la respuesta.
       operationId: getUserProducts
       security:
         - bearerAuth: []
@@ -1028,7 +1028,7 @@ paths:
       tags:
         - Products
       summary: Eliminar productos por filtro
-      description: Elimina los productos del usuario autenticado cuyo nombre coincida parcialmente con el query param word. Devuelve la cantidad de productos eliminados.
+      description: Marca como eliminados lógicamente los productos del usuario autenticado cuyo nombre coincida parcialmente con el query param word. Devuelve la cantidad de productos marcados como eliminados.
       operationId: deleteProduct
       security:
         - bearerAuth: []
@@ -1401,7 +1401,7 @@ paths:
       tags:
         - Products
       summary: Eliminar producto por identificador
-      description: Elimina un producto del usuario autenticado usando su identificador. Devuelve una respuesta 204 sin contenido si la eliminación es exitosa.
+      description: Marca como eliminado lógicamente un producto del usuario autenticado usando su identificador. Devuelve una respuesta 204 sin contenido si la operación es exitosa.
       operationId: deleteProductById
       security:
         - bearerAuth: []

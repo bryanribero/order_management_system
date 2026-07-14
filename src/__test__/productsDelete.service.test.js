@@ -60,8 +60,10 @@ describe('Product Service - deleteProducts', () => {
     const deletedProduct = await Product.findByPk(product1.id_product)
     const remainingProduct = await Product.findByPk(product2.id_product)
 
-    expect(deletedProduct).toBeNull()
+    expect(deletedProduct).not.toBeNull()
+    expect(deletedProduct.deleted_at).not.toBeNull()
     expect(remainingProduct).not.toBeNull()
+    expect(remainingProduct.deleted_at).toBeNull()
     expect(remainingProduct.id_user).toBe(user.id_user)
   })
 
@@ -102,8 +104,10 @@ describe('Product Service - deleteProducts', () => {
     const deletedProduct = await Product.findByPk(product1.id_product)
     const remainingProduct = await Product.findByPk(product2.id_product)
 
-    expect(deletedProduct).toBeNull()
+    expect(deletedProduct).not.toBeNull()
+    expect(deletedProduct.deleted_at).not.toBeNull()
     expect(remainingProduct).not.toBeNull()
+    expect(remainingProduct.deleted_at).toBeNull()
     expect(remainingProduct.id_user).toBe(user2.id_user)
   })
 })
@@ -122,7 +126,8 @@ describe('Product Service - deleteProductsById', () => {
     await deleteProductsById(user.id_user, product.id_product)
 
     const deletedProduct = await Product.findByPk(product.id_product)
-    expect(deletedProduct).toBeNull()
+    expect(deletedProduct).not.toBeNull()
+    expect(deletedProduct.deleted_at).not.toBeNull()
   })
 
   it('debería devolver not found si el producto no existe', async () => {

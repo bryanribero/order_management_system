@@ -32,6 +32,7 @@ export async function getCouriers(idUser, { page, limit }) {
   const couriers = await Courier.findAll({
     where: {
       id_user: idUser,
+      deleted_at: null,
     },
     limit: safeLimit,
     offset,

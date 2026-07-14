@@ -78,8 +78,10 @@ describe('DELETE /products', () => {
     const deletedProduct = await Product.findByPk(product1.id_product)
     const remainingProduct = await Product.findByPk(product2.id_product)
 
-    expect(deletedProduct).toBeNull()
+    expect(deletedProduct).not.toBeNull()
+    expect(deletedProduct.deleted_at).not.toBeNull()
     expect(remainingProduct).not.toBeNull()
+    expect(remainingProduct.deleted_at).toBeNull()
   })
 
   it('debería devolver not found si el filtro word no encuentra un producto del usuario autenticado', async () => {
@@ -160,7 +162,8 @@ describe('DELETE /products/:id', () => {
     expect(response.status).toBe(204)
 
     const deletedProduct = await Product.findByPk(product.id_product)
-    expect(deletedProduct).toBeNull()
+    expect(deletedProduct).not.toBeNull()
+    expect(deletedProduct.deleted_at).not.toBeNull()
   })
 
   it('debería devolver not found si el producto no existe', async () => {
