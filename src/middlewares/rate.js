@@ -87,3 +87,17 @@ export const userRateLimit = rateLimit({
     ],
   },
 })
+
+export const courierRateLimit = rateLimit({
+  windowMs: 60 * 1000,
+  limit: isTest ? 100 : 20,
+  message: {
+    success: false,
+    errors: [
+      {
+        message:
+          'Demasiadas peticiones de courier. Intenta nuevamente más tarde.',
+      },
+    ],
+  },
+})

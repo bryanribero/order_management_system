@@ -7,6 +7,7 @@ import { errorHandler } from './src/middlewares/errorHandler.js'
 import authRoutes from './src/routes/auth.routes.js'
 import productsRoutes from './src/routes/products.routes.js'
 import usersRoutes from './src/routes/users.routes.js'
+import couriersRoutes from './src/routes/couriers.routes.js'
 import fs from 'fs'
 import YAML from 'yaml'
 import swaggerUi from 'swagger-ui-express'
@@ -37,6 +38,8 @@ app.use('/api/auth', authRoutes)
 app.use('/api/products', productsRoutes)
 
 app.use('/api/users', usersRoutes)
+
+app.use('/api/couriers', couriersRoutes)
 
 app.use((req, res) => {
   res.status(404).json({
