@@ -1722,47 +1722,62 @@ paths:
                     success: false
                     errors:
                       - message: Demasiadas solicitudes para obtener couriers. Intenta nuevamente más tarde.
-    delete:
+  /api/couriers/{id}:
+    get:
       tags:
-        - Products
-      summary: Eliminar producto por identificador
-      description: Marca como eliminado lógicamente un producto del usuario autenticado usando su identificador. Devuelve una respuesta 204 sin contenido si la operación es exitosa.
-      operationId: deleteProductById
+        - Couriers
+      summary: Obtener courier por identificador
+      description: Obtiene un courier del usuario autenticado usando su identificador. Si el courier no existe o pertenece a otro usuario, devuelve Courier no encontrado.
+      operationId: getCourierById
       security:
         - bearerAuth: []
       parameters:
         - name: id
           in: path
           required: true
-          description: Identificador único del producto a eliminar. Debe ser un número entero mayor a 0.
+          description: Identificador del courier. Debe ser un número entero mayor o igual a 1.
           schema:
             type: integer
             minimum: 1
             example: 1
       responses:
-        '204':
-          description: Producto eliminado correctamente. Sin contenido en la respuesta.
+        '200':
+          description: Courier obtenido correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCourierByIdSuccessResponse'
+              examples:
+                found:
+                  summary: Courier encontrado
+                  value:
+                    success: true
+                    courier:
+                      id_courier: 1
+                      name: Repartidor 1
+                      phone: '1234567890'
+                      note: Disponible en horario comercial
         '400':
-          description: Error de validación del path param id.
+          description: Error de validación del parámetro id.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
               examples:
                 invalidId:
-                  summary: ID inválido
+                  summary: Identificador inválido
                   value:
                     success: false
                     errors:
                       - field: id
-                        message: El ID del producto debe ser un número entero
+                        message: El identificador debe ser un número entero
                 invalidIdMin:
-                  summary: ID menor a uno
+                  summary: Identificador menor a uno
                   value:
                     success: false
                     errors:
                       - field: id
-                        message: El ID del producto debe ser mayor a 0
+                        message: El identificador debe ser mayor o igual a 1
         '401':
           description: No se envió un access token válido o el encabezado Authorization es inválido.
           content:
@@ -1789,31 +1804,238 @@ paths:
                     errors:
                       - message: Token inválido
         '404':
-          description: El producto no existe o pertenece a otro usuario.
+          description: El courier no existe o no pertenece al usuario autenticado.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericErrorResponse'
               examples:
                 notFound:
-                  summary: Producto no encontrado
+                  summary: Courier no encontrado
                   value:
                     success: false
                     errors:
-                      - message: Producto no encontrado
-        '429':
-          description: Se superó el límite de solicitudes para eliminar productos.
+                      - message: Courier no encontrado
+        '500':
+          description: Error interno del servidor.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericErrorResponse'
               examples:
-                rateLimit:
-                  summary: Límite de eliminación de productos superado
+                internalError:
+                  summary: Error interno
                   value:
                     success: false
                     errors:
-                      - message: Demasiadas solicitudes para eliminar productos. Intenta nuevamente más tarde.
+                      - message: Error interno del servidor
+    patch:
+      tags:
+        - Couriers
+      summary: Actualizar courier por identificador
+      description: Actualiza un courier del usuario autenticado usando su identificador. Devuelve el courier actualizado.
+      operationId: updateCourierById
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Identificador del courier. Debe ser un número entero mayor o igual a 1.
+          schema:
+            type: integer
+            minimum: 1
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCourierRequest'
+            examples:
+              updateCourier:
+                summary: Actualizar courier
+                value:
+                  name: Repartidor actualizado
+                  phone: '0987654321'
+                  note: Cambio de turno
+      responses:
+        '200':
+          description: Courier actualizado correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateCourierSuccessResponse'
+              examples:
+                updated:
+                  summary: Actualización exitosa
+                  value:
+                    success: true
+                    message: Courier actualizado correctamente
+                    courier:
+                      id_courier: 1
+                      name: Repartidor actualizado
+                      phone: '0987654321'
+                      note: Cambio de turno
+        '400':
+          description: Error de validación del parámetro id o JSON inválido.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ValidationErrorResponse'
+                  - $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                invalidId:
+                  summary: Identificador inválido
+                  value:
+                    success: false
+                    errors:
+                      - field: id
+                        message: El identificador debe ser un número entero
+                invalidIdMin:
+                  summary: Identificador menor a uno
+                  value:
+                    success: false
+                    errors:
+                      - field: id
+                        message: El identificador debe ser mayor o igual a 1
+                malformedJson:
+                  summary: JSON inválido
+                  value:
+                    success: false
+                    errors:
+                      - message: JSON inválido o mal formado
+        '401':
+          description: No se envió un access token válido o el encabezado Authorization es inválido.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                missingToken:
+                  summary: Token requerido
+                  value:
+                    success: false
+                    errors:
+                      - message: Token requerido
+                invalidHeader:
+                  summary: Encabezado inválido
+                  value:
+                    success: false
+                    errors:
+                      - message: Encabezado Authorization inválido
+                invalidToken:
+                  summary: Token inválido
+                  value:
+                    success: false
+                    errors:
+                      - message: Token inválido
+        '404':
+          description: El courier no existe o no pertenece al usuario autenticado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                notFound:
+                  summary: Courier no encontrado
+                  value:
+                    success: false
+                    errors:
+                      - message: Courier no encontrado
+        '500':
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                internalError:
+                  summary: Error interno
+                  value:
+                    success: false
+                    errors:
+                      - message: Error interno del servidor
+    delete:
+      tags:
+        - Couriers
+      summary: Eliminar courier por identificador
+      description: Marca como eliminado lógicamente un courier del usuario autenticado usando su identificador. Devuelve una respuesta 204 sin contenido si la operación es exitosa.
+      operationId: deleteCourierById
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Identificador del courier. Debe ser un número entero mayor o igual a 1.
+          schema:
+            type: integer
+            minimum: 1
+            example: 1
+      responses:
+        '204':
+          description: Courier eliminado correctamente. Sin contenido en la respuesta.
+        '400':
+          description: Error de validación del path param id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+              examples:
+                invalidId:
+                  summary: ID inválido
+                  value:
+                    success: false
+                    errors:
+                      - field: id
+                        message: El identificador debe ser un número entero
+                invalidIdMin:
+                  summary: ID menor a uno
+                  value:
+                    success: false
+                    errors:
+                      - field: id
+                        message: El identificador debe ser mayor o igual a 1
+        '401':
+          description: No se envió un access token válido o el encabezado Authorization es inválido.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                missingToken:
+                  summary: Token requerido
+                  value:
+                    success: false
+                    errors:
+                      - message: Token requerido
+                invalidHeader:
+                  summary: Encabezado inválido
+                  value:
+                    success: false
+                    errors:
+                      - message: Encabezado Authorization inválido
+                invalidToken:
+                  summary: Token inválido
+                  value:
+                    success: false
+                    errors:
+                      - message: Token inválido
+        '404':
+          description: El courier no existe o no pertenece al usuario autenticado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                notFound:
+                  summary: Courier no encontrado
+                  value:
+                    success: false
+                    errors:
+                      - message: Courier no encontrado
         '500':
           description: Error interno del servidor.
           content:
