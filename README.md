@@ -310,8 +310,6 @@ Los endpoints de productos requieren un `accessToken` válido en el encabezado `
 | `price` | Nuevo precio decimal del producto.  |
 | `stock` | Nuevo stock del producto.           |
 
-| `word` | Texto utilizado para filtrar productos por nombre. No puede estar vacío. |
-
 El endpoint `DELETE /api/products/:id` acepta el siguiente path param:
 
 | Path param | Descripción                                                              |
