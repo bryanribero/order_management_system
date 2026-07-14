@@ -55,6 +55,7 @@ router.patch(
   ProductsRateLimit,
   verifyAccessToken,
   queryProductValidator,
+  updateProductValidator,
   validateFields,
   updateProductController
 )
