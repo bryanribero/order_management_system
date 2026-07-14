@@ -1,4 +1,4 @@
-import { body, query, param } from 'express-validator'
+import { body, query } from 'express-validator'
 
 export const createProductValidator = [
   body('name')
@@ -33,34 +33,40 @@ export const createProductValidator = [
     .withMessage('El stock del producto no puede ser negativo'),
 ]
 
-export const paginationProductValidator = [
-  query('page')
+export const updateProductValidator = [
+  body('name')
     .optional()
-    .isInt()
-    .withMessage('La página debe ser un número entero')
+    .trim()
+    .exists({ checkFalsy: true })
+    .withMessage('El nombre del producto es obligatorio')
     .bail()
-    .isInt({ min: 1 })
-    .withMessage('La página debe ser mayor o igual a 1')
-    .toInt(),
+    .isLength({ max: 50 })
+    .withMessage('El nombre del producto debe tener entre 1 y 50 caracteres'),
 
-  query('limit')
+  body('price')
     .optional()
-    .isInt()
-    .withMessage('El límite debe ser un número entero')
+    .trim()
+    .notEmpty()
+    .withMessage('El precio del producto es obligatorio')
     .bail()
-    .isInt({ min: 1, max: 50 })
-    .withMessage('El límite debe estar entre 1 y 50')
-    .toInt(),
-]
+    .isFloat()
+    .withMessage('El precio del producto debe ser decimal')
+    .bail()
+    .toFloat()
+    .isFloat({ gt: 0 })
+    .withMessage('El precio del producto debe ser mayor a 0'),
 
-export const paramsProductValidator = [
-  param('id')
-    .isInt()
-    .withMessage('El identificador debe ser un número entero')
+  body('stock')
+    .optional()
+    .trim()
+    .notEmpty()
+    .withMessage('El stock del producto es obligatorio')
     .bail()
-    .isInt({ gt: 0 })
-    .withMessage('El identificador debe ser mayor o igual a 1')
-    .toInt(),
+    .isInt()
+    .withMessage('El stock del producto debe ser entero')
+    .bail()
+    .isInt({ gt: -1 })
+    .withMessage('El stock del producto no puede ser negativo'),
 ]
 
 export const queryProductValidator = [

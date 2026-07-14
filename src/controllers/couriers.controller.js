@@ -1,6 +1,8 @@
 import {
   createCourier,
+  getCourierById,
   getCouriers,
+  updateCourierById,
 } from '../services/couriers/couriers.service.js'
 
 export async function createCourierController(req, res, next) {
@@ -34,6 +36,40 @@ export async function getCouriersController(req, res, next) {
     res.status(200).json({
       success: true,
       couriers: result,
+    })
+  } catch (err) {
+    next(err)
+  }
+}
+
+export async function getCourierByIdController(req, res, next) {
+  const idUser = req.user.id_user
+  const idCourier = req.params.id
+
+  try {
+    const result = await getCourierById(idUser, idCourier)
+
+    res.status(200).json({
+      success: true,
+      courier: result,
+    })
+  } catch (err) {
+    next(err)
+  }
+}
+
+export async function updateCourierByIdController(req, res, next) {
+  const idUser = req.user.id_user
+  const idCourier = req.params.id
+  const setter = req.body
+
+  try {
+    const result = await updateCourierById(idUser, idCourier, setter)
+
+    res.status(200).json({
+      success: true,
+      message: 'Courier actualizado correctamente',
+      courier: result,
     })
   } catch (err) {
     next(err)

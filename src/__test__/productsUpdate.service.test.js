@@ -53,7 +53,6 @@ describe('Product Service - updateProduct', () => {
 
     expect(updatedProduct[0]).toMatchObject({
       id_product: product.id_product,
-      id_user: user.id_user,
       sku: product.sku,
       name: 'Cafe en grano',
       price: '150.00',
@@ -138,9 +137,8 @@ describe('Product Service - updateProductById', () => {
       }
     )
 
-    expect(updatedProduct[0]).toMatchObject({
+    expect(updatedProduct).toMatchObject({
       id_product: product.id_product,
-      id_user: user.id_user,
       sku: product.sku,
       name: 'Café en grano',
       price: '150.00',

@@ -11,10 +11,13 @@ import {
 } from '../controllers/products.controller.js'
 import {
   createProductValidator,
-  paginationProductValidator,
-  paramsProductValidator,
   queryProductValidator,
+  updateProductValidator,
 } from '../validators/products.validator.js'
+import {
+  paginationValidator,
+  paramsValidator,
+} from '../validators/request.validator.js'
 import { validateFields } from '../middlewares/validateFields.js'
 import { ProductsRateLimit } from '../middlewares/rate.js'
 
@@ -33,7 +36,7 @@ router.get(
   '/',
   ProductsRateLimit,
   verifyAccessToken,
-  paginationProductValidator,
+  paginationValidator,
   validateFields,
   getUserProductsController
 )
@@ -42,7 +45,7 @@ router.get(
   '/:id',
   ProductsRateLimit,
   verifyAccessToken,
-  paramsProductValidator,
+  paramsValidator,
   validateFields,
   getUserProductByIdController
 )
@@ -60,7 +63,8 @@ router.patch(
   '/:id',
   ProductsRateLimit,
   verifyAccessToken,
-  paramsProductValidator,
+  paramsValidator,
+  updateProductValidator,
   validateFields,
   updateProductByIdController
 )
@@ -78,7 +82,7 @@ router.delete(
   '/:id',
   ProductsRateLimit,
   verifyAccessToken,
-  paramsProductValidator,
+  paramsValidator,
   validateFields,
   deletedProductByIdController
 )

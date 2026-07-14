@@ -69,11 +69,10 @@ describe('PATCH /products', () => {
     expect(response.body).toEqual(
       expect.objectContaining({
         success: true,
-        message: 'Productos actualizado correctamente',
+        message: 'Productos actualizados correctamente',
         products: expect.arrayContaining([
           expect.objectContaining({
             id_product: product.id_product,
-            id_user: user.id_user,
             sku: product.sku,
             name: setter.name,
             price: setter.price,
@@ -213,16 +212,13 @@ describe('PATCH /products/:id', () => {
       expect.objectContaining({
         success: true,
         message: 'Producto actualizado correctamente',
-        product: expect.arrayContaining([
-          expect.objectContaining({
-            id_product: product.id_product,
-            id_user: user.id_user,
-            sku: product.sku,
-            name: setter.name,
-            price: setter.price,
-            stock: setter.stock,
-          }),
-        ]),
+        product: expect.objectContaining({
+          id_product: product.id_product,
+          sku: product.sku,
+          name: setter.name,
+          price: setter.price,
+          stock: setter.stock,
+        }),
       })
     )
 

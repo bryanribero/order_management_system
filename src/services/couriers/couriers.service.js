@@ -1,6 +1,7 @@
 import Courier from '../../db/models/Courier.js'
 import { UniqueConstraintError } from 'sequelize'
 import { ConflictError } from '../../errors/ConflictError.js'
+import { NotFoundError } from '../../errors/NotFoundError.js'
 
 export async function createCourier(idUser, { name, phone, note }) {
   try {
@@ -36,7 +37,54 @@ export async function getCouriers(idUser, { page, limit }) {
     },
     limit: safeLimit,
     offset,
+    attributes: ['id_courier', 'name', 'phone', 'note'],
   })
 
   return couriers
+}
+
+export async function getCourierById(idUser, idCourier) {
+  const courier = await Courier.findOne({
+    where: {
+      id_user: idUser,
+      id_courier: idCourier,
+      deleted_at: null,
+    },
+    attributes: ['id_courier', 'name', 'phone', 'note'],
+  })
+
+  if (!courier) {
+    throw new NotFoundError('Courier no encontrado')
+  }
+
+  return courier
+}
+
+export async function updateCourierById(
+  idUser,
+  idCourier,
+  { name, phone, note }
+) {
+  const [affectedRow, updatedCourier] = await Courier.update(
+    { name, phone, note },
+    {
+      where: {
+        id_user: idUser,
+        id_courier: idCourier,
+        deleted_at: null,
+      },
+      returning: true,
+    }
+  )
+
+  if (affectedRow === 0) {
+    throw new NotFoundError('Courier no encontrado')
+  }
+
+  return {
+    id_courier: updatedCourier[0].id_courier,
+    name: updatedCourier[0].name,
+    phone: updatedCourier[0].phone,
+    note: updatedCourier[0].note,
+  }
 }

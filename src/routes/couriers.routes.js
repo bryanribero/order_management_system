@@ -1,13 +1,15 @@
 import { Router } from 'express'
 import { courierRateLimit } from '../middlewares/rate.js'
+import { bodyCourierValidator } from '../validators/couriers.validator.js'
 import {
-  bodyValidator,
-  paginationCourierValidator,
-} from '../validators/couriers.validator.js'
+  paginationValidator,
+  paramsValidator,
+} from '../validators/request.validator.js'
 import { validateFields } from '../middlewares/validateFields.js'
 import { verifyAccessToken } from '../middlewares/verifyAccessToken.js'
 import {
   createCourierController,
+  getCourierByIdController,
   getCouriersController,
 } from '../controllers/couriers.controller.js'
 
@@ -17,7 +19,7 @@ router.post(
   '/',
   courierRateLimit,
   verifyAccessToken,
-  bodyValidator,
+  bodyCourierValidator,
   validateFields,
   createCourierController
 )
@@ -26,9 +28,18 @@ router.get(
   '/',
   courierRateLimit,
   verifyAccessToken,
-  paginationCourierValidator,
+  paginationValidator,
   validateFields,
   getCouriersController
+)
+
+router.get(
+  '/:id',
+  courierRateLimit,
+  verifyAccessToken,
+  paramsValidator,
+  validateFields,
+  getCourierByIdController
 )
 
 export default router

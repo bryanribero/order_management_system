@@ -920,20 +920,19 @@ paths:
                   stock: 8
       responses:
         '200':
-          description: Producto actualizado correctamente.
+          description: Productos actualizados correctamente.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UpdateProductSuccessResponse'
+                $ref: '#/components/schemas/UpdateProductsSuccessResponse'
               examples:
                 updated:
                   summary: Actualización exitosa
                   value:
                     success: true
-                    message: Producto actualizado correctamente
-                    product:
+                    message: Productos actualizados correctamente
+                    products:
                       - id_product: 1
-                        id_user: 1
                         sku: SKU-001
                         name: Cafe en grano
                         price: '150.00'
@@ -1290,7 +1289,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UpdateProductSuccessResponse'
+                $ref: '#/components/schemas/UpdateProductByIdSuccessResponse'
               examples:
                 updated:
                   summary: Actualización exitosa
@@ -1298,12 +1297,11 @@ paths:
                     success: true
                     message: Producto actualizado correctamente
                     product:
-                      - id_product: 1
-                        id_user: 1
-                        sku: SKU-001
-                        name: Café en grano
-                        price: '150.00'
-                        stock: 8
+                      id_product: 1
+                      sku: SKU-001
+                      name: Café en grano
+                      price: '150.00'
+                      stock: 8
         '400':
           description: Error de validación del parámetro id o JSON inválido.
           content:
@@ -1769,7 +1767,24 @@ components:
           example: true
         product:
           $ref: '#/components/schemas/ProductReadById'
-    UpdateProductSuccessResponse:
+    UpdateProductsSuccessResponse:
+      type: object
+      required:
+        - success
+        - message
+        - products
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Productos actualizados correctamente
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/Product'
+    UpdateProductByIdSuccessResponse:
       type: object
       required:
         - success
@@ -1783,9 +1798,7 @@ components:
           type: string
           example: Producto actualizado correctamente
         product:
-          type: array
-          items:
-            $ref: '#/components/schemas/ProductReadById'
+          $ref: '#/components/schemas/Product'
     DeleteProductSuccessResponse:
       type: object
       required:

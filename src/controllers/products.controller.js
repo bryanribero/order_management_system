@@ -73,7 +73,7 @@ export async function updateProductController(req, res, next) {
 
     res.status(200).json({
       success: true,
-      message: 'Productos actualizado correctamente',
+      message: 'Productos actualizados correctamente',
       products: result,
     })
   } catch (err) {

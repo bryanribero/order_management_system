@@ -55,40 +55,68 @@ export async function getUserProductById(idUser, idProduct) {
   return product
 }
 
-export async function updateProduct(idUser, filter, setter) {
-  const [affectedRows, updatedProducts] = await Product.update(setter, {
-    where: {
-      id_user: idUser,
-      deleted_at: null,
-      name: {
-        [Op.iLike]: `${filter}%`,
+export async function updateProduct(
+  idUser,
+  filter,
+  { sku, name, price, stock }
+) {
+  const [affectedRows, updatedProducts] = await Product.update(
+    { sku, name, price, stock },
+    {
+      where: {
+        id_user: idUser,
+        deleted_at: null,
+        name: {
+          [Op.iLike]: `${filter}%`,
+        },
       },
-    },
-    returning: true,
-  })
+      returning: true,
+    }
+  )
 
   if (affectedRows === 0) {
     throw new NotFoundError('Producto no encontrado')
   }
 
-  return updatedProducts
+  const response = updatedProducts.map((product) => ({
+    id_product: product.id_product,
+    sku: product.sku,
+    name: product.name,
+    price: product.price,
+    stock: product.stock,
+  }))
+
+  return response
 }
 
-export async function updateProductById(idUser, idProduct, setter) {
-  const [affectedRow, updatedProduct] = await Product.update(setter, {
-    where: {
-      id_user: idUser,
-      id_product: idProduct,
-      deleted_at: null,
-    },
-    returning: true,
-  })
+export async function updateProductById(
+  idUser,
+  idProduct,
+  { sku, name, price, stock }
+) {
+  const [affectedRow, updatedProduct] = await Product.update(
+    { sku, name, price, stock },
+    {
+      where: {
+        id_user: idUser,
+        id_product: idProduct,
+        deleted_at: null,
+      },
+      returning: true,
+    }
+  )
 
   if (affectedRow === 0) {
     throw new NotFoundError('Producto no encontrado')
   }
 
-  return updatedProduct
+  return {
+    id_product: updatedProduct[0].id_product,
+    sku: updatedProduct[0].sku,
+    name: updatedProduct[0].name,
+    price: updatedProduct[0].price,
+    stock: updatedProduct[0].stock,
+  }
 }
 
 export async function deleteProducts(idUser, filter) {
