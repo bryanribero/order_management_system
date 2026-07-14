@@ -60,7 +60,6 @@ describe('GET /products/:id', () => {
         success: true,
         product: expect.objectContaining({
           id_product: product.id_product,
-          id_user: product.id_user,
           sku: null,
           name: 'Producto de prueba',
           price: '100.00',

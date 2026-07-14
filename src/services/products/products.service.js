@@ -35,6 +35,7 @@ export async function getUserProducts(idUser, { page, limit }) {
       id_user: idUser,
       deleted_at: null,
     },
+    attributes: ['id_product', 'sku', 'name', 'price', 'stock'],
     limit: safeLimit,
     offset: offset,
   })
@@ -45,7 +46,7 @@ export async function getUserProducts(idUser, { page, limit }) {
 export async function getUserProductById(idUser, idProduct) {
   const product = await Product.findOne({
     where: { id_product: idProduct, id_user: idUser, deleted_at: null },
-    attributes: ['id_product', 'id_user', 'sku', 'name', 'price', 'stock'],
+    attributes: ['id_product', 'sku', 'name', 'price', 'stock'],
   })
 
   if (!product) {

@@ -1,4 +1,7 @@
-import { createCustomer } from '../services/customers/customers.service.js'
+import {
+  createCustomer,
+  getCustomers,
+} from '../services/customers/customers.service.js'
 
 export async function createCustomerController(req, res, next) {
   const idUser = req.user.id_user
@@ -19,6 +22,22 @@ export async function createCustomerController(req, res, next) {
         phone,
         note,
       },
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export async function getCustomersController(req, res, next) {
+  const idUser = req.user.id_user
+  const pagination = req.query
+
+  try {
+    const result = await getCustomers(idUser, pagination)
+
+    res.status(200).json({
+      success: true,
+      customers: result,
     })
   } catch (error) {
     next(error)

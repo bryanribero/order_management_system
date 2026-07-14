@@ -72,16 +72,12 @@ describe('Product Service - getUserProducts', () => {
       expect.arrayContaining([
         expect.objectContaining({
           id_product: userProducts[2].id_product,
-          id_user: user.id_user,
           sku: userProducts[2].sku,
           name: userProducts[2].name,
           price: userProducts[2].price,
           stock: userProducts[2].stock,
         }),
       ])
-    )
-    expect(products.every((product) => product.id_user === user.id_user)).toBe(
-      true
     )
   })
 
