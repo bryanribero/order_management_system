@@ -276,6 +276,51 @@ Los endpoints de productos requieren un `accessToken` válido en el encabezado `
 
 <br>
 
+## Endpoints de couriers
+
+Los endpoints de couriers disponibles actualmente son:
+
+| Método | Endpoint            | Descripción                                                                                             |
+| ------ | ------------------- | ------------------------------------------------------------------------------------------------------- |
+| POST   | `/api/couriers`     | Crea un courier asociado al usuario autenticado. El nombre es obligatorio y debe ser único por usuario. |
+| GET    | `/api/couriers`     | Obtiene los couriers del usuario autenticado con paginación.                                            |
+| GET    | `/api/couriers/:id` | Obtiene un courier del usuario autenticado por su identificador.                                        |
+| PATCH  | `/api/couriers/:id` | Actualiza un courier del usuario autenticado por su identificador.                                      |
+| DELETE | `/api/couriers/:id` | Marca como eliminado lógicamente un courier del usuario autenticado por su identificador.               |
+
+Los couriers eliminados lógicamente se excluyen de las consultas activas y no se eliminan físicamente de la base de datos.
+
+Los endpoints de couriers requieren un `accessToken` válido en el encabezado `Authorization` con el esquema `Bearer`.
+
+<br>
+
+### Query params para `GET /api/couriers`
+
+| Query param | Descripción                                               | Valor por defecto | Límite |
+| ----------- | --------------------------------------------------------- | ----------------- | ------ |
+| `page`      | Número de página a consultar. Debe ser mayor o igual a 1. | `1`               | -      |
+| `limit`     | Cantidad de couriers por página. Debe estar entre 1 y 50. | `20`              | `50`   |
+
+<br>
+
+### Path params para `/api/couriers/:id`
+
+| Path param | Descripción                                                             |
+| ---------- | ----------------------------------------------------------------------- |
+| `id`       | Identificador del courier. Debe ser un número entero mayor o igual a 1. |
+
+<br>
+
+### Body para `POST /api/couriers` y `PATCH /api/couriers/:id`
+
+| Campo   | Descripción                                  |
+| ------- | -------------------------------------------- |
+| `name`  | Nombre del courier. Obligatorio en creación. |
+| `phone` | Teléfono del courier. Opcional.              |
+| `note`  | Nota adicional sobre el courier. Opcional.   |
+
+<br>
+
 ### Query params para `GET /api/products`
 
 | Query param | Descripción                                                | Valor por defecto | Límite |

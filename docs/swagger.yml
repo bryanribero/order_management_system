@@ -12,6 +12,8 @@ tags:
     description: Endpoints de autenticación y registro de usuarios.
   - name: Products
     description: Endpoints para gestionar productos del usuario autenticado.
+  - name: Couriers
+    description: Endpoints para gestionar repartidores del usuario autenticado.
   - name: Users
     description: Endpoints para actualizar y eliminar el usuario autenticado.
 
@@ -1500,6 +1502,331 @@ paths:
                     success: false
                     errors:
                       - message: Error interno del servidor
+  /api/couriers:
+    post:
+      tags:
+        - Couriers
+      summary: Crear courier
+      description: Crea un repartidor asociado al usuario autenticado. El nombre debe ser único dentro del usuario.
+      operationId: createCourier
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCourierRequest'
+            examples:
+              createCourier:
+                summary: Crear courier
+                value:
+                  name: Repartidor 1
+                  phone: '1234567890'
+                  note: Disponible en horario comercial
+      responses:
+        '201':
+          description: Courier creado correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateCourierSuccessResponse'
+              examples:
+                created:
+                  summary: Courier creado
+                  value:
+                    success: true
+                    message: Courier creado correctamente
+                    courier:
+                      id_courier: 1
+                      name: Repartidor 1
+                      phone: '1234567890'
+                      note: Disponible en horario comercial
+        '400':
+          description: Error de validación del cuerpo de la petición o JSON inválido.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ValidationErrorResponse'
+                  - $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                invalidName:
+                  summary: Nombre inválido
+                  value:
+                    success: false
+                    errors:
+                      - field: name
+                        message: El campo name no puede estar vacío
+                invalidPhone:
+                  summary: Teléfono inválido
+                  value:
+                    success: false
+                    errors:
+                      - field: phone
+                        message: El campo phone no es un número de teléfono válido
+                malformedJson:
+                  summary: JSON inválido
+                  value:
+                    success: false
+                    errors:
+                      - message: JSON inválido o mal formado
+        '401':
+          description: No se envió un access token válido o el encabezado Authorization es inválido.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                missingToken:
+                  summary: Token requerido
+                  value:
+                    success: false
+                    errors:
+                      - message: Token requerido
+                invalidHeader:
+                  summary: Encabezado inválido
+                  value:
+                    success: false
+                    errors:
+                      - message: Encabezado Authorization inválido
+                invalidToken:
+                  summary: Token inválido
+                  value:
+                    success: false
+                    errors:
+                      - message: Token inválido
+        '409':
+          description: El nombre de courier ya existe para el usuario autenticado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                duplicatedName:
+                  summary: Nombre duplicado
+                  value:
+                    success: false
+                    errors:
+                      - message: El name ya esta en uso, debe ser unico por courier
+    get:
+      tags:
+        - Couriers
+      summary: Obtener couriers
+      description: Obtiene los couriers activos asociados al usuario autenticado. Permite paginar la respuesta con los query params page y limit.
+      operationId: getCouriers
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          required: false
+          description: Número de página a consultar. Si no se envía, el servicio utiliza la página 1.
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+            example: 1
+        - name: limit
+          in: query
+          required: false
+          description: Cantidad de couriers por página. Si no se envía, el servicio utiliza 20. El máximo permitido es 50.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+            example: 20
+      responses:
+        '200':
+          description: Couriers obtenidos correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCouriersSuccessResponse'
+              examples:
+                withCouriers:
+                  summary: Couriers encontrados
+                  value:
+                    success: true
+                    couriers:
+                      - id_courier: 1
+                        name: Repartidor 1
+                        phone: '1234567890'
+                        note: Disponible en horario comercial
+                      - id_courier: 2
+                        name: Repartidor 2
+                        phone: null
+                        note: null
+                empty:
+                  summary: Sin couriers
+                  value:
+                    success: true
+                    couriers: []
+        '400':
+          description: Error de validación de los query params.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+              examples:
+                invalidPage:
+                  summary: Página inválida
+                  value:
+                    success: false
+                    errors:
+                      - field: page
+                        message: La página debe ser un número entero
+                invalidLimit:
+                  summary: Límite inválido
+                  value:
+                    success: false
+                    errors:
+                      - field: limit
+                        message: El límite debe ser un número entero
+        '401':
+          description: No se envió un access token válido o el encabezado Authorization es inválido.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                missingToken:
+                  summary: Token requerido
+                  value:
+                    success: false
+                    errors:
+                      - message: Token requerido
+                invalidHeader:
+                  summary: Encabezado inválido
+                  value:
+                    success: false
+                    errors:
+                      - message: Encabezado Authorization inválido
+                invalidToken:
+                  summary: Token inválido
+                  value:
+                    success: false
+                    errors:
+                      - message: Token inválido
+        '429':
+          description: Se superó el límite de solicitudes para obtener couriers.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                rateLimit:
+                  summary: Límite de obtención de couriers superado
+                  value:
+                    success: false
+                    errors:
+                      - message: Demasiadas solicitudes para obtener couriers. Intenta nuevamente más tarde.
+    delete:
+      tags:
+        - Products
+      summary: Eliminar producto por identificador
+      description: Marca como eliminado lógicamente un producto del usuario autenticado usando su identificador. Devuelve una respuesta 204 sin contenido si la operación es exitosa.
+      operationId: deleteProductById
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Identificador único del producto a eliminar. Debe ser un número entero mayor a 0.
+          schema:
+            type: integer
+            minimum: 1
+            example: 1
+      responses:
+        '204':
+          description: Producto eliminado correctamente. Sin contenido en la respuesta.
+        '400':
+          description: Error de validación del path param id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+              examples:
+                invalidId:
+                  summary: ID inválido
+                  value:
+                    success: false
+                    errors:
+                      - field: id
+                        message: El ID del producto debe ser un número entero
+                invalidIdMin:
+                  summary: ID menor a uno
+                  value:
+                    success: false
+                    errors:
+                      - field: id
+                        message: El ID del producto debe ser mayor a 0
+        '401':
+          description: No se envió un access token válido o el encabezado Authorization es inválido.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                missingToken:
+                  summary: Token requerido
+                  value:
+                    success: false
+                    errors:
+                      - message: Token requerido
+                invalidHeader:
+                  summary: Encabezado inválido
+                  value:
+                    success: false
+                    errors:
+                      - message: Encabezado Authorization inválido
+                invalidToken:
+                  summary: Token inválido
+                  value:
+                    success: false
+                    errors:
+                      - message: Token inválido
+        '404':
+          description: El producto no existe o pertenece a otro usuario.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                notFound:
+                  summary: Producto no encontrado
+                  value:
+                    success: false
+                    errors:
+                      - message: Producto no encontrado
+        '429':
+          description: Se superó el límite de solicitudes para eliminar productos.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                rateLimit:
+                  summary: Límite de eliminación de productos superado
+                  value:
+                    success: false
+                    errors:
+                      - message: Demasiadas solicitudes para eliminar productos. Intenta nuevamente más tarde.
+        '500':
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+              examples:
+                internalError:
+                  summary: Error interno
+                  value:
+                    success: false
+                    errors:
+                      - message: Error interno del servidor
 components:
   securitySchemes:
     bearerAuth:
@@ -1574,6 +1901,121 @@ components:
             - admin
             - owner
           example: owner
+    Courier:
+      type: object
+      required:
+        - id_courier
+        - name
+      properties:
+        id_courier:
+          type: integer
+          format: int32
+          example: 1
+        name:
+          type: string
+          example: Repartidor 1
+        phone:
+          type: string
+          nullable: true
+          example: '1234567890'
+        note:
+          type: string
+          nullable: true
+          example: Disponible en horario comercial
+    CreateCourierRequest:
+      type: object
+      required:
+        - name
+      additionalProperties: true
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 50
+          description: Nombre del repartidor.
+          example: Repartidor 1
+        phone:
+          type: string
+          description: Número de teléfono del repartidor.
+          example: '1234567890'
+        note:
+          type: string
+          maxLength: 500
+          description: Nota opcional sobre el repartidor.
+          example: Disponible en horario comercial
+    UpdateCourierRequest:
+      type: object
+      additionalProperties: true
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 50
+          description: Nuevo nombre del repartidor.
+          example: Repartidor actualizado
+        phone:
+          type: string
+          description: Nuevo número de teléfono del repartidor.
+          example: '0987654321'
+        note:
+          type: string
+          maxLength: 500
+          description: Nueva nota del repartidor.
+          example: Cambio de turno
+    CreateCourierSuccessResponse:
+      type: object
+      required:
+        - success
+        - message
+        - courier
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Courier creado correctamente
+        courier:
+          $ref: '#/components/schemas/Courier'
+    GetCouriersSuccessResponse:
+      type: object
+      required:
+        - success
+        - couriers
+      properties:
+        success:
+          type: boolean
+          example: true
+        couriers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Courier'
+    GetCourierByIdSuccessResponse:
+      type: object
+      required:
+        - success
+        - courier
+      properties:
+        success:
+          type: boolean
+          example: true
+        courier:
+          $ref: '#/components/schemas/Courier'
+    UpdateCourierSuccessResponse:
+      type: object
+      required:
+        - success
+        - message
+        - courier
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Courier actualizado correctamente
+        courier:
+          $ref: '#/components/schemas/Courier'
     Product:
       type: object
       required:
