@@ -256,26 +256,6 @@ Ambos endpoints requieren un `accessToken` válido en el encabezado `Authorizati
 
 <br>
 
-## Endpoints de productos
-
-Los endpoints de productos disponibles actualmente son:
-
-| Método | Endpoint            | Descripción                                                                                   |
-| ------ | ------------------- | --------------------------------------------------------------------------------------------- |
-| POST   | `/api/products`     | Crea un producto asociado al usuario autenticado. El SKU es opcional.                         |
-| GET    | `/api/products`     | Obtiene los productos del usuario autenticado con paginación.                                 |
-| GET    | `/api/products/:id` | Obtiene un producto del usuario autenticado por su identificador.                             |
-| PATCH  | `/api/products`     | Actualiza productos del usuario autenticado filtrando por nombre.                             |
-| PATCH  | `/api/products/:id` | Actualiza un producto del usuario autenticado por su identificador.                           |
-| DELETE | `/api/products`     | Marca como eliminados lógicamente los productos del usuario autenticado filtrando por nombre. |
-| DELETE | `/api/products/:id` | Marca como eliminado lógicamente un producto del usuario autenticado por su identificador.    |
-
-Los productos eliminados lógicamente se excluyen de las consultas activas y no se eliminan físicamente de la base de datos.
-
-Los endpoints de productos requieren un `accessToken` válido en el encabezado `Authorization` con el esquema `Bearer`.
-
-<br>
-
 ## Endpoints de couriers
 
 Los endpoints de couriers disponibles actualmente son:
@@ -318,6 +298,26 @@ Los endpoints de couriers requieren un `accessToken` válido en el encabezado `A
 | `name`  | Nombre del courier. Obligatorio en creación. |
 | `phone` | Teléfono del courier. Opcional.              |
 | `note`  | Nota adicional sobre el courier. Opcional.   |
+
+<br>
+
+## Endpoints de productos
+
+Los endpoints de productos disponibles actualmente son:
+
+| Método | Endpoint            | Descripción                                                                                   |
+| ------ | ------------------- | --------------------------------------------------------------------------------------------- |
+| POST   | `/api/products`     | Crea un producto asociado al usuario autenticado. El SKU es opcional.                         |
+| GET    | `/api/products`     | Obtiene los productos del usuario autenticado con paginación.                                 |
+| GET    | `/api/products/:id` | Obtiene un producto del usuario autenticado por su identificador.                             |
+| PATCH  | `/api/products`     | Actualiza productos del usuario autenticado filtrando por nombre.                             |
+| PATCH  | `/api/products/:id` | Actualiza un producto del usuario autenticado por su identificador.                           |
+| DELETE | `/api/products`     | Marca como eliminados lógicamente los productos del usuario autenticado filtrando por nombre. |
+| DELETE | `/api/products/:id` | Marca como eliminado lógicamente un producto del usuario autenticado por su identificador.    |
+
+Los productos eliminados lógicamente se excluyen de las consultas activas y no se eliminan físicamente de la base de datos.
+
+Los endpoints de productos requieren un `accessToken` válido en el encabezado `Authorization` con el esquema `Bearer`.
 
 <br>
 
