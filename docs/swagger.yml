@@ -14,6 +14,8 @@ tags:
     description: Endpoints para gestionar productos del usuario autenticado.
   - name: Couriers
     description: Endpoints para gestionar repartidores del usuario autenticado.
+  - name: Customers
+    description: Endpoints para gestionar clientes del usuario autenticado.
   - name: Users
     description: Endpoints para actualizar y eliminar el usuario autenticado.
 
@@ -1502,6 +1504,277 @@ paths:
                     success: false
                     errors:
                       - message: Error interno del servidor
+  /api/customers:
+    post:
+      tags:
+        - Customers
+      summary: Crear customer
+      description: Crea un cliente asociado al usuario autenticado.
+      operationId: createCustomer
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCustomerRequest'
+            examples:
+              createCustomer:
+                summary: Crear cliente
+                value:
+                  name: Juan Pérez
+                  address: Av. Siempre Viva 742
+                  email: juan@example.com
+                  phone: '1122334455'
+                  note: Cliente nuevo
+      responses:
+        '201':
+          description: Customer creado correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateCustomerSuccessResponse'
+        '400':
+          description: Error de validación del cuerpo de la petición o JSON inválido.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '401':
+          description: No se envió un access token válido o el encabezado Authorization es inválido.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '429':
+          description: Se superó el límite de solicitudes para crear customers.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+    get:
+      tags:
+        - Customers
+      summary: Obtener customers
+      description: Obtiene los clientes activos asociados al usuario autenticado. Permite paginar la respuesta con los query params page y limit.
+      operationId: getCustomers
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          required: false
+          description: Número de página a consultar. Si no se envía, el servicio utiliza la página 1.
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+            example: 1
+        - name: limit
+          in: query
+          required: false
+          description: Cantidad de clientes por página. Si no se envía, el servicio utiliza 20. El máximo permitido es 50.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+            example: 20
+      responses:
+        '200':
+          description: Customers obtenidos correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCustomersSuccessResponse'
+        '400':
+          description: Error de validación de los query params.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '401':
+          description: No se envió un access token válido o el encabezado Authorization es inválido.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '429':
+          description: Se superó el límite de solicitudes para obtener customers.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+  /api/customers/{id}:
+    get:
+      tags:
+        - Customers
+      summary: Obtener customer por identificador
+      description: Obtiene un customer del usuario autenticado usando su identificador.
+      operationId: getCustomerById
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Identificador del customer.
+          schema:
+            type: integer
+            minimum: 1
+            example: 1
+      responses:
+        '200':
+          description: Customer obtenido correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCustomerByIdSuccessResponse'
+        '400':
+          description: Error de validación del parámetro id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '401':
+          description: No se envió un access token válido o el encabezado Authorization es inválido.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '404':
+          description: El customer no existe o no pertenece al usuario autenticado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+    patch:
+      tags:
+        - Customers
+      summary: Actualizar customer por identificador
+      description: Actualiza un customer del usuario autenticado usando su identificador.
+      operationId: updateCustomerById
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Identificador del customer.
+          schema:
+            type: integer
+            minimum: 1
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCustomerRequest'
+      responses:
+        '200':
+          description: Customer actualizado correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateCustomerSuccessResponse'
+        '400':
+          description: Error de validación del parámetro id o JSON inválido.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '401':
+          description: No se envió un access token válido o el encabezado Authorization es inválido.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '404':
+          description: El customer no existe o no pertenece al usuario autenticado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+    delete:
+      tags:
+        - Customers
+      summary: Eliminar customer por identificador
+      description: Marca como eliminado lógicamente un customer del usuario autenticado usando su identificador.
+      operationId: deleteCustomerById
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Identificador del customer.
+          schema:
+            type: integer
+            minimum: 1
+            example: 1
+      responses:
+        '204':
+          description: Customer eliminado correctamente. Sin contenido en la respuesta.
+        '400':
+          description: Error de validación del path param id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '401':
+          description: No se envió un access token válido o el encabezado Authorization es inválido.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '404':
+          description: El customer no existe o no pertenece al usuario autenticado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+  /api/customers/all:
+    delete:
+      tags:
+        - Customers
+      summary: Eliminar todos los customers del usuario autenticado
+      description: Marca como eliminados lógicamente todos los customers activos del usuario autenticado cuando se confirma la acción.
+      operationId: deleteAllCustomers
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteAllCustomersRequest'
+      responses:
+        '200':
+          description: Customers eliminados correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteAllCustomersSuccessResponse'
+        '400':
+          description: Error de validación del cuerpo de la petición o JSON inválido.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '401':
+          description: No se envió un access token válido o el encabezado Authorization es inválido.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '404':
+          description: No existen customers activos para eliminar.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
   /api/couriers:
     post:
       tags:
@@ -2238,6 +2511,176 @@ components:
           example: Courier actualizado correctamente
         courier:
           $ref: '#/components/schemas/Courier'
+    Customer:
+      type: object
+      required:
+        - id_customer
+        - name
+        - address
+      properties:
+        id_customer:
+          type: integer
+          format: int32
+          example: 1
+        name:
+          type: string
+          example: Juan Pérez
+        address:
+          type: string
+          example: Av. Siempre Viva 742
+        email:
+          type: string
+          nullable: true
+          example: juan@example.com
+        phone:
+          type: string
+          nullable: true
+          example: '1122334455'
+        note:
+          type: string
+          nullable: true
+          example: Cliente nuevo
+    CreateCustomerRequest:
+      type: object
+      required:
+        - name
+        - address
+      additionalProperties: true
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Nombre del cliente.
+          example: Juan Pérez
+        address:
+          type: string
+          minLength: 1
+          maxLength: 255
+          description: Dirección del cliente.
+          example: Av. Siempre Viva 742
+        email:
+          type: string
+          format: email
+          description: Email opcional del cliente.
+          example: juan@example.com
+        phone:
+          type: string
+          description: Teléfono opcional del cliente.
+          example: '1122334455'
+        note:
+          type: string
+          maxLength: 500
+          description: Nota opcional del cliente.
+          example: Cliente nuevo
+    UpdateCustomerRequest:
+      type: object
+      additionalProperties: true
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Nuevo nombre del cliente.
+          example: Juan Pérez
+        address:
+          type: string
+          minLength: 1
+          maxLength: 255
+          description: Nueva dirección del cliente.
+          example: Av. Siempre Viva 742
+        email:
+          type: string
+          format: email
+          description: Nuevo email opcional del cliente.
+          example: juan@example.com
+        phone:
+          type: string
+          description: Nuevo teléfono opcional del cliente.
+          example: '1122334455'
+        note:
+          type: string
+          maxLength: 500
+          description: Nueva nota opcional del cliente.
+          example: Cliente nuevo
+    DeleteAllCustomersRequest:
+      type: object
+      required:
+        - confirmDelete
+      properties:
+        confirmDelete:
+          type: boolean
+          example: true
+    CreateCustomerSuccessResponse:
+      type: object
+      required:
+        - success
+        - message
+        - customer
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Customer creado correctamente
+        customer:
+          $ref: '#/components/schemas/Customer'
+    GetCustomersSuccessResponse:
+      type: object
+      required:
+        - success
+        - customers
+      properties:
+        success:
+          type: boolean
+          example: true
+        customers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Customer'
+    GetCustomerByIdSuccessResponse:
+      type: object
+      required:
+        - success
+        - customer
+      properties:
+        success:
+          type: boolean
+          example: true
+        customer:
+          $ref: '#/components/schemas/Customer'
+    UpdateCustomerSuccessResponse:
+      type: object
+      required:
+        - success
+        - message
+        - customer
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Customer actualizado correctamente
+        customer:
+          $ref: '#/components/schemas/Customer'
+    DeleteAllCustomersSuccessResponse:
+      type: object
+      required:
+        - success
+        - message
+        - deletedCount
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Customers eliminados correctamente
+        deletedCount:
+          type: integer
+          example: 2
     Product:
       type: object
       required:
