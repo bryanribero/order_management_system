@@ -10,6 +10,7 @@ import { validateFields } from '../middlewares/validateFields.js'
 import {
   createCustomerController,
   deleteAllCustomersController,
+  deleteCustomerByIdController,
   getCustomerByIdController,
   getCustomersController,
   updateCustomerByIdController,
@@ -65,6 +66,15 @@ router.delete(
   confirmDeleteCustomerValidator,
   validateFields,
   deleteAllCustomersController
+)
+
+router.delete(
+  '/:id',
+  customerRateLimit,
+  verifyAccessToken,
+  paramsValidator,
+  validateFields,
+  deleteCustomerByIdController
 )
 
 export default router

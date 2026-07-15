@@ -110,3 +110,20 @@ export async function deleteAllCustomers(idUser, { confirmDelete }) {
 
   return affectedRows
 }
+
+export async function deleteCustomerById(idUser, idCustomer) {
+  const [affectedRow] = await Customer.update(
+    { deleted_at: Date.now() },
+    {
+      where: {
+        id_user: idUser,
+        id_customer: idCustomer,
+        deleted_at: null,
+      },
+    }
+  )
+
+  if (affectedRow === 0) {
+    throw new NotFoundError('Customer no encontrado')
+  }
+}

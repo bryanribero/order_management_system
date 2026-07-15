@@ -1,6 +1,7 @@
 import {
   createCustomer,
   deleteAllCustomers,
+  deleteCustomerById,
   getCustomerById,
   getCustomers,
   updateCustomerById,
@@ -93,6 +94,19 @@ export async function deleteAllCustomersController(req, res, next) {
       message: 'Customers eliminados correctamente',
       deletedCount: result,
     })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export async function deleteCustomerByIdController(req, res, next) {
+  const idUser = req.user.id_user
+  const idCustomer = req.params.id
+
+  try {
+    await deleteCustomerById(idUser, idCustomer)
+
+    res.status(204).end()
   } catch (error) {
     next(error)
   }
