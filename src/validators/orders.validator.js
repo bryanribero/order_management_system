@@ -1,4 +1,4 @@
-import { body } from 'express-validator'
+import { body, query } from 'express-validator'
 
 export const createOrderValidator = [
   body('actionToken')
@@ -50,4 +50,14 @@ export const createOrderValidator = [
     .bail()
     .isInt({ gt: 0 })
     .withMessage('La cantidad debe ser un número entero positivo'),
+]
+
+export const statusOrderValidator = [
+  query('status')
+    .optional()
+    .exists({ checkFalsy: true })
+    .withMessage('El estado es obligatorio')
+    .bail()
+    .isIn(['completed', 'cancelled'])
+    .withMessage('El estado debe ser "completed" o "cancelled"'),
 ]

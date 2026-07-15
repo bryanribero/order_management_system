@@ -123,3 +123,50 @@ export async function createOrder(
     })
   })
 }
+
+export async function getOrders(idUser, { limit, page, status }) {
+  const safeLimit = limit || 20
+  const safePage = page || 1
+
+  const offset = (safePage - 1) * safeLimit
+
+  const where = {}
+
+  if (status) {
+    where.status = status
+  }
+
+  const orders = await Order.findAll({
+    where,
+    include: [
+      {
+        model: Customer,
+        as: 'customer',
+        where: {
+          id_user: idUser,
+        },
+        attributes: [],
+      },
+      {
+        model: OrderItem,
+        as: 'orderItems',
+        attributes: {
+          exclude: ['createdAt', 'updatedAt'],
+        },
+      },
+    ],
+    attributes: [
+      'id_order',
+      'id_customer',
+      'id_courier',
+      'note',
+      'status',
+      'total_amount',
+    ],
+    order: [['id_order', 'DESC']],
+    limit: safeLimit,
+    offset,
+  })
+
+  return orders
+}
