@@ -20,7 +20,7 @@ export async function createOrder(
   return createIdemPotent(actionToken, idUser, requestFingerprint, async () => {
     return sequelize.transaction(async (t) => {
       const order = await Order.create(
-        { id_user: idUser, id_customer, id_courier, note },
+        { id_customer, id_courier, note },
         { transaction: t }
       )
 

@@ -60,7 +60,7 @@ export const refreshRateLimit = rateLimit({
   },
 })
 
-export const ProductsRateLimit = rateLimit({
+export const productsRateLimit = rateLimit({
   windowMs: 60 * 1000,
   limit: isTest ? 100 : 20,
   message: {

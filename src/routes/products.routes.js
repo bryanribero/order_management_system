@@ -19,13 +19,13 @@ import {
   paramsValidator,
 } from '../validators/request.validator.js'
 import { validateFields } from '../middlewares/validateFields.js'
-import { ProductsRateLimit } from '../middlewares/rate.js'
+import { productsRateLimit } from '../middlewares/rate.js'
 
 const router = Router()
 
 router.post(
   '/',
-  ProductsRateLimit,
+  productsRateLimit,
   verifyAccessToken,
   createProductValidator,
   validateFields,
@@ -34,7 +34,7 @@ router.post(
 
 router.get(
   '/',
-  ProductsRateLimit,
+  productsRateLimit,
   verifyAccessToken,
   paginationValidator,
   validateFields,
@@ -43,7 +43,7 @@ router.get(
 
 router.get(
   '/:id',
-  ProductsRateLimit,
+  productsRateLimit,
   verifyAccessToken,
   paramsValidator,
   validateFields,
@@ -52,7 +52,7 @@ router.get(
 
 router.patch(
   '/',
-  ProductsRateLimit,
+  productsRateLimit,
   verifyAccessToken,
   queryProductValidator,
   updateProductValidator,
@@ -62,7 +62,7 @@ router.patch(
 
 router.patch(
   '/:id',
-  ProductsRateLimit,
+  productsRateLimit,
   verifyAccessToken,
   paramsValidator,
   updateProductValidator,
@@ -72,7 +72,7 @@ router.patch(
 
 router.delete(
   '/',
-  ProductsRateLimit,
+  productsRateLimit,
   verifyAccessToken,
   queryProductValidator,
   validateFields,
@@ -81,7 +81,7 @@ router.delete(
 
 router.delete(
   '/:id',
-  ProductsRateLimit,
+  productsRateLimit,
   verifyAccessToken,
   paramsValidator,
   validateFields,
