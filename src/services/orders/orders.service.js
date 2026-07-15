@@ -5,6 +5,8 @@ import Product from '../../db/models/Product.js'
 import { NotFoundError } from '../../errors/NotFoundError.js'
 import { createIdemPotent } from './utils/createIdemPotent.js'
 import { BadRequestError } from '../../errors/BadRequestError.js'
+import Customer from '../../db/models/Customer.js'
+import Courier from '../../db/models/Courier.js'
 
 export async function createOrder(
   idUser,
@@ -19,6 +21,32 @@ export async function createOrder(
 
   return createIdemPotent(actionToken, idUser, requestFingerprint, async () => {
     return sequelize.transaction(async (t) => {
+      const customer = await Customer.findOne({
+        where: {
+          id_customer,
+          id_user: idUser,
+          deleted_at: null,
+        },
+        transaction: t,
+      })
+
+      if (!customer) {
+        throw new NotFoundError('Customer no encontrado')
+      }
+
+      const courier = await Courier.findOne({
+        where: {
+          id_courier,
+          id_user: idUser,
+          deleted_at: null,
+        },
+        transaction: t,
+      })
+
+      if (!courier) {
+        throw new NotFoundError('Courier no encontrado')
+      }
+
       const order = await Order.create(
         { id_customer, id_courier, note },
         { transaction: t }
