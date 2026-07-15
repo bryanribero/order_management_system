@@ -58,8 +58,8 @@ export const statusOrderValidator = [
     .exists({ checkFalsy: true })
     .withMessage('El estado es obligatorio')
     .bail()
-    .isIn(['completed', 'cancelled'])
-    .withMessage('El estado debe ser "completed" o "cancelled"'),
+    .isIn(['pending', 'completed', 'cancelled'])
+    .withMessage('El estado debe ser "pending", "completed" o "cancelled"'),
 ]
 
 export const updateStatusOrderValidator = [

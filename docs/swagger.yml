@@ -16,6 +16,8 @@ tags:
     description: Endpoints para gestionar repartidores del usuario autenticado.
   - name: Customers
     description: Endpoints para gestionar clientes del usuario autenticado.
+  - name: Orders
+    description: Endpoints para gestionar orders del usuario autenticado.
   - name: Users
     description: Endpoints para actualizar y eliminar el usuario autenticado.
 
@@ -2322,6 +2324,350 @@ paths:
                     success: false
                     errors:
                       - message: Error interno del servidor
+  /api/orders:
+    get:
+      tags:
+        - Orders
+      summary: Obtener orders
+      description: Obtiene las orders del usuario autenticado con paginacion y filtro opcional por status.
+      operationId: getOrders
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          required: false
+          description: Numero de pagina a consultar. Si no se envia, el servicio utiliza la pagina 1.
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+            example: 1
+        - name: limit
+          in: query
+          required: false
+          description: Cantidad de orders por pagina. Si no se envia, el servicio utiliza 20. El maximo permitido es 50.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+            example: 20
+        - name: status
+          in: query
+          required: false
+          description: Estado usado para filtrar orders.
+          schema:
+            type: string
+            enum:
+              - pending
+              - completed
+              - cancelled
+            example: pending
+      responses:
+        '200':
+          description: Orders obtenidas correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetOrdersSuccessResponse'
+        '400':
+          description: Error de validacion de los query params.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '401':
+          description: No se envio un access token valido o el encabezado Authorization es invalido.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '429':
+          description: Se supero el limite de solicitudes para orders.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '500':
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+    post:
+      tags:
+        - Orders
+      summary: Crear order
+      description: Crea una order pending para el usuario autenticado, descuenta stock de los productos y calcula el total.
+      operationId: createOrder
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderRequest'
+            examples:
+              createOrder:
+                summary: Crear order
+                value:
+                  actionToken: 550e8400-e29b-41d4-a716-446655440000
+                  id_customer: 1
+                  id_courier: 1
+                  note: Entregar por la tarde
+                  items:
+                    - id_product: 1
+                      quantity: 2
+      responses:
+        '201':
+          description: Order creada correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateOrderSuccessResponse'
+        '400':
+          description: Error de validacion del cuerpo de la peticion, stock insuficiente o JSON invalido.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ValidationErrorResponse'
+                  - $ref: '#/components/schemas/GenericErrorResponse'
+        '401':
+          description: No se envio un access token valido o el encabezado Authorization es invalido.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '404':
+          description: El customer, courier o producto no existe para el usuario autenticado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '409':
+          description: Conflicto de idempotencia o item duplicado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '429':
+          description: Se supero el limite de solicitudes para orders.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '500':
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+  /api/orders/{id}:
+    get:
+      tags:
+        - Orders
+      summary: Obtener order por identificador
+      description: Obtiene una order del usuario autenticado por su identificador.
+      operationId: getOrderById
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Identificador de la order. Debe ser un numero entero mayor o igual a 1.
+          schema:
+            type: integer
+            minimum: 1
+            example: 1
+      responses:
+        '200':
+          description: Order obtenida correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetOrderByIdSuccessResponse'
+        '400':
+          description: Error de validacion del path param id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '401':
+          description: No se envio un access token valido o el encabezado Authorization es invalido.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '404':
+          description: La order no existe o no pertenece al usuario autenticado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '500':
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+    patch:
+      tags:
+        - Orders
+      summary: Actualizar order por identificador
+      description: Actualiza id_courier, note y los items de una order. Solo se permite si la order esta en estado pending. Al eliminar un orderItem se devuelve su quantity al stock del producto; al crear uno nuevo se descuenta stock y se recalcula total_amount.
+      operationId: updateOrder
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Identificador de la order. Debe ser un numero entero mayor o igual a 1.
+          schema:
+            type: integer
+            minimum: 1
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateOrderRequest'
+            examples:
+              updateOrder:
+                summary: Actualizar datos e items
+                value:
+                  id_courier: 2
+                  note: Entregar antes de las 18
+                  items:
+                    delete:
+                      - 1
+                    create:
+                      - id_product: 3
+                        quantity: 2
+      responses:
+        '200':
+          description: Order actualizada correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateOrderSuccessResponse'
+        '400':
+          description: Error de validacion del path param, cuerpo de la peticion, stock insuficiente o JSON invalido.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ValidationErrorResponse'
+                  - $ref: '#/components/schemas/GenericErrorResponse'
+        '401':
+          description: No se envio un access token valido o el encabezado Authorization es invalido.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '404':
+          description: La order, courier, producto u orderItem no existe para el usuario autenticado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '409':
+          description: La order no esta pending o se intenta crear un producto duplicado en la misma order.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '429':
+          description: Se supero el limite de solicitudes para orders.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '500':
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+  /api/orders/status/{id}:
+    patch:
+      tags:
+        - Orders
+      summary: Actualizar status de order
+      description: Actualiza el status de una order pending a completed o cancelled.
+      operationId: updateStatusOrder
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Identificador de la order. Debe ser un numero entero mayor o igual a 1.
+          schema:
+            type: integer
+            minimum: 1
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateStatusOrderRequest'
+            examples:
+              completeOrder:
+                summary: Completar order
+                value:
+                  status: completed
+      responses:
+        '200':
+          description: Estado de la order actualizado correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateStatusOrderSuccessResponse'
+        '400':
+          description: Error de validacion del path param, cuerpo de la peticion o JSON invalido.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ValidationErrorResponse'
+                  - $ref: '#/components/schemas/GenericErrorResponse'
+        '401':
+          description: No se envio un access token valido o el encabezado Authorization es invalido.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '404':
+          description: La order no existe o no pertenece al usuario autenticado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '409':
+          description: La order no esta pending.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '429':
+          description: Se supero el limite de solicitudes para orders.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '500':
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
 components:
   securitySchemes:
     bearerAuth:
@@ -2922,6 +3268,237 @@ components:
         deletedCount:
           type: integer
           example: 1
+    OrderItem:
+      type: object
+      required:
+        - id_item
+        - id_product
+        - unit_price
+        - quantity
+        - subtotal
+      properties:
+        id_item:
+          type: integer
+          format: int32
+          example: 1
+        id_product:
+          type: integer
+          format: int32
+          example: 1
+        unit_price:
+          type: string
+          pattern: '^\d+(\.\d{1,2})?$'
+          example: '125.50'
+        quantity:
+          type: integer
+          minimum: 1
+          example: 2
+        subtotal:
+          type: string
+          pattern: '^\d+(\.\d{1,2})?$'
+          example: '251.00'
+    Order:
+      type: object
+      required:
+        - id_order
+        - id_customer
+        - status
+        - total_amount
+        - orderItems
+      properties:
+        id_order:
+          type: integer
+          format: int32
+          example: 1
+        id_customer:
+          type: integer
+          format: int32
+          example: 1
+        id_courier:
+          type: integer
+          format: int32
+          nullable: true
+          example: 1
+        note:
+          type: string
+          nullable: true
+          example: Entregar por la tarde
+        status:
+          type: string
+          enum:
+            - pending
+            - cancelled
+            - completed
+          example: pending
+        total_amount:
+          type: string
+          pattern: '^\d+(\.\d{1,2})?$'
+          example: '251.00'
+        orderItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItem'
+    CreateOrderItemRequest:
+      type: object
+      required:
+        - id_product
+        - quantity
+      properties:
+        id_product:
+          type: integer
+          minimum: 1
+          example: 1
+        quantity:
+          type: integer
+          minimum: 1
+          example: 2
+    CreateOrderRequest:
+      type: object
+      required:
+        - actionToken
+        - id_customer
+        - id_courier
+        - items
+      additionalProperties: true
+      properties:
+        actionToken:
+          type: string
+          format: uuid
+          description: Token idempotente de la accion.
+          example: 550e8400-e29b-41d4-a716-446655440000
+        id_customer:
+          type: integer
+          minimum: 1
+          example: 1
+        id_courier:
+          type: integer
+          minimum: 1
+          example: 1
+        note:
+          type: string
+          maxLength: 500
+          nullable: true
+          example: Entregar por la tarde
+        items:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/CreateOrderItemRequest'
+    UpdateOrderItemsRequest:
+      type: object
+      properties:
+        delete:
+          type: array
+          minItems: 1
+          description: Identificadores de order_items a eliminar.
+          items:
+            type: integer
+            minimum: 1
+          example:
+            - 1
+        create:
+          type: array
+          minItems: 1
+          description: Items nuevos a crear en la order.
+          items:
+            $ref: '#/components/schemas/CreateOrderItemRequest'
+    UpdateOrderRequest:
+      type: object
+      additionalProperties: true
+      properties:
+        id_courier:
+          type: integer
+          minimum: 1
+          description: Nuevo courier de la order.
+          example: 2
+        note:
+          type: string
+          maxLength: 500
+          nullable: true
+          description: Nueva nota de la order.
+          example: Entregar antes de las 18
+        items:
+          $ref: '#/components/schemas/UpdateOrderItemsRequest'
+    UpdateStatusOrderRequest:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - completed
+            - cancelled
+          example: completed
+    CreateOrderSuccessResponse:
+      type: object
+      required:
+        - success
+        - message
+        - order
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Orden creada correctamente
+        order:
+          $ref: '#/components/schemas/Order'
+    GetOrdersSuccessResponse:
+      type: object
+      required:
+        - success
+        - orders
+      properties:
+        success:
+          type: boolean
+          example: true
+        orders:
+          type: array
+          items:
+            $ref: '#/components/schemas/Order'
+    GetOrderByIdSuccessResponse:
+      type: object
+      required:
+        - success
+        - order
+      properties:
+        success:
+          type: boolean
+          example: true
+        order:
+          $ref: '#/components/schemas/Order'
+    UpdateOrderSuccessResponse:
+      type: object
+      required:
+        - success
+        - message
+        - order
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Order actualizado correctamente
+        order:
+          $ref: '#/components/schemas/Order'
+    UpdateStatusOrderSuccessResponse:
+      type: object
+      required:
+        - success
+        - message
+        - order
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Estado de la orden actualizado correctamente
+        order:
+          $ref: '#/components/schemas/Order'
     RefreshSuccessResponse:
       type: object
       required:

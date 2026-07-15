@@ -402,3 +402,78 @@ El endpoint `DELETE /api/products/:id` acepta el siguiente path param:
 | Path param | Descripción                                                              |
 | ---------- | ------------------------------------------------------------------------ |
 | `id`       | Identificador del producto. Debe ser un número entero mayor o igual a 1. |
+
+<br>
+
+## Endpoints de orders
+
+Los endpoints de orders disponibles actualmente son:
+
+| Metodo | Endpoint                 | Descripcion                                                                                                        |
+| ------ | ------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| POST   | `/api/orders`            | Crea una order asociada al usuario autenticado, descuenta stock de productos y calcula el total.                   |
+| GET    | `/api/orders`            | Obtiene las orders del usuario autenticado con paginacion y filtro opcional por estado.                            |
+| GET    | `/api/orders/:id`        | Obtiene una order del usuario autenticado por su identificador.                                                    |
+| PATCH  | `/api/orders/status/:id` | Actualiza el estado de una order `pending` a `completed` o `cancelled`.                                            |
+| PATCH  | `/api/orders/:id`        | Actualiza `id_courier`, `note` y los items de una order. Solo se permite cuando la order esta en estado `pending`. |
+
+Los endpoints de orders requieren un `accessToken` valido en el encabezado `Authorization` con el esquema `Bearer`.
+
+<br>
+
+### Query params para `GET /api/orders`
+
+| Query param | Descripcion                                               | Valor por defecto | Limite                              |
+| ----------- | --------------------------------------------------------- | ----------------- | ----------------------------------- |
+| `page`      | Numero de pagina a consultar. Debe ser mayor o igual a 1. | `1`               | -                                   |
+| `limit`     | Cantidad de orders por pagina. Debe estar entre 1 y 50.   | `20`              | `50`                                |
+| `status`    | Estado usado para filtrar orders.                         | -                 | `pending`, `completed`, `cancelled` |
+
+<br>
+
+### Path params para `/api/orders/:id` y `/api/orders/status/:id`
+
+| Path param | Descripcion                                                             |
+| ---------- | ----------------------------------------------------------------------- |
+| `id`       | Identificador de la order. Debe ser un numero entero mayor o igual a 1. |
+
+<br>
+
+### Body para `POST /api/orders`
+
+| Campo         | Descripcion                                                      |
+| ------------- | ---------------------------------------------------------------- |
+| `actionToken` | UUID usado para idempotencia de la creacion. Obligatorio.        |
+| `id_customer` | Identificador del customer de la order. Obligatorio.             |
+| `id_courier`  | Identificador del courier asignado a la order. Obligatorio.      |
+| `note`        | Nota adicional de la order. Opcional.                            |
+| `items`       | Array de productos de la order. Debe tener al menos un elemento. |
+
+Cada elemento de `items` debe incluir:
+
+| Campo        | Descripcion                                           |
+| ------------ | ----------------------------------------------------- |
+| `id_product` | Identificador del producto. Obligatorio.              |
+| `quantity`   | Cantidad solicitada del producto. Debe ser mayor a 0. |
+
+<br>
+
+### Body para `PATCH /api/orders/:id`
+
+| Campo        | Descripcion                                                                                |
+| ------------ | ------------------------------------------------------------------------------------------ |
+| `id_courier` | Nuevo courier asignado a la order. Opcional.                                               |
+| `note`       | Nueva nota de la order. Opcional.                                                          |
+| `items`      | Objeto opcional con operaciones sobre items: `delete` para eliminar y `create` para crear. |
+
+El campo `items.delete` debe ser un array con identificadores de `order_items` a eliminar. Cuando se elimina un item, la cantidad vuelve al stock del producto correspondiente.
+
+El campo `items.create` debe ser un array de items nuevos con `id_product` y `quantity`. Cuando se crea un item, se descuenta stock del producto y se recalcula el `total_amount` de la order.
+
+<br>
+
+### Body para `PATCH /api/orders/status/:id`
+
+| Campo    | Descripcion                                                    |
+| -------- | -------------------------------------------------------------- |
+| `status` | Nuevo estado de la order. Puede ser `completed` o `cancelled`. |
