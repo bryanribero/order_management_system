@@ -8,9 +8,13 @@ import {
 import { validateFields } from '../middlewares/validateFields.js'
 import {
   createOrderController,
+  getOrderByIdController,
   getOrdersController,
 } from '../controllers/orders.controller.js'
-import { paginationValidator } from '../validators/request.validator.js'
+import {
+  paginationValidator,
+  paramsValidator,
+} from '../validators/request.validator.js'
 
 const router = Router()
 
@@ -31,6 +35,15 @@ router.get(
   statusOrderValidator,
   validateFields,
   getOrdersController
+)
+
+router.get(
+  '/:id',
+  orderRateLimit,
+  verifyAccessToken,
+  paramsValidator,
+  validateFields,
+  getOrderByIdController
 )
 
 export default router

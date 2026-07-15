@@ -105,7 +105,7 @@ export async function createOrder(
             model: OrderItem,
             as: 'orderItems',
             attributes: {
-              exclude: ['createdAt', 'updatedAt'],
+              exclude: ['createdAt', 'updatedAt', 'id_order'],
             },
           },
         ],
@@ -151,7 +151,7 @@ export async function getOrders(idUser, { limit, page, status }) {
         model: OrderItem,
         as: 'orderItems',
         attributes: {
-          exclude: ['createdAt', 'updatedAt'],
+          exclude: ['createdAt', 'updatedAt', 'id_order'],
         },
       },
     ],
@@ -169,4 +169,39 @@ export async function getOrders(idUser, { limit, page, status }) {
   })
 
   return orders
+}
+
+export async function getOrderById(idUser, idOrder) {
+  const order = await Order.findOne({
+    where: {
+      id_order: idOrder,
+    },
+    include: [
+      {
+        model: Customer,
+        as: 'customer',
+        where: { id_user: idUser },
+        attributes: [],
+      },
+      {
+        model: OrderItem,
+        as: 'orderItems',
+        attributes: { exclude: ['createdAt', 'updatedAt', 'id_order'] },
+      },
+    ],
+    attributes: [
+      'id_order',
+      'id_customer',
+      'id_courier',
+      'note',
+      'status',
+      'total_amount',
+    ],
+  })
+
+  if (!order) {
+    throw new NotFoundError('Order no encontrado')
+  }
+
+  return order
 }

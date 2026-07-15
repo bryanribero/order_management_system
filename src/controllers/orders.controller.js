@@ -1,4 +1,8 @@
-import { createOrder, getOrders } from '../services/orders/orders.service.js'
+import {
+  createOrder,
+  getOrderById,
+  getOrders,
+} from '../services/orders/orders.service.js'
 
 export async function createOrderController(req, res, next) {
   const idUser = req.user.id_user
@@ -27,6 +31,22 @@ export async function getOrdersController(req, res, next) {
     res.status(200).json({
       success: true,
       orders: result,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export async function getOrderByIdController(req, res, next) {
+  const idUser = req.user.id_user
+  const idOrder = req.params.id
+
+  try {
+    const result = await getOrderById(idUser, idOrder)
+
+    res.status(200).json({
+      success: true,
+      order: result,
     })
   } catch (error) {
     next(error)
