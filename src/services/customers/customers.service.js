@@ -1,4 +1,5 @@
 import Customer from '../../db/models/Customer.js'
+import { AuthError } from '../../errors/AuthError.js'
 import { NotFoundError } from '../../errors/NotFoundError.js'
 
 export async function createCustomer(
@@ -84,4 +85,28 @@ export async function updateCustomerById(
   }
 
   return editCustomer
+}
+
+export async function deleteAllCustomers(idUser, { confirmDelete }) {
+  if (!confirmDelete) {
+    throw new AuthError(
+      'Acción no autorizada: se requiere confirmación explícita para eliminar todos los clientes'
+    )
+  }
+
+  const [affectedRows] = await Customer.update(
+    { deleted_at: Date.now() },
+    {
+      where: {
+        id_user: idUser,
+        deleted_at: null,
+      },
+    }
+  )
+
+  if (affectedRows === 0) {
+    throw new NotFoundError('Customer no encontrado')
+  }
+
+  return affectedRows
 }

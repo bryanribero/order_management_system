@@ -79,3 +79,12 @@ export const bodyUpdateCustomerValidate = [
     .isLength({ max: 500 })
     .withMessage('El campo note acepta un máximo de 500 caracteres'),
 ]
+
+export const confirmDeleteCustomerValidator = [
+  body('confirmDelete')
+    .notEmpty()
+    .withMessage('El campo confirmDelete es obligatorio')
+    .bail()
+    .isBoolean()
+    .withMessage('El campo confirmDelete tiene que ser un booleano'),
+]

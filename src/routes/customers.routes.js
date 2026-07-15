@@ -4,10 +4,12 @@ import { verifyAccessToken } from '../middlewares/verifyAccessToken.js'
 import {
   bodyCustomerValidate,
   bodyUpdateCustomerValidate,
+  confirmDeleteCustomerValidator,
 } from '../validators/customers.validator.js'
 import { validateFields } from '../middlewares/validateFields.js'
 import {
   createCustomerController,
+  deleteAllCustomersController,
   getCustomerByIdController,
   getCustomersController,
   updateCustomerByIdController,
@@ -54,6 +56,15 @@ router.patch(
   bodyUpdateCustomerValidate,
   validateFields,
   updateCustomerByIdController
+)
+
+router.delete(
+  '/all',
+  customerRateLimit,
+  verifyAccessToken,
+  confirmDeleteCustomerValidator,
+  validateFields,
+  deleteAllCustomersController
 )
 
 export default router
