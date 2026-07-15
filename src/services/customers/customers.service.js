@@ -1,4 +1,5 @@
 import Customer from '../../db/models/Customer.js'
+import { NotFoundError } from '../../errors/NotFoundError.js'
 
 export async function createCustomer(
   idUser,
@@ -33,4 +34,54 @@ export async function getCustomers(idUser, { page, limit }) {
   })
 
   return customer
+}
+
+export async function getCustomerById(idUser, idCustomer) {
+  const customer = await Customer.findOne({
+    where: {
+      id_user: idUser,
+      id_customer: idCustomer,
+      deleted_at: null,
+    },
+    attributes: ['id_customer', 'name', 'address', 'email', 'phone', 'note'],
+  })
+
+  if (!customer) {
+    throw new NotFoundError('Customer no encontrado')
+  }
+
+  return customer
+}
+
+export async function updateCustomerById(
+  idUser,
+  idCustomer,
+  { name, address, email, phone, note }
+) {
+  const [affectedRow, customer] = await Customer.update(
+    { name, address, email, phone, note },
+    {
+      where: {
+        id_user: idUser,
+        id_customer: idCustomer,
+        deleted_at: null,
+      },
+      returning: true,
+    }
+  )
+
+  if (affectedRow === 0) {
+    throw new NotFoundError('Customer no encontrado')
+  }
+
+  const editCustomer = {
+    id_customer: customer[0].id_customer,
+    name: customer[0].name,
+    address: customer[0].address,
+    email: customer[0].email,
+    phone: customer[0].phone,
+    note: customer[0].note,
+  }
+
+  return editCustomer
 }

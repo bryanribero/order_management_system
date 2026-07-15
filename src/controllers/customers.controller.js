@@ -1,6 +1,8 @@
 import {
   createCustomer,
+  getCustomerById,
   getCustomers,
+  updateCustomerById,
 } from '../services/customers/customers.service.js'
 
 export async function createCustomerController(req, res, next) {
@@ -38,6 +40,40 @@ export async function getCustomersController(req, res, next) {
     res.status(200).json({
       success: true,
       customers: result,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export async function getCustomerByIdController(req, res, next) {
+  const idUser = req.user.id_user
+  const idCustomer = req.params.id
+
+  try {
+    const result = await getCustomerById(idUser, idCustomer)
+
+    res.status(200).json({
+      success: true,
+      customer: result,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export async function updateCustomerByIdController(req, res, next) {
+  const idUser = req.user.id_user
+  const idCustomer = req.params.id
+  const setter = req.body
+
+  try {
+    const result = await updateCustomerById(idUser, idCustomer, setter)
+
+    res.status(200).json({
+      success: true,
+      message: 'Customer actualizado correctamente',
+      customer: result,
     })
   } catch (error) {
     next(error)
