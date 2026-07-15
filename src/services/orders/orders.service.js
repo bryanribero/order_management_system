@@ -7,6 +7,7 @@ import { createIdemPotent } from './utils/createIdemPotent.js'
 import { BadRequestError } from '../../errors/BadRequestError.js'
 import Customer from '../../db/models/Customer.js'
 import Courier from '../../db/models/Courier.js'
+import { ConflictError } from '../../errors/ConflictError.js'
 
 export async function createOrder(
   idUser,
@@ -202,6 +203,50 @@ export async function getOrderById(idUser, idOrder) {
   if (!order) {
     throw new NotFoundError('Order no encontrado')
   }
+
+  return order
+}
+
+export async function updateStatusOrder(idUser, idOrder, { status }) {
+  const order = await Order.findOne({
+    where: {
+      id_order: idOrder,
+    },
+    include: [
+      {
+        model: Customer,
+        as: 'customer',
+        where: { id_user: idUser },
+        attributes: [],
+      },
+      {
+        model: OrderItem,
+        as: 'orderItems',
+        attributes: { exclude: ['createdAt', 'updatedAt', 'id_order'] },
+      },
+    ],
+    attributes: [
+      'id_order',
+      'id_customer',
+      'id_courier',
+      'note',
+      'status',
+      'total_amount',
+    ],
+  })
+
+  if (!order) {
+    throw new NotFoundError('Order no encontrado')
+  }
+
+  if (order.status !== 'pending') {
+    throw new ConflictError(
+      'Solo las orders con estado "pending" pueden actualizarse'
+    )
+  }
+
+  order.status = status
+  await order.save()
 
   return order
 }

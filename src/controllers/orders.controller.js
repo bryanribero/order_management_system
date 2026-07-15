@@ -2,6 +2,7 @@ import {
   createOrder,
   getOrderById,
   getOrders,
+  updateStatusOrder,
 } from '../services/orders/orders.service.js'
 
 export async function createOrderController(req, res, next) {
@@ -46,6 +47,24 @@ export async function getOrderByIdController(req, res, next) {
 
     res.status(200).json({
       success: true,
+      order: result,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export async function statusUpdateOrderController(req, res, next) {
+  const idUser = req.user.id_user
+  const idOrder = req.params.id
+  const status = req.body
+
+  try {
+    const result = await updateStatusOrder(idUser, idOrder, status)
+
+    res.status(200).json({
+      success: true,
+      message: 'Estado de la orden actualizado correctamente',
       order: result,
     })
   } catch (error) {

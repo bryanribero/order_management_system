@@ -4,12 +4,14 @@ import { verifyAccessToken } from '../middlewares/verifyAccessToken.js'
 import {
   createOrderValidator,
   statusOrderValidator,
+  updateStatusOrderValidator,
 } from '../validators/orders.validator.js'
 import { validateFields } from '../middlewares/validateFields.js'
 import {
   createOrderController,
   getOrderByIdController,
   getOrdersController,
+  statusUpdateOrderController,
 } from '../controllers/orders.controller.js'
 import {
   paginationValidator,
@@ -44,6 +46,16 @@ router.get(
   paramsValidator,
   validateFields,
   getOrderByIdController
+)
+
+router.patch(
+  '/status/:id',
+  orderRateLimit,
+  verifyAccessToken,
+  paramsValidator,
+  updateStatusOrderValidator,
+  validateFields,
+  statusUpdateOrderController
 )
 
 export default router
