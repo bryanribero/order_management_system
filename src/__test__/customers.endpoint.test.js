@@ -66,7 +66,9 @@ describe('Customer Endpoints', () => {
         })
       )
 
-      const customerDB = await Customer.findByPk(response.body.customer.id_customer)
+      const customerDB = await Customer.findByPk(
+        response.body.customer.id_customer
+      )
       expect(customerDB).not.toBeNull()
       expect(customerDB.id_user).toBe(user.id_user)
     })

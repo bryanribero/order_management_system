@@ -132,12 +132,16 @@ describe('Customer Service', () => {
         address: 'Calle original',
       })
 
-      const updated = await updateCustomerById(user.id_user, customer.id_customer, {
-        name: 'Cliente actualizado',
-        address: 'Calle actualizada',
-        phone: '5551234',
-        note: 'Cambio de dirección',
-      })
+      const updated = await updateCustomerById(
+        user.id_user,
+        customer.id_customer,
+        {
+          name: 'Cliente actualizado',
+          address: 'Calle actualizada',
+          phone: '5551234',
+          note: 'Cambio de dirección',
+        }
+      )
 
       expect(updated).toMatchObject({
         id_customer: customer.id_customer,
@@ -180,7 +184,9 @@ describe('Customer Service', () => {
         where: { id_user: user.id_user },
       })
 
-      expect(remainingCustomers.every((customer) => customer.deleted_at)).toBe(true)
+      expect(remainingCustomers.every((customer) => customer.deleted_at)).toBe(
+        true
+      )
     })
 
     it('debería rechazar la operación si confirmDelete es falso', async () => {

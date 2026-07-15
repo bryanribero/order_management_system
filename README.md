@@ -305,14 +305,14 @@ Los endpoints de couriers requieren un `accessToken` válido en el encabezado `A
 
 Los endpoints de customers disponibles actualmente son:
 
-| Método | Endpoint            | Descripción                                                                                          |
-| ------ | ------------------- | ---------------------------------------------------------------------------------------------------- |
-| POST   | `/api/customers`    | Crea un customer asociado al usuario autenticado. Los campos `name` y `address` son obligatorios.    |
-| GET    | `/api/customers`    | Obtiene los customers activos del usuario autenticado con paginación.                                 |
-| GET    | `/api/customers/:id`| Obtiene un customer del usuario autenticado por su identificador.                                     |
-| PATCH  | `/api/customers/:id`| Actualiza un customer del usuario autenticado por su identificador.                                   |
-| DELETE | `/api/customers/all`| Marca como eliminados lógicamente todos los customers activos del usuario autenticado cuando se confirma la acción. |
-| DELETE | `/api/customers/:id`| Marca como eliminado lógicamente un customer del usuario autenticado por su identificador.          |
+| Método | Endpoint             | Descripción                                                                                                         |
+| ------ | -------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| POST   | `/api/customers`     | Crea un customer asociado al usuario autenticado. Los campos `name` y `address` son obligatorios.                   |
+| GET    | `/api/customers`     | Obtiene los customers activos del usuario autenticado con paginación.                                               |
+| GET    | `/api/customers/:id` | Obtiene un customer del usuario autenticado por su identificador.                                                   |
+| PATCH  | `/api/customers/:id` | Actualiza un customer del usuario autenticado por su identificador.                                                 |
+| DELETE | `/api/customers/all` | Marca como eliminados lógicamente todos los customers activos del usuario autenticado cuando se confirma la acción. |
+| DELETE | `/api/customers/:id` | Marca como eliminado lógicamente un customer del usuario autenticado por su identificador.                          |
 
 Los customers eliminados lógicamente se excluyen de las consultas activas y no se eliminan físicamente de la base de datos.
 
@@ -322,22 +322,22 @@ Los endpoints de customers requieren un `accessToken` válido en el encabezado `
 
 ### Query params para `GET /api/customers`
 
-| Query param | Descripción                                               | Valor por defecto | Límite |
-| ----------- | --------------------------------------------------------- | ----------------- | ------ |
-| `page`      | Número de página a consultar. Debe ser mayor o igual a 1. | `1`               | -      |
+| Query param | Descripción                                                | Valor por defecto | Límite |
+| ----------- | ---------------------------------------------------------- | ----------------- | ------ |
+| `page`      | Número de página a consultar. Debe ser mayor o igual a 1.  | `1`               | -      |
 | `limit`     | Cantidad de customers por página. Debe estar entre 1 y 50. | `20`              | `50`   |
 
 <br>
 
 ### Body para `POST /api/customers` y `PATCH /api/customers/:id`
 
-| Campo    | Descripción                                          |
-| -------- | ---------------------------------------------------- |
-| `name`   | Nombre del cliente. Obligatorio en creación.         |
-| `address`| Dirección del cliente. Obligatoria en creación.      |
-| `email`  | Email opcional del cliente.                         |
-| `phone`  | Teléfono opcional del cliente.                      |
-| `note`   | Nota adicional del cliente. Opcional.               |
+| Campo     | Descripción                                     |
+| --------- | ----------------------------------------------- |
+| `name`    | Nombre del cliente. Obligatorio en creación.    |
+| `address` | Dirección del cliente. Obligatoria en creación. |
+| `email`   | Email opcional del cliente.                     |
+| `phone`   | Teléfono opcional del cliente.                  |
+| `note`    | Nota adicional del cliente. Opcional.           |
 
 <br>
 
