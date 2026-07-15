@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { orderRateLimit } from '../middlewares/rate.js'
 import { verifyAccessToken } from '../middlewares/verifyAccessToken.js'
 import {
+  bodyUpdateOrderValidator,
   createOrderValidator,
   statusOrderValidator,
   updateStatusOrderValidator,
@@ -12,6 +13,7 @@ import {
   getOrderByIdController,
   getOrdersController,
   statusUpdateOrderController,
+  updateOrderController,
 } from '../controllers/orders.controller.js'
 import {
   paginationValidator,
@@ -56,6 +58,16 @@ router.patch(
   updateStatusOrderValidator,
   validateFields,
   statusUpdateOrderController
+)
+
+router.patch(
+  '/:id',
+  orderRateLimit,
+  verifyAccessToken,
+  paramsValidator,
+  bodyUpdateOrderValidator,
+  validateFields,
+  updateOrderController
 )
 
 export default router
