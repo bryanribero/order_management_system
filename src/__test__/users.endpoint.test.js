@@ -94,14 +94,14 @@ describe('PATCH /api/users', () => {
   })
 })
 
-describe('POST /api/users/delete', () => {
+describe('DELETE /api/users/delete', () => {
   const endpoint = '/api/users/delete'
 
   it('debe eliminar el usuario autenticado cuando la contraseña es correcta', async () => {
     const { user, accessToken } = await createAuthenticatedUser()
 
     const response = await request(app)
-      .post(endpoint)
+      .delete(endpoint)
       .set('Authorization', `Bearer ${accessToken}`)
       .send({ password: '1234567A' })
 
@@ -116,7 +116,7 @@ describe('POST /api/users/delete', () => {
     const { accessToken } = await createAuthenticatedUser()
 
     const response = await request(app)
-      .post(endpoint)
+      .delete(endpoint)
       .set('Authorization', `Bearer ${accessToken}`)
       .send({ password: 'Incorrecta123' })
 
@@ -135,7 +135,7 @@ describe('POST /api/users/delete', () => {
     const { accessToken } = await createAuthenticatedUser()
 
     const response = await request(app)
-      .post(endpoint)
+      .delete(endpoint)
       .set('Authorization', `Bearer ${accessToken}`)
       .send({})
 

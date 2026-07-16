@@ -190,7 +190,7 @@ describe('PATCH /orders/:id', () => {
           create: [
             {
               id_product: 'abc',
-              quantity: 0,
+              quantity: 2.2,
             },
           ],
         },
