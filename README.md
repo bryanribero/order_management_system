@@ -1,5 +1,7 @@
 # Sistema gestor de pedidos
 
+[English version](README.en.md)
+
 ## Descripción
 
 Sistema gestor de pedidos orientado a pequeños comercios o emprendimientos, diseñado para administrar clientes, productos, repartidores y órdenes desde una API centralizada. Permite registrar pedidos con múltiples elementos, asignar responsables de entrega, controlar estados como pendiente, cancelado o completado, y conservar un historial confiable de las operaciones realizadas.
