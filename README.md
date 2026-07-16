@@ -216,9 +216,10 @@ La documentación interactiva de la API está disponible mediante Swagger UI.
 
 Swagger permite visualizar los endpoints disponibles, sus parámetros, cuerpos de solicitud y posibles respuestas.
 
-| Entorno          | URL                              |
-| ---------------- | -------------------------------- |
-| Desarrollo local | <http://localhost:3000/api-docs> |
+| Entorno          | URL                                                                |
+| ---------------- | ------------------------------------------------------------------ |
+| Desarrollo local | <http://localhost:3000/api-docs>                                   |
+| Producción       | <https://order-management-system-995e.onrender.com/api-docs>       |
 
 Los archivos relacionados con la documentación se encuentran en:
 
@@ -250,7 +251,7 @@ Los endpoints de usuario disponibles actualmente son:
 | Método | Endpoint            | Descripción                                                          |
 | ------ | ------------------- | -------------------------------------------------------------------- |
 | PATCH  | `/api/users`        | Actualiza el email y/o contraseña del usuario autenticado.           |
-| POST   | `/api/users/delete` | Elimina el usuario autenticado cuando se envía la contraseña actual. |
+| DELETE | `/api/users/delete` | Elimina el usuario autenticado cuando se envía la contraseña actual. |
 
 Ambos endpoints requieren un `accessToken` válido en el encabezado `Authorization` con el esquema `Bearer`.
 

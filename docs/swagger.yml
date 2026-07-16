@@ -6,6 +6,8 @@ info:
 servers:
   - url: http://localhost:3000
     description: Servidor local
+  - url: https://order-management-system-995e.onrender.com
+    description: Servidor de producción
 
 tags:
   - name: Auth
@@ -520,7 +522,7 @@ paths:
                     errors:
                       - message: Error interno del servidor
   /api/users/delete:
-    post:
+    delete:
       tags:
         - Users
       summary: Eliminar usuario autenticado
@@ -2721,6 +2723,32 @@ components:
           pattern: '^\S+$'
           description: Password del usuario. Debe ser texto, no puede contener espacios y debe incluir al menos una letra mayúscula.
           example: passwordTest
+    UpdateUserRequest:
+      type: object
+      additionalProperties: true
+      minProperties: 1
+      properties:
+        email:
+          type: string
+          format: email
+          description: Nuevo email del usuario.
+          example: usuario-actualizado@example.com
+        password:
+          type: string
+          minLength: 8
+          maxLength: 16
+          pattern: '^\S+$'
+          description: Nueva contraseña del usuario. Debe ser texto, no puede contener espacios y debe incluir al menos una letra mayúscula.
+          example: NewPass123
+    DeleteUserRequest:
+      type: object
+      required:
+        - password
+      properties:
+        password:
+          type: string
+          description: Contraseña actual del usuario autenticado.
+          example: 1234567A
     User:
       type: object
       required:
