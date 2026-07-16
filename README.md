@@ -66,8 +66,10 @@ src/
 Herramientas necesarias antes de instalar el proyecto:
 
 - Node.js
-- pnpm
+- pnpm `10.33.3` o compatible
 - PostgreSQL
+- Una base de datos PostgreSQL creada para desarrollo y otra para pruebas
+- Una URL de conexión PostgreSQL para producción, por ejemplo en Render
 
 <br>
 
@@ -116,6 +118,18 @@ JWT_ACCESS_SECRET="Clave secreta para firmar y verificar tokens de acceso para p
 JWT_REFRESH_SECRET="Clave secreta para firmar y verificar tokens de refresco para pruebas"
 ```
 
+### `.env.prod`
+
+Archivo utilizado para ejecutar el servidor o las migraciones contra la base de datos de producción.
+
+```env
+DATABASE_URL="URL de conexión PostgreSQL de producción"
+JWT_ACCESS_SECRET="Clave secreta para firmar y verificar tokens de acceso para producción"
+JWT_REFRESH_SECRET="Clave secreta para firmar y verificar tokens de refresco para producción"
+```
+
+> **Nota:** en producción el proyecto utiliza `DATABASE_URL` y conexión SSL, según la configuración de Sequelize.
+
 <br>
 
 ## Ejecución del proyecto
@@ -134,23 +148,41 @@ http://localhost:3000
 
 El puerto puede configurarse mediante la variable de entorno `PORT`.
 
+Para ejecutar el proyecto en modo producción:
+
+```bash
+pnpm start
+```
+
+Este comando inicia el servidor con `NODE_ENV=prod`, por lo que carga las variables de `.env` y `.env.prod`.
+
+La API desplegada en producción está disponible en:
+
+```text
+https://order-management-system-995e.onrender.com
+```
+
 <br>
 
 ## Scripts disponibles
 
 Tabla con los comandos disponibles del proyecto.
 
-| Comando                      | Descripción                                                            |
-| ---------------------------- | ---------------------------------------------------------------------- |
-| `pnpm dev`                   | Inicia el servidor en modo desarrollo usando Nodemon.                  |
-| `pnpm test`                  | Ejecuta todas las pruebas.                                             |
-| `pnpm migration-create`      | Crea una nueva migración con Sequelize CLI.                            |
-| `pnpm migrate-dev`           | Ejecuta las migraciones pendientes en el entorno de desarrollo.        |
-| `pnpm migrate-test`          | Ejecuta las migraciones pendientes en el entorno de pruebas.           |
-| `pnpm undo-migrate-dev`      | Revierte la última migración ejecutada en el entorno de desarrollo.    |
-| `pnpm undo-migrate-test`     | Revierte la última migración ejecutada en el entorno de pruebas.       |
-| `pnpm all-undo-migrate-dev`  | Revierte todas las migraciones ejecutadas en el entorno de desarrollo. |
-| `pnpm all-undo-migrate-test` | Revierte todas las migraciones ejecutadas en el entorno de pruebas.    |
+| Comando                           | Descripción                                                                 |
+| --------------------------------- | --------------------------------------------------------------------------- |
+| `pnpm dev`                        | Inicia el servidor en modo desarrollo usando Nodemon.                       |
+| `pnpm start`                      | Inicia el servidor en modo producción con `NODE_ENV=prod`.                  |
+| `pnpm test`                       | Ejecuta todas las pruebas automatizadas con Jest y Supertest.               |
+| `pnpm migration-create -- <name>` | Crea una nueva migración con Sequelize CLI.                                 |
+| `pnpm migrate-dev`                | Ejecuta las migraciones pendientes en la base de datos de desarrollo.       |
+| `pnpm migrate-test`               | Ejecuta las migraciones pendientes en la base de datos de pruebas.          |
+| `pnpm migrate-prod`               | Ejecuta las migraciones pendientes en la base de datos de producción.       |
+| `pnpm undo-migrate-dev`           | Revierte la última migración ejecutada en desarrollo.                       |
+| `pnpm undo-migrate-test`          | Revierte la última migración ejecutada en pruebas.                          |
+| `pnpm undo-migrate-prod`          | Revierte la última migración ejecutada en producción.                       |
+| `pnpm all-undo-migrate-dev`       | Revierte todas las migraciones ejecutadas en desarrollo.                    |
+| `pnpm all-undo-migrate-test`      | Revierte todas las migraciones ejecutadas en pruebas.                       |
+| `pnpm all-undo-migrate-prod`      | Revierte todas las migraciones ejecutadas en producción. Usar con cuidado.  |
 
 <br>
 
@@ -160,19 +192,35 @@ El proyecto utiliza PostgreSQL como sistema de gestión de base de datos y Seque
 
 La administración del esquema de la base de datos y la ejecución de migraciones se realiza mediante Sequelize CLI.
 
-### Entornos de desarrollo y pruebas
+### Ambientes soportados
 
-Para los entornos de desarrollo y pruebas se requiere una instancia de PostgreSQL accesible y la creación previa de las bases de datos correspondientes a cada entorno.
+| Ambiente    | Variables utilizadas        | Comando de migración |
+| ----------- | --------------------------- | -------------------- |
+| Desarrollo  | `.env` y `.env.dev`         | `pnpm migrate-dev`   |
+| Pruebas     | `.env` y `.env.test`        | `pnpm migrate-test`  |
+| Producción  | `.env` y `.env.prod`        | `pnpm migrate-prod`  |
 
-Una vez configuradas las variables de entorno, las migraciones pueden ejecutarse utilizando los scripts disponibles en el proyecto.
+Para desarrollo y pruebas se requiere una instancia de PostgreSQL accesible y la creación previa de las bases de datos correspondientes a cada ambiente.
 
-> **Nota:** los archivos generados por Sequelize CLI utilizan sintaxis CommonJS. Por este motivo, las migraciones, seeders y archivos de configuración generados deben utilizar la extensión `.cjs`.
+En producción, Sequelize utiliza `DATABASE_URL` con SSL habilitado. Antes de desplegar o iniciar el servidor productivo, verificar que la variable exista y que las migraciones hayan sido ejecutadas.
 
-Para ejecutar las migraciones:
+Para ejecutar migraciones según el ambiente:
 
 ```bash
-pnpm migrate-{entorno}
+pnpm migrate-dev
+pnpm migrate-test
+pnpm migrate-prod
 ```
+
+Para revertir migraciones:
+
+```bash
+pnpm undo-migrate-dev
+pnpm undo-migrate-test
+pnpm undo-migrate-prod
+```
+
+> **Nota:** los archivos generados por Sequelize CLI utilizan sintaxis CommonJS. Por este motivo, las migraciones, seeders y archivos de configuración generados deben utilizar la extensión `.cjs`.
 
 <br>
 
@@ -207,6 +255,25 @@ El proyecto implementa diferentes medidas de seguridad para proteger la API y lo
 - Configuración de CORS.
 - Validación de datos utilizando Express Validator.
 - Manejo centralizado de errores.
+
+<br>
+
+## Despliegue en producción
+
+El proyecto está preparado para ejecutarse en producción usando `NODE_ENV=prod`.
+
+Flujo recomendado para un despliegue:
+
+1. Configurar las variables `DATABASE_URL`, `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET` y `PORT` en el proveedor de hosting.
+2. Instalar dependencias con `pnpm install`.
+3. Ejecutar las migraciones pendientes con `pnpm migrate-prod`.
+4. Iniciar el servidor con `pnpm start`.
+
+La instancia de producción actual está desplegada en Render:
+
+```text
+https://order-management-system-995e.onrender.com
+```
 
 <br>
 
