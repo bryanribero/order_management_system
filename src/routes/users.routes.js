@@ -22,7 +22,7 @@ router.patch(
   updateUserController
 )
 
-router.post(
+router.delete(
   '/delete',
   userRateLimit,
   verifyAccessToken,
