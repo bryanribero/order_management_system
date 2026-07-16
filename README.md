@@ -37,27 +37,102 @@ Las funcionalidades principales incluyen:
 
 ## Arquitectura del proyecto
 
-El proyecto sigue una arquitectura basada en capas, con separación de responsabilidades.
+El proyecto sigue una arquitectura basada en capas, con separación de responsabilidades por dominio.
+
+El flujo principal de una solicitud es:
 
 ```txt
-docs/
-src/
-├── errors/
-├── controllers/
-├── services/
-│   ├── auth/
-│   │   └── utils/
-│   └── products/
-├── middlewares/
-├── routes/
-├── db/
-│   ├── config/
-│   ├── models/
-│   ├── migrations/
-│   └── seeders/
-├── __test__/
-└── validators/
+Request HTTP
+  -> routes
+  -> middlewares
+  -> validators
+  -> controllers
+  -> services
+  -> models / database
+  -> response
 ```
+
+Cada capa tiene una responsabilidad concreta:
+
+- `routes/`: define los endpoints y conecta middlewares, validadores y controladores.
+- `middlewares/`: centraliza validación de tokens, rate limiting, validación de campos y manejo global de errores.
+- `validators/`: contiene las reglas de validación de entrada para body, params y query params.
+- `controllers/`: recibe la solicitud validada, extrae datos de `req` y delega la lógica de negocio.
+- `services/`: concentra la lógica de negocio por módulo, incluyendo operaciones transaccionales y reglas propias del dominio.
+- `db/models/`: define los modelos Sequelize y sus relaciones.
+- `db/migrations/`: versiona los cambios de estructura de la base de datos.
+- `errors/`: define errores personalizados para respuestas controladas.
+- `__test__/`: contiene pruebas de endpoints, servicios, middlewares y funciones utilitarias.
+- `docs/`: contiene la especificación Swagger/OpenAPI de la API.
+
+```txt
+.
+├── app.js
+├── server.js
+├── env.js
+├── docs/
+│   └── swagger.yml
+└── src/
+    ├── controllers/
+    ├── db/
+    │   ├── config/
+    │   ├── migrations/
+    │   └── models/
+    ├── errors/
+    ├── middlewares/
+    ├── routes/
+    ├── services/
+    │   ├── auth/
+    │   │   └── utils/
+    │   ├── couriers/
+    │   ├── customers/
+    │   ├── orders/
+    │   │   └── utils/
+    │   ├── products/
+    │   └── users/
+    ├── validators/
+    └── __test__/
+```
+
+<br>
+
+## Modelo de datos y relaciones
+
+El modelo de datos está centrado en el usuario autenticado. Cada usuario administra sus propios productos, clientes, repartidores y pedidos.
+
+### Entidades principales
+
+| Entidad        | Tabla           | Descripción |
+| -------------- | --------------- | ----------- |
+| `User`         | `users`         | Representa al usuario del sistema. Guarda email, password hasheado y rol. |
+| `RefreshToken` | `refresh_token` | Almacena hashes de refresh tokens, fecha de expiración y revocación. |
+| `Product`      | `products`      | Producto perteneciente a un usuario, con SKU opcional, precio, stock y borrado lógico. |
+| `Customer`     | `customers`     | Cliente perteneciente a un usuario, con datos de contacto, dirección y borrado lógico. |
+| `Courier`      | `couriers`      | Repartidor perteneciente a un usuario, con datos de contacto y borrado lógico. |
+| `Order`        | `orders`        | Pedido asociado a un cliente y opcionalmente a un repartidor. Controla estado y monto total. |
+| `OrderItem`    | `order_items`   | Detalle de productos incluidos en una orden, con precio unitario, cantidad y subtotal. |
+
+### Relaciones principales
+
+| Relación | Cardinalidad | Descripción |
+| -------- | ------------ | ----------- |
+| `User -> Product` | Uno a muchos | Un usuario puede tener muchos productos. |
+| `User -> Customer` | Uno a muchos | Un usuario puede registrar muchos clientes. |
+| `User -> Courier` | Uno a muchos | Un usuario puede registrar muchos repartidores. |
+| `User -> RefreshToken` | Uno a muchos | Un usuario puede tener múltiples refresh tokens emitidos o revocados. |
+| `Customer -> Order` | Uno a muchos | Un cliente puede estar asociado a muchas órdenes. |
+| `Courier -> Order` | Uno a muchos | Un repartidor puede estar asignado a muchas órdenes. La asignación puede ser opcional. |
+| `Order -> OrderItem` | Uno a muchos | Una orden puede contener múltiples items. |
+| `Product -> OrderItem` | Uno a muchos | Un producto puede aparecer en múltiples items de órdenes. |
+
+### Reglas de dominio relevantes
+
+- Los recursos principales se consultan siempre en el contexto del usuario autenticado.
+- `products`, `customers` y `couriers` utilizan borrado lógico mediante `deleted_at`.
+- Las órdenes manejan los estados `pending`, `cancelled` y `completed`.
+- Al crear una orden, se descuenta stock de los productos y se calcula `total_amount`.
+- Al modificar items de una orden pendiente, se recalcula el total y se ajusta el stock correspondiente.
+- Los refresh tokens no se guardan en texto plano: se almacena su hash y pueden revocarse con `revoked_at`.
 
 <br>
 
