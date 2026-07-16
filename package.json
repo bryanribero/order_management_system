@@ -11,7 +11,10 @@
     "all-undo-migrate-dev": "cross-env NODE_ENV=dev sequelize-cli db:migrate:undo:all --env development",
     "migrate-test": "cross-env NODE_ENV=test sequelize-cli db:migrate --env test",
     "undo-migrate-test": "cross-env NODE_ENV=test sequelize-cli db:migrate:undo --env test",
-    "all-undo-migrate-test": "cross-env NODE_ENV=test sequelize-cli db:migrate:undo:all --env test"
+    "all-undo-migrate-test": "cross-env NODE_ENV=test sequelize-cli db:migrate:undo:all --env test",
+    "migrate-prod": "cross-env NODE_ENV=prod sequelize-cli db:migrate --env development",
+    "undo-migrate-prod": "cross-env NODE_ENV=prod sequelize-cli db:migrate:undo --env development",
+    "all-undo-migrate-prod": "cross-env NODE_ENV=prod sequelize-cli db:migrate:undo:all --env development"
   },
   "keywords": [],
   "type": "module",
