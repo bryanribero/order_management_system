@@ -122,18 +122,18 @@ El modelo de datos está centrado en el usuario autenticado. Cada usuario admini
 | `User -> Customer`     | Uno a muchos | Un usuario puede registrar muchos clientes.                                            |
 | `User -> Courier`      | Uno a muchos | Un usuario puede registrar muchos repartidores.                                        |
 | `User -> RefreshToken` | Uno a muchos | Un usuario puede tener múltiples refresh tokens emitidos o revocados.                  |
-| `Customer -> Order`    | Uno a muchos | Un cliente puede estar asociado a muchas órdenes.                                      |
-| `Courier -> Order`     | Uno a muchos | Un repartidor puede estar asignado a muchas órdenes. La asignación puede ser opcional. |
-| `Order -> OrderItem`   | Uno a muchos | Una orden puede contener múltiples items.                                              |
-| `Product -> OrderItem` | Uno a muchos | Un producto puede aparecer en múltiples items de órdenes.                              |
+| `Customer -> Order`    | Uno a muchos | Un cliente puede estar asociado a muchos pedidos.                                      |
+| `Courier -> Order`     | Uno a muchos | Un repartidor puede estar asignado a muchos pedidos. La asignación puede ser opcional. |
+| `Order -> OrderItem`   | Uno a muchos | Un pedido puede contener múltiples items.                                              |
+| `Product -> OrderItem` | Uno a muchos | Un producto puede aparecer en múltiples items de pedidos.                              |
 
 ### Reglas de dominio relevantes
 
 - Los recursos principales se consultan siempre en el contexto del usuario autenticado.
 - `products`, `customers` y `couriers` utilizan borrado lógico mediante `deleted_at`.
-- Las órdenes manejan los estados `pending`, `cancelled` y `completed`.
-- Al crear una orden, se descuenta stock de los productos y se calcula `total_amount`.
-- Al modificar items de una orden pendiente, se recalcula el total y se ajusta el stock correspondiente.
+- Los pedidos manejan los estados `pending`, `cancelled` y `completed`.
+- Al crear un pedido, se descuenta stock de los productos y se calcula `total_amount`.
+- Al modificar items de un pedido pendiente, se recalcula el total y se ajusta el stock correspondiente.
 - Los refresh tokens no se guardan en texto plano: se almacena su hash y pueden revocarse con `revoked_at`.
 
 <br>
