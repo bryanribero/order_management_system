@@ -16,7 +16,7 @@ export async function createCourier(idUser, { name, phone, note }) {
   } catch (err) {
     if (err instanceof UniqueConstraintError) {
       throw new ConflictError(
-        'El name ya esta en uso, debe ser unico por courier'
+        'El nombre ya está en uso, debe ser único por repartidor'
       )
     }
 
@@ -54,7 +54,7 @@ export async function getCourierById(idUser, idCourier) {
   })
 
   if (!courier) {
-    throw new NotFoundError('Courier no encontrado')
+    throw new NotFoundError('Repartidor no encontrado')
   }
 
   return courier
@@ -78,7 +78,7 @@ export async function updateCourierById(
   )
 
   if (affectedRow === 0) {
-    throw new NotFoundError('Courier no encontrado')
+    throw new NotFoundError('Repartidor no encontrado')
   }
 
   return {
@@ -102,6 +102,6 @@ export async function deleteCourierById(idUser, idCourier) {
   )
 
   if (affectedRow === 0) {
-    throw new NotFoundError('Courier no encontrado')
+    throw new NotFoundError('Repartidor no encontrado')
   }
 }

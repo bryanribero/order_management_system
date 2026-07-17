@@ -3,7 +3,7 @@ import Order from '../../db/models/Order.js'
 import OrderItem from '../../db/models/OrderItem.js'
 import Product from '../../db/models/Product.js'
 import { NotFoundError } from '../../errors/NotFoundError.js'
-import { createIdemPotent } from './utils/createIdemPotent.js'
+import { createIdemPotent, fingerprintHash } from './utils/createIdemPotent.js'
 import { BadRequestError } from '../../errors/BadRequestError.js'
 import Customer from '../../db/models/Customer.js'
 import Courier from '../../db/models/Courier.js'
@@ -11,117 +11,137 @@ import { ConflictError } from '../../errors/ConflictError.js'
 
 export async function createOrder(
   idUser,
-  { actionToken, id_customer, id_courier, note, items }
+  { action_token, id_customer, id_courier, note, items }
 ) {
-  const requestFingerprint = JSON.stringify({
+  const fingerprintPayload = {
     id_customer,
     id_courier,
-    note,
-    items,
-  })
+    note: note ?? null,
+    items: items
+      .map(({ id_product, quantity }) => ({
+        id_product: Number(id_product),
+        quantity: Number(quantity),
+      }))
+      .sort((a, b) => a.id_product - b.id_product),
+  }
 
-  return createIdemPotent(actionToken, idUser, requestFingerprint, async () => {
-    return sequelize.transaction(async (t) => {
-      const customer = await Customer.findOne({
-        where: {
-          id_customer,
-          id_user: idUser,
-          deleted_at: null,
-        },
-        transaction: t,
-      })
+  const requestFingerprint = fingerprintHash(JSON.stringify(fingerprintPayload))
 
-      if (!customer) {
-        throw new NotFoundError('Customer no encontrado')
-      }
+  return sequelize.transaction(async (t) => {
+    const customer = await Customer.findOne({
+      where: {
+        id_customer,
+        id_user: idUser,
+        deleted_at: null,
+      },
+      transaction: t,
+    })
 
-      const courier = await Courier.findOne({
-        where: {
-          id_courier,
-          id_user: idUser,
-          deleted_at: null,
-        },
-        transaction: t,
-      })
+    if (!customer) {
+      throw new NotFoundError('Cliente no encontrado')
+    }
 
-      if (!courier) {
-        throw new NotFoundError('Courier no encontrado')
-      }
+    const courier = await Courier.findOne({
+      where: {
+        id_courier,
+        id_user: idUser,
+        deleted_at: null,
+      },
+      transaction: t,
+    })
 
-      const order = await Order.create(
-        { id_customer, id_courier, note },
-        { transaction: t }
-      )
+    if (!courier) {
+      throw new NotFoundError('Repartidor no encontrado')
+    }
 
-      let totalAmount = 0
-
-      for (const item of items) {
-        const { id_product, quantity } = item
-
-        const product = await Product.findOne({
-          where: {
-            id_product,
-            id_user: idUser,
-            deleted_at: null,
-          },
-          transaction: t,
-        })
-
-        if (!product) {
-          throw new NotFoundError(`Producto ${id_product} no encontrado`)
-        }
-
-        if (product.stock < quantity) {
-          throw new BadRequestError(
-            `No hay suficiente stock para el producto ${id_product} solicitado. Disponibles: ${product.stock}.`
-          )
-        }
-
-        const subtotal = Number(product.price) * quantity
-
-        totalAmount += subtotal
-
-        product.stock = product.stock - quantity
-        await product.save({ transaction: t })
-
-        await OrderItem.create(
+    return createIdemPotent(
+      action_token,
+      idUser,
+      requestFingerprint,
+      t,
+      async () => {
+        const order = await Order.create(
           {
-            id_order: order.id_order,
-            id_product: product.id_product,
-            unit_price: Number(product.price),
-            quantity,
-            subtotal,
+            id_customer,
+            id_courier,
+            note,
+            action_token,
+            request_fingerprint: requestFingerprint,
           },
           { transaction: t }
         )
-      }
 
-      order.total_amount = totalAmount
-      await order.save({ transaction: t })
+        let totalAmount = 0
 
-      const orderWithItems = await Order.findByPk(order.id_order, {
-        transaction: t,
-        include: [
-          {
-            model: OrderItem,
-            as: 'orderItems',
-            attributes: {
-              exclude: ['createdAt', 'updatedAt', 'id_order'],
+        for (const item of items) {
+          const { id_product, quantity } = item
+
+          const product = await Product.findOne({
+            where: {
+              id_product,
+              id_user: idUser,
+              deleted_at: null,
             },
-          },
-        ],
-        attributes: [
-          'id_order',
-          'id_customer',
-          'id_courier',
-          'note',
-          'status',
-          'total_amount',
-        ],
-      })
+            transaction: t,
+          })
 
-      return orderWithItems
-    })
+          if (!product) {
+            throw new NotFoundError(`Producto ${id_product} no encontrado`)
+          }
+
+          if (product.stock < quantity) {
+            throw new BadRequestError(
+              `No hay suficiente stock para el producto ${id_product} solicitado. Disponibles: ${product.stock}.`
+            )
+          }
+
+          const subtotal = Number(product.price) * quantity
+
+          totalAmount += subtotal
+
+          product.stock = product.stock - quantity
+          await product.save({ transaction: t })
+
+          await OrderItem.create(
+            {
+              id_order: order.id_order,
+              id_product: product.id_product,
+              unit_price: Number(product.price),
+              quantity,
+              subtotal,
+            },
+            { transaction: t }
+          )
+        }
+
+        order.total_amount = totalAmount
+        await order.save({ transaction: t })
+
+        const orderWithItems = await Order.findByPk(order.id_order, {
+          transaction: t,
+          include: [
+            {
+              model: OrderItem,
+              as: 'orderItems',
+              attributes: {
+                exclude: ['createdAt', 'updatedAt', 'id_order'],
+              },
+            },
+          ],
+          attributes: [
+            'id_order',
+            'id_customer',
+            'id_courier',
+            'note',
+            'status',
+            'total_amount',
+            'action_token',
+          ],
+        })
+
+        return orderWithItems
+      }
+    )
   })
 }
 
@@ -163,6 +183,7 @@ export async function getOrders(idUser, { limit, page, status }) {
       'note',
       'status',
       'total_amount',
+      'action_token',
     ],
     order: [['id_order', 'DESC']],
     limit: safeLimit,
@@ -197,11 +218,12 @@ export async function getOrderById(idUser, idOrder) {
       'note',
       'status',
       'total_amount',
+      'action_token',
     ],
   })
 
   if (!order) {
-    throw new NotFoundError('Order no encontrado')
+    throw new NotFoundError('Pedido no encontrado')
   }
 
   return order
@@ -232,16 +254,17 @@ export async function updateStatusOrder(idUser, idOrder, { status }) {
       'note',
       'status',
       'total_amount',
+      'action_token',
     ],
   })
 
   if (!order) {
-    throw new NotFoundError('Order no encontrado')
+    throw new NotFoundError('Pedido no encontrado')
   }
 
   if (order.status !== 'pending') {
     throw new ConflictError(
-      'Solo las orders con estado "pending" pueden actualizarse'
+      'Solo los pedidos con estado "pending" pueden actualizarse'
     )
   }
 
@@ -277,12 +300,12 @@ export async function updateOrder(
     })
 
     if (!order) {
-      throw new NotFoundError('Order no encontrado')
+      throw new NotFoundError('Pedido no encontrado')
     }
 
     if (order.status !== 'pending') {
       throw new ConflictError(
-        'Solo las orders con estado "pending" pueden actualizarse'
+        'Solo los pedidos con estado "pending" pueden actualizarse'
       )
     }
 
@@ -297,7 +320,7 @@ export async function updateOrder(
       })
 
       if (!courier) {
-        throw new NotFoundError('Courier no encontrado')
+        throw new NotFoundError('Repartidor no encontrado')
       }
     }
 
@@ -359,12 +382,6 @@ export async function updateOrder(
         transaction: t,
       })
 
-      if (existingOrderItem) {
-        throw new ConflictError(
-          `El producto ${id_product} ya existe en esta order`
-        )
-      }
-
       const product = await Product.findOne({
         where: {
           id_product,
@@ -387,41 +404,89 @@ export async function updateOrder(
 
       const subtotal = Number(product.price) * quantity
 
-      product.stock = product.stock - quantity
+      product.stock -= quantity
       await product.save({ transaction: t })
 
-      await OrderItem.create(
-        {
-          id_order: idOrder,
-          id_product: product.id_product,
-          unit_price: Number(product.price),
-          quantity,
-          subtotal,
-        },
-        { transaction: t }
-      )
+      if (existingOrderItem) {
+        existingOrderItem.quantity += quantity
+
+        existingOrderItem.subtotal =
+          Number(existingOrderItem.unit_price) * existingOrderItem.quantity
+
+        await existingOrderItem.save({ transaction: t })
+      } else {
+        await OrderItem.create(
+          {
+            id_order: idOrder,
+            id_product: product.id_product,
+            unit_price: Number(product.price),
+            quantity,
+            subtotal,
+          },
+          { transaction: t }
+        )
+      }
 
       totalAmount += subtotal
     }
 
     order.total_amount = totalAmount
+
     await order.save({ transaction: t })
 
-    return Order.findOne({
-      where: {
-        id_order: idOrder,
+    await order.reload({
+      include: [
+        {
+          model: OrderItem,
+          as: 'orderItems',
+          attributes: {
+            exclude: ['createdAt', 'updatedAt', 'id_order'],
+          },
+        },
+      ],
+      transaction: t,
+    })
+
+    const fingerprintPayload = {
+      id_customer: order.id_customer,
+      id_courier: order.id_courier,
+      note: order.note ?? null,
+      items: order.orderItems
+        .map(({ id_product, quantity }) => ({
+          id_product: Number(id_product),
+          quantity: Number(quantity),
+        }))
+        .sort((a, b) => a.id_product - b.id_product),
+    }
+
+    await order.update(
+      {
+        request_fingerprint: fingerprintHash(
+          JSON.stringify(fingerprintPayload)
+        ),
       },
+      {
+        transaction: t,
+      }
+    )
+
+    return Order.findOne({
+      where: { id_order: idOrder },
       include: [
         {
           model: Customer,
           as: 'customer',
-          where: { id_user: idUser },
+          where: {
+            id_user: idUser,
+          },
           attributes: [],
         },
         {
           model: OrderItem,
           as: 'orderItems',
-          attributes: { exclude: ['createdAt', 'updatedAt', 'id_order'] },
+          attributes: {
+            exclude: ['createdAt', 'updatedAt', 'id_order'],
+          },
         },
       ],
       attributes: [
@@ -431,6 +496,7 @@ export async function updateOrder(
         'note',
         'status',
         'total_amount',
+        'action_token',
       ],
       transaction: t,
     })

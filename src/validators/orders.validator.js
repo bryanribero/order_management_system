@@ -1,27 +1,27 @@
 import { body, query } from 'express-validator'
 
 export const createOrderValidator = [
-  body('actionToken')
+  body('action_token')
     .notEmpty()
-    .withMessage('El actionToken es obligatorio')
+    .withMessage('El action_token es obligatorio')
     .bail()
     .isUUID()
-    .withMessage('El actionToken debe ser un UUID v4 válido'),
+    .withMessage('El action_token debe ser un UUID v4 válido'),
 
   body('id_customer')
     .exists({ checkFalsy: true })
-    .withMessage('El customer es obligatorio')
+    .withMessage('El cliente es obligatorio')
     .bail()
     .isInt({ gt: 0 })
-    .withMessage('El id del customer debe ser un entero positivo')
+    .withMessage('El id del cliente debe ser un entero positivo')
     .toInt(),
 
   body('id_courier')
     .exists({ checkFalsy: true })
-    .withMessage('El courier es obligatorio')
+    .withMessage('El repartidor es obligatorio')
     .bail()
     .isInt({ gt: 0 })
-    .withMessage('El id del courier debe ser un entero positivo')
+    .withMessage('El id del repartidor debe ser un entero positivo')
     .toInt(),
 
   body('note')
@@ -77,10 +77,10 @@ export const bodyUpdateOrderValidator = [
   body('id_courier')
     .optional()
     .notEmpty()
-    .withMessage('El courier no puede estar vacio')
+    .withMessage('El repartidor no puede estar vacio')
     .bail()
     .isInt({ gt: 0 })
-    .withMessage('El id del courier debe ser un entero positivo')
+    .withMessage('El id del repartidor debe ser un entero positivo')
     .toInt(),
 
   body('note')

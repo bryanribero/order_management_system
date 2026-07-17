@@ -15,7 +15,7 @@ export async function createOrderController(req, res, next) {
 
     res.status(201).json({
       success: true,
-      message: 'Orden creada correctamente',
+      message: 'Pedido creado correctamente',
       order: result,
     })
   } catch (error) {
@@ -65,7 +65,7 @@ export async function statusUpdateOrderController(req, res, next) {
 
     res.status(200).json({
       success: true,
-      message: 'Estado de la orden actualizado correctamente',
+      message: 'Estado del pedido actualizado correctamente',
       order: result,
     })
   } catch (error) {
@@ -83,7 +83,7 @@ export async function updateOrderController(req, res, next) {
 
     res.status(200).json({
       success: true,
-      message: 'Order actualizado correctamente',
+      message: 'Pedido actualizado correctamente',
       order: result,
     })
   } catch (error) {

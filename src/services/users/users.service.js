@@ -36,7 +36,7 @@ export async function deleteUser(idUser, password) {
   const passwordIsValid = await comparePassword(password, user.password)
 
   if (!passwordIsValid) {
-    throw new AuthError('Password incorrecto')
+    throw new AuthError('Contraseña incorrecta')
   }
 
   await User.destroy({

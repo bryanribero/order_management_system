@@ -11,6 +11,10 @@ module.exports = {
         autoIncrement: true,
         allowNull: false,
       },
+      action_token: {
+        type: Sequelize.UUID,
+        allowNull: false,
+      },
       id_customer: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -44,6 +48,10 @@ module.exports = {
         type: Sequelize.DECIMAL(10, 2),
         allowNull: false,
         defaultValue: 0,
+      },
+      request_fingerprint: {
+        type: Sequelize.STRING(64),
+        allowNull: false,
       },
       created_at: {
         type: Sequelize.DATE,

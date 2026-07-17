@@ -52,7 +52,7 @@ describe('Courier Endpoints', () => {
       expect(response.body).toEqual(
         expect.objectContaining({
           success: true,
-          message: 'Courier creado correctamente',
+          message: 'Repartidor creado correctamente',
           courier: expect.objectContaining({
             id_courier: expect.any(Number),
             name: courierData.name,
@@ -86,7 +86,7 @@ describe('Courier Endpoints', () => {
       expect(response.body).toEqual(
         expect.objectContaining({
           success: true,
-          message: 'Courier creado correctamente',
+          message: 'Repartidor creado correctamente',
           courier: expect.objectContaining({
             id_courier: expect.any(Number),
             name: courierData.name,
@@ -116,7 +116,7 @@ describe('Courier Endpoints', () => {
         success: false,
         errors: [
           {
-            message: 'El name ya esta en uso, debe ser unico por courier',
+            message: 'El nombre ya está en uso, debe ser único por repartidor',
           },
         ],
       })
@@ -168,7 +168,7 @@ describe('Courier Endpoints', () => {
           errors: expect.arrayContaining([
             expect.objectContaining({
               field: 'name',
-              message: 'El campo name no puede estar vacío',
+              message: 'El nombre no puede estar vacío',
             }),
           ]),
         })
@@ -285,7 +285,7 @@ describe('Courier Endpoints', () => {
       expect(response.status).toBe(404)
       expect(response.body).toEqual({
         success: false,
-        errors: [{ message: 'Courier no encontrado' }],
+        errors: [{ message: 'Repartidor no encontrado' }],
       })
     })
 
@@ -339,7 +339,7 @@ describe('Courier Endpoints', () => {
       expect(response.body).toEqual(
         expect.objectContaining({
           success: true,
-          message: 'Courier actualizado correctamente',
+          message: 'Repartidor actualizado correctamente',
           courier: expect.objectContaining({
             id_courier: courier.id_courier,
             name: 'Repartidor actualizado',
@@ -366,7 +366,7 @@ describe('Courier Endpoints', () => {
       expect(response.status).toBe(404)
       expect(response.body).toEqual({
         success: false,
-        errors: [{ message: 'Courier no encontrado' }],
+        errors: [{ message: 'Repartidor no encontrado' }],
       })
     })
 
@@ -389,7 +389,7 @@ describe('Courier Endpoints', () => {
           errors: expect.arrayContaining([
             expect.objectContaining({
               field: 'name',
-              message: 'El campo name no puede estar vacío',
+              message: 'El nombre no puede estar vacío',
             }),
           ]),
         })
@@ -441,7 +441,7 @@ describe('Courier Endpoints', () => {
       expect(response.status).toBe(404)
       expect(response.body).toEqual({
         success: false,
-        errors: [{ message: 'Courier no encontrado' }],
+        errors: [{ message: 'Repartidor no encontrado' }],
       })
     })
 

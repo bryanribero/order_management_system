@@ -8,7 +8,6 @@ servers:
     description: Servidor local
   - url: https://order-management-system-995e.onrender.com
     description: Servidor de producción
-
 tags:
   - name: Auth
     description: Endpoints de autenticación y registro de usuarios.
@@ -22,34 +21,36 @@ tags:
     description: Endpoints para gestionar orders del usuario autenticado.
   - name: Users
     description: Endpoints para actualizar y eliminar el usuario autenticado.
-
 paths:
   /api/auth/register:
     post:
       tags:
         - Auth
       summary: Registrar un nuevo usuario
-      description: Crea un usuario nuevo con email y password. El password debe ser texto, no puede contener espacios, debe tener entre 8 y 16 caracteres e incluir al menos una letra mayúscula. El rol se asigna por defecto como owner aunque se envíe otro rol en el cuerpo de la petición.
+      description: Crea un usuario nuevo con email y password. El password debe ser texto, no puede
+        contener espacios, debe tener entre 8 y 16 caracteres e incluir al menos una letra
+        mayúscula. El rol se asigna por defecto como owner aunque se envíe otro rol en el cuerpo de
+        la petición.
       operationId: registerUser
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RegisterRequest'
+              $ref: "#/components/schemas/RegisterRequest"
             examples:
               validUser:
                 summary: Usuario válido
                 value:
                   email: usuario@example.com
-                  password: '123G5678'
+                  password: 123G5678
       responses:
-        '201':
+        "201":
           description: Usuario creado correctamente.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RegisterSuccessResponse'
+                $ref: "#/components/schemas/RegisterSuccessResponse"
               examples:
                 created:
                   summary: Registro exitoso
@@ -60,14 +61,14 @@ paths:
                       id_user: 1
                       email: usuario@example.com
                       role: owner
-        '400':
+        "400":
           description: Error de validación del cuerpo de la petición o JSON inválido.
           content:
             application/json:
               schema:
                 oneOf:
-                  - $ref: '#/components/schemas/ValidationErrorResponse'
-                  - $ref: '#/components/schemas/GenericErrorResponse'
+                  - $ref: "#/components/schemas/ValidationErrorResponse"
+                  - $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 emptyBody:
                   summary: Body vacío
@@ -126,58 +127,46 @@ paths:
                     success: false
                     errors:
                       - message: JSON inválido o mal formado
-        '409':
+        "409":
           description: El email ya se encuentra registrado.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
-                duplicatedEmail:
-                  summary: Email duplicado
+                conflict:
+                  summary: Conflicto
                   value:
                     success: false
                     errors:
                       - message: El email ya está en uso
-        '429':
+        "429":
           description: Se superó el límite de intentos de registro.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 rateLimit:
-                  summary: Límite de registros superado
+                  summary: Límite de solicitudes superado
                   value:
                     success: false
                     errors:
                       - message: Demasiados intentos de registro. Intenta nuevamente más tarde.
-        '500':
-          description: Error interno del servidor.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-              examples:
-                internalError:
-                  summary: Error interno
-                  value:
-                    success: false
-                    errors:
-                      - message: Error interno del servidor
   /api/auth/login:
     post:
       tags:
         - Auth
       summary: Iniciar sesión
-      description: Autentica un usuario registrado con email y password. Si las credenciales son válidas, devuelve un access token con duración de 1 hora y un refresh token con duración de 7 días.
+      description: Autentica un usuario registrado con email y password. Si las credenciales son válidas,
+        devuelve un access token con duración de 1 hora y un refresh token con duración de 7 días.
       operationId: loginUser
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/LoginRequest'
+              $ref: "#/components/schemas/LoginRequest"
             examples:
               validCredentials:
                 summary: Credenciales válidas
@@ -185,12 +174,12 @@ paths:
                   email: usuario@example.com
                   password: passwordTest
       responses:
-        '200':
+        "200":
           description: Inicio de sesión exitoso.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LoginSuccessResponse'
+                $ref: "#/components/schemas/LoginSuccessResponse"
               examples:
                 loggedIn:
                   summary: Login exitoso
@@ -199,14 +188,14 @@ paths:
                     message: Inicio de sesión exitoso
                     accessToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
                     refreshToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-        '400':
+        "400":
           description: Error de validación del cuerpo de la petición o JSON inválido.
           content:
             application/json:
               schema:
                 oneOf:
-                  - $ref: '#/components/schemas/ValidationErrorResponse'
-                  - $ref: '#/components/schemas/GenericErrorResponse'
+                  - $ref: "#/components/schemas/ValidationErrorResponse"
+                  - $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 emptyBody:
                   summary: Body vacío
@@ -258,12 +247,12 @@ paths:
                     success: false
                     errors:
                       - message: JSON inválido o mal formado
-        '401':
+        "401":
           description: El email no existe o el password no coincide.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 invalidCredentials:
                   summary: Credenciales inválidas
@@ -271,60 +260,48 @@ paths:
                     success: false
                     errors:
                       - message: Credenciales inválidas
-        '429':
+        "429":
           description: Se superó el límite de intentos de login.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 rateLimit:
-                  summary: Límite de login superado
+                  summary: Límite de solicitudes superado
                   value:
                     success: false
                     errors:
                       - message: Demasiados intentos de login. Intenta nuevamente más tarde.
-        '500':
-          description: Error interno del servidor.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-              examples:
-                internalError:
-                  summary: Error interno
-                  value:
-                    success: false
-                    errors:
-                      - message: Error interno del servidor
   /api/auth/logout:
     post:
       tags:
         - Auth
       summary: Cerrar sesión
-      description: Revoca los refresh tokens activos del usuario autenticado. Requiere un access token válido en el encabezado Authorization con el esquema Bearer.
+      description: Revoca los refresh tokens activos del usuario autenticado. Requiere un access token
+        válido en el encabezado Authorization con el esquema Bearer.
       operationId: logoutUser
       security:
         - bearerAuth: []
       responses:
-        '200':
+        "200":
           description: Sesión cerrada correctamente.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LogoutSuccessResponse'
+                $ref: "#/components/schemas/LogoutSuccessResponse"
               examples:
                 loggedOut:
                   summary: Logout exitoso
                   value:
                     success: true
                     message: Sesión cerrada correctamente
-        '401':
-          description: No se envió un access token válido o el encabezado Authorization es inválido.
+        "401": &a1
+          description: No se envió un token válido o el encabezado Authorization es inválido.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 missingToken:
                   summary: Token requerido
@@ -344,35 +321,24 @@ paths:
                     success: false
                     errors:
                       - message: Token inválido
-        '500':
-          description: Error interno del servidor.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-              examples:
-                internalError:
-                  summary: Error interno
-                  value:
-                    success: false
-                    errors:
-                      - message: Error interno del servidor
   /api/auth/refresh:
     post:
       tags:
         - Auth
       summary: Renovar tokens
-      description: Genera un nuevo access token y un nuevo refresh token usando un refresh token válido en el encabezado Authorization con el esquema Bearer. Al renovar, el refresh token anterior queda revocado.
+      description: Genera un nuevo access token y un nuevo refresh token usando un refresh token válido en
+        el encabezado Authorization con el esquema Bearer. Al renovar, el refresh token anterior
+        queda revocado.
       operationId: refreshTokens
       security:
         - bearerAuth: []
       responses:
-        '200':
+        "200":
           description: Tokens renovados correctamente.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RefreshSuccessResponse'
+                $ref: "#/components/schemas/RefreshSuccessResponse"
               examples:
                 refreshed:
                   summary: Refresh exitoso
@@ -381,12 +347,12 @@ paths:
                     message: Tokens renovados correctamente
                     accessToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
                     refreshToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-        '401':
-          description: No se envió un refresh token válido, el encabezado Authorization es inválido, el token expiró o el token fue revocado.
+        "401":
+          description: No se envió un refresh token válido, el token expiró o el token fue revocado.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 missingToken:
                   summary: Token requerido
@@ -418,38 +384,26 @@ paths:
                     success: false
                     errors:
                       - message: Token revocado
-        '429':
+        "429":
           description: Se superó el límite de intentos de renovación de tokens.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 rateLimit:
-                  summary: Límite de refresh superado
+                  summary: Límite de solicitudes superado
                   value:
                     success: false
                     errors:
                       - message: Demasiados intentos de Refresh. Intenta nuevamente más tarde.
-        '500':
-          description: Error interno del servidor.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-              examples:
-                internalError:
-                  summary: Error interno
-                  value:
-                    success: false
-                    errors:
-                      - message: Error interno del servidor
   /api/users:
     patch:
       tags:
         - Users
       summary: Actualizar usuario autenticado
-      description: Actualiza el email y/o contraseña del usuario autenticado. Requiere un access token válido enviado en el encabezado Authorization con el esquema Bearer.
+      description: Actualiza el email y/o contraseña del usuario autenticado. Requiere un access token
+        válido enviado en el encabezado Authorization con el esquema Bearer.
       operationId: updateUser
       security:
         - bearerAuth: []
@@ -458,7 +412,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateUserRequest'
+              $ref: "#/components/schemas/UpdateUserRequest"
             examples:
               updateUser:
                 summary: Actualización de usuario
@@ -466,16 +420,16 @@ paths:
                   email: usuario-actualizado@example.com
                   password: NewPass123
       responses:
-        '204':
+        "204":
           description: Usuario actualizado correctamente. Sin contenido en la respuesta.
-        '400':
+        "400":
           description: Error de validación del cuerpo de la petición.
           content:
             application/json:
               schema:
                 oneOf:
-                  - $ref: '#/components/schemas/ValidationErrorResponse'
-                  - $ref: '#/components/schemas/GenericErrorResponse'
+                  - $ref: "#/components/schemas/ValidationErrorResponse"
+                  - $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 invalidBody:
                   summary: Body inválido
@@ -483,50 +437,40 @@ paths:
                     success: false
                     errors:
                       - message: Debe enviar al menos el email o la contraseña
-        '401':
-          description: No se envió un access token válido o el encabezado Authorization es inválido.
+        "401": *a1
+        "404":
+          description: El usuario autenticado no existe.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
-                missingToken:
-                  summary: Token requerido
+                notFound:
+                  summary: Recurso no encontrado
                   value:
                     success: false
                     errors:
-                      - message: Token requerido
-                invalidHeader:
-                  summary: Encabezado inválido
-                  value:
-                    success: false
-                    errors:
-                      - message: Encabezado Authorization inválido
-                invalidToken:
-                  summary: Token inválido
-                  value:
-                    success: false
-                    errors:
-                      - message: Token inválido
-        '500':
-          description: Error interno del servidor.
+                      - message: Usuario no encontrado
+        "429":
+          description: Se superó el límite de solicitudes de usuario.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
-                internalError:
-                  summary: Error interno
+                rateLimit:
+                  summary: Límite de solicitudes superado
                   value:
                     success: false
                     errors:
-                      - message: Error interno del servidor
+                      - message: Demasiadas peticiones de usuario. Intenta nuevamente más tarde.
   /api/users/delete:
     delete:
       tags:
         - Users
       summary: Eliminar usuario autenticado
-      description: Elimina el usuario autenticado cuando la contraseña enviada es correcta. Requiere un access token válido en el encabezado Authorization con el esquema Bearer.
+      description: Elimina el usuario autenticado cuando la contraseña enviada es correcta. Requiere un
+        access token válido en el encabezado Authorization con el esquema Bearer.
       operationId: deleteUser
       security:
         - bearerAuth: []
@@ -535,21 +479,21 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DeleteUserRequest'
+              $ref: "#/components/schemas/DeleteUserRequest"
             examples:
               deleteUser:
                 summary: Eliminar usuario
                 value:
                   password: 1234567A
       responses:
-        '204':
+        "204":
           description: Usuario eliminado correctamente. Sin contenido en la respuesta.
-        '400':
+        "400":
           description: Error de validación del cuerpo de la petición.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ValidationErrorResponse'
+                $ref: "#/components/schemas/ValidationErrorResponse"
               examples:
                 missingPassword:
                   summary: Falta password
@@ -558,12 +502,12 @@ paths:
                     errors:
                       - field: password
                         message: La contraseña es obligatoria
-        '401':
-          description: Password incorrecto o token inválido.
+        "401":
+          description: No se envió un token válido o el password no coincide.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 wrongPassword:
                   summary: Password incorrecto
@@ -589,25 +533,40 @@ paths:
                     success: false
                     errors:
                       - message: Token inválido
-        '500':
-          description: Error interno del servidor.
+        "404":
+          description: El usuario autenticado no existe.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
-                internalError:
-                  summary: Error interno
+                notFound:
+                  summary: Recurso no encontrado
                   value:
                     success: false
                     errors:
-                      - message: Error interno del servidor
+                      - message: Usuario no encontrado
+        "429":
+          description: Se superó el límite de solicitudes de usuario.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+              examples:
+                rateLimit:
+                  summary: Límite de solicitudes superado
+                  value:
+                    success: false
+                    errors:
+                      - message: Demasiadas peticiones de usuario. Intenta nuevamente más tarde.
   /api/products:
     get:
       tags:
         - Products
       summary: Obtener productos
-      description: Obtiene los productos activos asociados al usuario autenticado. Permite paginar la respuesta con los query params page y limit. El límite máximo permitido es 50. Los productos eliminados lógicamente se excluyen de la respuesta.
+      description: Obtiene los productos activos asociados al usuario autenticado. Permite paginar la
+        respuesta con los query params page y limit. El límite máximo permitido es 50. Los productos
+        eliminados lógicamente se excluyen de la respuesta.
       operationId: getUserProducts
       security:
         - bearerAuth: []
@@ -624,7 +583,8 @@ paths:
         - name: limit
           in: query
           required: false
-          description: Cantidad de productos por página. Si no se envía, el servicio utiliza 20. El máximo permitido es 50.
+          description: Cantidad de productos por página. Si no se envía, el servicio utiliza 20. El máximo
+            permitido es 50.
           schema:
             type: integer
             minimum: 1
@@ -632,12 +592,12 @@ paths:
             default: 20
             example: 20
       responses:
-        '200':
+        "200":
           description: Productos obtenidos correctamente.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetUserProductsSuccessResponse'
+                $ref: "#/components/schemas/GetUserProductsSuccessResponse"
               examples:
                 withProducts:
                   summary: Productos encontrados
@@ -647,24 +607,24 @@ paths:
                       - id_product: 1
                         sku: SKU-001
                         name: Café molido
-                        price: '125.50'
+                        price: "125.50"
                         stock: 12
                       - id_product: 2
                         sku: null
                         name: Caja de té
-                        price: '80.00'
+                        price: "80.00"
                         stock: 5
                 empty:
                   summary: Sin productos
                   value:
                     success: true
                     products: []
-        '400':
+        "400":
           description: Error de validación de los query params.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ValidationErrorResponse'
+                $ref: "#/components/schemas/ValidationErrorResponse"
               examples:
                 invalidPage:
                   summary: Página inválida
@@ -694,12 +654,12 @@ paths:
                     errors:
                       - field: limit
                         message: El límite debe estar entre 1 y 50
-        '401':
+        "401":
           description: No se envió un access token válido o el encabezado Authorization es inválido.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 missingToken:
                   summary: Token requerido
@@ -719,37 +679,25 @@ paths:
                     success: false
                     errors:
                       - message: Token inválido
-        '429':
-          description: Se superó el límite de solicitudes para obtener productos.
+        "429":
+          description: Se superó el límite de solicitudes de productos.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 rateLimit:
-                  summary: Límite de obtención de productos superado
+                  summary: Límite de solicitudes superado
                   value:
                     success: false
                     errors:
-                      - message: Demasiadas solicitudes para obtener productos. Intenta nuevamente más tarde.
-        '500':
-          description: Error interno del servidor.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-              examples:
-                internalError:
-                  summary: Error interno
-                  value:
-                    success: false
-                    errors:
-                      - message: Error interno del servidor
+                      - message: Demasiadas peticiones de productos. Intenta nuevamente más tarde.
     post:
       tags:
         - Products
       summary: Crear producto
-      description: Crea un producto asociado al usuario autenticado. El SKU es opcional, pero si se envía no puede repetirse para el mismo usuario.
+      description: Crea un producto asociado al usuario autenticado. El SKU es opcional, pero si se envía
+        no puede repetirse para el mismo usuario.
       operationId: createProduct
       security:
         - bearerAuth: []
@@ -758,28 +706,28 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateProductRequest'
+              $ref: "#/components/schemas/CreateProductRequest"
             examples:
               withSku:
                 summary: Producto con SKU
                 value:
                   sku: SKU-001
                   name: Café molido
-                  price: '125.50'
+                  price: "125.50"
                   stock: 12
               withoutSku:
                 summary: Producto sin SKU
                 value:
                   name: Caja de té
-                  price: '80.00'
+                  price: "80.00"
                   stock: 5
       responses:
-        '201':
+        "201":
           description: Producto creado correctamente.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CreateProductSuccessResponse'
+                $ref: "#/components/schemas/CreateProductSuccessResponse"
               examples:
                 created:
                   summary: Creación exitosa
@@ -790,16 +738,16 @@ paths:
                       id_product: 1
                       sku: SKU-001
                       name: Café molido
-                      price: '125.50'
+                      price: "125.50"
                       stock: 12
-        '400':
+        "400":
           description: Error de validación del cuerpo de la petición o JSON inválido.
           content:
             application/json:
               schema:
                 oneOf:
-                  - $ref: '#/components/schemas/ValidationErrorResponse'
-                  - $ref: '#/components/schemas/GenericErrorResponse'
+                  - $ref: "#/components/schemas/ValidationErrorResponse"
+                  - $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 emptyBody:
                   summary: Body vacío
@@ -846,12 +794,12 @@ paths:
                     success: false
                     errors:
                       - message: JSON inválido o mal formado
-        '401':
+        "401":
           description: No se envió un access token válido o el encabezado Authorization es inválido.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 missingToken:
                   summary: Token requerido
@@ -871,37 +819,38 @@ paths:
                     success: false
                     errors:
                       - message: Token inválido
-        '409':
-          description: El SKU ya existe para el usuario autenticado.
+        "409":
+          description: El SKU ya se encuentra registrado para el usuario autenticado.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
-                duplicatedSku:
-                  summary: SKU duplicado
+                conflict:
+                  summary: Conflicto
                   value:
                     success: false
                     errors:
                       - message: El SKU ya está en uso para este usuario
-        '500':
-          description: Error interno del servidor.
+        "429":
+          description: Se superó el límite de solicitudes de productos.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
-                internalError:
-                  summary: Error interno
+                rateLimit:
+                  summary: Límite de solicitudes superado
                   value:
                     success: false
                     errors:
-                      - message: Error interno del servidor
+                      - message: Demasiadas peticiones de productos. Intenta nuevamente más tarde.
     patch:
       tags:
         - Products
       summary: Actualizar productos por filtro
-      description: Actualiza los productos del usuario autenticado cuyo nombre coincida parcialmente con el query param word. Devuelve los productos actualizados.
+      description: Actualiza los productos del usuario autenticado cuyo nombre coincida parcialmente con
+        el query param word. Devuelve los productos actualizados.
       operationId: updateProduct
       security:
         - bearerAuth: []
@@ -918,21 +867,21 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateProductRequest'
+              $ref: "#/components/schemas/UpdateProductRequest"
             examples:
               updateFields:
                 summary: Campos a actualizar
                 value:
                   name: Cafe en grano
-                  price: '150.00'
+                  price: "150.00"
                   stock: 8
       responses:
-        '200':
+        "200":
           description: Productos actualizados correctamente.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UpdateProductsSuccessResponse'
+                $ref: "#/components/schemas/UpdateProductsSuccessResponse"
               examples:
                 updated:
                   summary: Actualización exitosa
@@ -943,16 +892,16 @@ paths:
                       - id_product: 1
                         sku: SKU-001
                         name: Cafe en grano
-                        price: '150.00'
+                        price: "150.00"
                         stock: 8
-        '400':
+        "400":
           description: Error de validación del query param word o JSON inválido.
           content:
             application/json:
               schema:
                 oneOf:
-                  - $ref: '#/components/schemas/ValidationErrorResponse'
-                  - $ref: '#/components/schemas/GenericErrorResponse'
+                  - $ref: "#/components/schemas/ValidationErrorResponse"
+                  - $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 missingWord:
                   summary: Word obligatorio
@@ -967,12 +916,12 @@ paths:
                     success: false
                     errors:
                       - message: JSON inválido o mal formado
-        '401':
+        "401":
           description: No se envió un access token válido o el encabezado Authorization es inválido.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 missingToken:
                   summary: Token requerido
@@ -992,50 +941,39 @@ paths:
                     success: false
                     errors:
                       - message: Token inválido
-        '404':
-          description: No se encontró ningún producto del usuario autenticado que coincida con el filtro.
+        "404":
+          description: No existen productos activos que coincidan con el filtro word.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 notFound:
-                  summary: Producto no encontrado
+                  summary: Recurso no encontrado
                   value:
                     success: false
                     errors:
                       - message: Producto no encontrado
-        '429':
-          description: Se superó el límite de solicitudes para obtener o actualizar productos.
+        "429":
+          description: Se superó el límite de solicitudes de productos.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 rateLimit:
-                  summary: Límite de productos superado
+                  summary: Límite de solicitudes superado
                   value:
                     success: false
                     errors:
-                      - message: Demasiadas solicitudes para obtener productos. Intenta nuevamente más tarde.
-        '500':
-          description: Error interno del servidor.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-              examples:
-                internalError:
-                  summary: Error interno
-                  value:
-                    success: false
-                    errors:
-                      - message: Error interno del servidor
+                      - message: Demasiadas peticiones de productos. Intenta nuevamente más tarde.
     delete:
       tags:
         - Products
       summary: Eliminar productos por filtro
-      description: Marca como eliminados lógicamente los productos del usuario autenticado cuyo nombre coincida parcialmente con el query param word. Devuelve la cantidad de productos marcados como eliminados.
+      description: Marca como eliminados lógicamente los productos del usuario autenticado cuyo nombre
+        coincida parcialmente con el query param word. Devuelve la cantidad de productos marcados
+        como eliminados.
       operationId: deleteProduct
       security:
         - bearerAuth: []
@@ -1048,12 +986,12 @@ paths:
             type: string
             example: Cafe
       responses:
-        '200':
+        "200":
           description: Productos eliminados correctamente.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DeleteProductSuccessResponse'
+                $ref: "#/components/schemas/DeleteProductSuccessResponse"
               examples:
                 deleted:
                   summary: Eliminación exitosa
@@ -1061,12 +999,12 @@ paths:
                     success: true
                     message: Productos eliminados correctamente
                     deletedCount: 1
-        '400':
+        "400":
           description: Error de validación del query param word.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ValidationErrorResponse'
+                $ref: "#/components/schemas/ValidationErrorResponse"
               examples:
                 missingWord:
                   summary: Word obligatorio
@@ -1075,12 +1013,12 @@ paths:
                     errors:
                       - field: word
                         message: El campo "word" es obligatorio y debe contener un valor para filtrar los productos.
-        '401':
+        "401":
           description: No se envió un access token válido o el encabezado Authorization es inválido.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 missingToken:
                   summary: Token requerido
@@ -1100,51 +1038,39 @@ paths:
                     success: false
                     errors:
                       - message: Token inválido
-        '404':
-          description: No se encontró ningún producto del usuario autenticado que coincida con el filtro.
+        "404":
+          description: No existen productos activos que coincidan con el filtro word.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 notFound:
-                  summary: Producto no encontrado
+                  summary: Recurso no encontrado
                   value:
                     success: false
                     errors:
                       - message: Producto no encontrado
-        '429':
-          description: Se superó el límite de solicitudes para eliminar productos.
+        "429":
+          description: Se superó el límite de solicitudes de productos.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 rateLimit:
-                  summary: Límite de eliminación de productos superado
+                  summary: Límite de solicitudes superado
                   value:
                     success: false
                     errors:
-                      - message: Demasiadas solicitudes para eliminar productos. Intenta nuevamente más tarde.
-        '500':
-          description: Error interno del servidor.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-              examples:
-                internalError:
-                  summary: Error interno
-                  value:
-                    success: false
-                    errors:
-                      - message: Error interno del servidor
+                      - message: Demasiadas peticiones de productos. Intenta nuevamente más tarde.
   /api/products/{id}:
     get:
       tags:
         - Products
       summary: Obtener producto por identificador
-      description: Obtiene un producto del usuario autenticado usando su identificador. Si el producto no existe o pertenece a otro usuario, devuelve Producto no encontrado.
+      description: Obtiene un producto del usuario autenticado usando su identificador. Si el producto no
+        existe o pertenece a otro usuario, devuelve Producto no encontrado.
       operationId: getUserProductById
       security:
         - bearerAuth: []
@@ -1158,12 +1084,12 @@ paths:
             minimum: 1
             example: 1
       responses:
-        '200':
+        "200":
           description: Producto obtenido correctamente.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetUserProductByIdSuccessResponse'
+                $ref: "#/components/schemas/GetUserProductByIdSuccessResponse"
               examples:
                 found:
                   summary: Producto encontrado
@@ -1174,14 +1100,14 @@ paths:
                       id_user: 1
                       sku: null
                       name: Producto de prueba
-                      price: '100.00'
+                      price: "100.00"
                       stock: 20
-        '400':
+        "400":
           description: Error de validación del parámetro id.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ValidationErrorResponse'
+                $ref: "#/components/schemas/ValidationErrorResponse"
               examples:
                 invalidId:
                   summary: Identificador inválido
@@ -1197,12 +1123,12 @@ paths:
                     errors:
                       - field: id
                         message: El identificador debe ser mayor o igual a 1
-        '401':
+        "401":
           description: No se envió un access token válido o el encabezado Authorization es inválido.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 missingToken:
                   summary: Token requerido
@@ -1222,50 +1148,38 @@ paths:
                     success: false
                     errors:
                       - message: Token inválido
-        '404':
+        "404":
           description: El producto no existe o no pertenece al usuario autenticado.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 notFound:
-                  summary: Producto no encontrado
+                  summary: Recurso no encontrado
                   value:
                     success: false
                     errors:
                       - message: Producto no encontrado
-        '429':
-          description: Se superó el límite de solicitudes para obtener productos.
+        "429":
+          description: Se superó el límite de solicitudes de productos.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 rateLimit:
-                  summary: Límite de obtención de productos superado
+                  summary: Límite de solicitudes superado
                   value:
                     success: false
                     errors:
-                      - message: Demasiadas solicitudes para obtener productos. Intenta nuevamente más tarde.
-        '500':
-          description: Error interno del servidor.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-              examples:
-                internalError:
-                  summary: Error interno
-                  value:
-                    success: false
-                    errors:
-                      - message: Error interno del servidor
+                      - message: Demasiadas peticiones de productos. Intenta nuevamente más tarde.
     patch:
       tags:
         - Products
       summary: Actualizar producto por identificador
-      description: Actualiza un producto del usuario autenticado usando su identificador. Si el producto no existe o pertenece a otro usuario, devuelve Producto no encontrado.
+      description: Actualiza un producto del usuario autenticado usando su identificador. Si el producto
+        no existe o pertenece a otro usuario, devuelve Producto no encontrado.
       operationId: updateProductById
       security:
         - bearerAuth: []
@@ -1283,21 +1197,21 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateProductRequest'
+              $ref: "#/components/schemas/UpdateProductRequest"
             examples:
               updateFields:
                 summary: Campos a actualizar
                 value:
                   name: Café en grano
-                  price: '150.00'
+                  price: "150.00"
                   stock: 8
       responses:
-        '200':
+        "200":
           description: Producto actualizado correctamente.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UpdateProductByIdSuccessResponse'
+                $ref: "#/components/schemas/UpdateProductByIdSuccessResponse"
               examples:
                 updated:
                   summary: Actualización exitosa
@@ -1308,16 +1222,16 @@ paths:
                       id_product: 1
                       sku: SKU-001
                       name: Café en grano
-                      price: '150.00'
+                      price: "150.00"
                       stock: 8
-        '400':
+        "400":
           description: Error de validación del parámetro id o JSON inválido.
           content:
             application/json:
               schema:
                 oneOf:
-                  - $ref: '#/components/schemas/ValidationErrorResponse'
-                  - $ref: '#/components/schemas/GenericErrorResponse'
+                  - $ref: "#/components/schemas/ValidationErrorResponse"
+                  - $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 invalidId:
                   summary: Identificador inválido
@@ -1339,12 +1253,12 @@ paths:
                     success: false
                     errors:
                       - message: JSON inválido o mal formado
-        '401':
+        "401":
           description: No se envió un access token válido o el encabezado Authorization es inválido.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 missingToken:
                   summary: Token requerido
@@ -1364,50 +1278,38 @@ paths:
                     success: false
                     errors:
                       - message: Token inválido
-        '404':
+        "404":
           description: El producto no existe o no pertenece al usuario autenticado.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 notFound:
-                  summary: Producto no encontrado
+                  summary: Recurso no encontrado
                   value:
                     success: false
                     errors:
                       - message: Producto no encontrado
-        '429':
-          description: Se superó el límite de solicitudes para actualizar productos.
+        "429":
+          description: Se superó el límite de solicitudes de productos.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 rateLimit:
-                  summary: Límite de actualización de productos superado
+                  summary: Límite de solicitudes superado
                   value:
                     success: false
                     errors:
-                      - message: Demasiadas solicitudes para actualizar productos. Intenta nuevamente más tarde.
-        '500':
-          description: Error interno del servidor.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-              examples:
-                internalError:
-                  summary: Error interno
-                  value:
-                    success: false
-                    errors:
-                      - message: Error interno del servidor
+                      - message: Demasiadas peticiones de productos. Intenta nuevamente más tarde.
     delete:
       tags:
         - Products
       summary: Eliminar producto por identificador
-      description: Marca como eliminado lógicamente un producto del usuario autenticado usando su identificador. Devuelve una respuesta 204 sin contenido si la operación es exitosa.
+      description: Marca como eliminado lógicamente un producto del usuario autenticado usando su
+        identificador. Devuelve una respuesta 204 sin contenido si la operación es exitosa.
       operationId: deleteProductById
       security:
         - bearerAuth: []
@@ -1421,14 +1323,14 @@ paths:
             minimum: 1
             example: 1
       responses:
-        '204':
+        "204":
           description: Producto eliminado correctamente. Sin contenido en la respuesta.
-        '400':
+        "400":
           description: Error de validación del path param id.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ValidationErrorResponse'
+                $ref: "#/components/schemas/ValidationErrorResponse"
               examples:
                 invalidId:
                   summary: ID inválido
@@ -1444,12 +1346,12 @@ paths:
                     errors:
                       - field: id
                         message: El ID del producto debe ser mayor a 0
-        '401':
+        "401":
           description: No se envió un access token válido o el encabezado Authorization es inválido.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 missingToken:
                   summary: Token requerido
@@ -1469,45 +1371,32 @@ paths:
                     success: false
                     errors:
                       - message: Token inválido
-        '404':
-          description: El producto no existe o pertenece a otro usuario.
+        "404":
+          description: El producto no existe o no pertenece al usuario autenticado.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 notFound:
-                  summary: Producto no encontrado
+                  summary: Recurso no encontrado
                   value:
                     success: false
                     errors:
                       - message: Producto no encontrado
-        '429':
-          description: Se superó el límite de solicitudes para eliminar productos.
+        "429":
+          description: Se superó el límite de solicitudes de productos.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 rateLimit:
-                  summary: Límite de eliminación de productos superado
+                  summary: Límite de solicitudes superado
                   value:
                     success: false
                     errors:
-                      - message: Demasiadas solicitudes para eliminar productos. Intenta nuevamente más tarde.
-        '500':
-          description: Error interno del servidor.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-              examples:
-                internalError:
-                  summary: Error interno
-                  value:
-                    success: false
-                    errors:
-                      - message: Error interno del servidor
+                      - message: Demasiadas peticiones de productos. Intenta nuevamente más tarde.
   /api/customers:
     post:
       tags:
@@ -1522,7 +1411,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateCustomerRequest'
+              $ref: "#/components/schemas/CreateCustomerRequest"
             examples:
               createCustomer:
                 summary: Crear cliente
@@ -1530,38 +1419,46 @@ paths:
                   name: Juan Pérez
                   address: Av. Siempre Viva 742
                   email: juan@example.com
-                  phone: '1122334455'
+                  phone: "1122334455"
                   note: Cliente nuevo
       responses:
-        '201':
+        "201":
           description: Customer creado correctamente.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CreateCustomerSuccessResponse'
-        '400':
+                $ref: "#/components/schemas/CreateCustomerSuccessResponse"
+        "400":
           description: Error de validación del cuerpo de la petición o JSON inválido.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ValidationErrorResponse'
-        '401':
+                $ref: "#/components/schemas/ValidationErrorResponse"
+        "401":
           description: No se envió un access token válido o el encabezado Authorization es inválido.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-        '429':
-          description: Se superó el límite de solicitudes para crear customers.
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "429":
+          description: Se superó el límite de solicitudes de customers.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
+              examples:
+                rateLimit:
+                  summary: Límite de solicitudes superado
+                  value:
+                    success: false
+                    errors:
+                      - message: Demasiadas peticiones de customer. Intenta nuevamente más tarde.
     get:
       tags:
         - Customers
       summary: Obtener customers
-      description: Obtiene los clientes activos asociados al usuario autenticado. Permite paginar la respuesta con los query params page y limit.
+      description: Obtiene los clientes activos asociados al usuario autenticado. Permite paginar la
+        respuesta con los query params page y limit.
       operationId: getCustomers
       security:
         - bearerAuth: []
@@ -1578,7 +1475,8 @@ paths:
         - name: limit
           in: query
           required: false
-          description: Cantidad de clientes por página. Si no se envía, el servicio utiliza 20. El máximo permitido es 50.
+          description: Cantidad de clientes por página. Si no se envía, el servicio utiliza 20. El máximo
+            permitido es 50.
           schema:
             type: integer
             minimum: 1
@@ -1586,30 +1484,37 @@ paths:
             default: 20
             example: 20
       responses:
-        '200':
+        "200":
           description: Customers obtenidos correctamente.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetCustomersSuccessResponse'
-        '400':
+                $ref: "#/components/schemas/GetCustomersSuccessResponse"
+        "400":
           description: Error de validación de los query params.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ValidationErrorResponse'
-        '401':
+                $ref: "#/components/schemas/ValidationErrorResponse"
+        "401":
           description: No se envió un access token válido o el encabezado Authorization es inválido.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-        '429':
-          description: Se superó el límite de solicitudes para obtener customers.
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "429":
+          description: Se superó el límite de solicitudes de customers.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
+              examples:
+                rateLimit:
+                  summary: Límite de solicitudes superado
+                  value:
+                    success: false
+                    errors:
+                      - message: Demasiadas peticiones de customer. Intenta nuevamente más tarde.
   /api/customers/{id}:
     get:
       tags:
@@ -1629,30 +1534,50 @@ paths:
             minimum: 1
             example: 1
       responses:
-        '200':
+        "200":
           description: Customer obtenido correctamente.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetCustomerByIdSuccessResponse'
-        '400':
+                $ref: "#/components/schemas/GetCustomerByIdSuccessResponse"
+        "400":
           description: Error de validación del parámetro id.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ValidationErrorResponse'
-        '401':
+                $ref: "#/components/schemas/ValidationErrorResponse"
+        "401":
           description: No se envió un access token válido o el encabezado Authorization es inválido.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-        '404':
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "404":
           description: El customer no existe o no pertenece al usuario autenticado.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
+              examples:
+                notFound:
+                  summary: Recurso no encontrado
+                  value:
+                    success: false
+                    errors:
+                      - message: Customer no encontrado
+        "429":
+          description: Se superó el límite de solicitudes de customers.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+              examples:
+                rateLimit:
+                  summary: Límite de solicitudes superado
+                  value:
+                    success: false
+                    errors:
+                      - message: Demasiadas peticiones de customer. Intenta nuevamente más tarde.
     patch:
       tags:
         - Customers
@@ -1675,32 +1600,52 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateCustomerRequest'
+              $ref: "#/components/schemas/UpdateCustomerRequest"
       responses:
-        '200':
+        "200":
           description: Customer actualizado correctamente.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UpdateCustomerSuccessResponse'
-        '400':
+                $ref: "#/components/schemas/UpdateCustomerSuccessResponse"
+        "400":
           description: Error de validación del parámetro id o JSON inválido.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ValidationErrorResponse'
-        '401':
+                $ref: "#/components/schemas/ValidationErrorResponse"
+        "401":
           description: No se envió un access token válido o el encabezado Authorization es inválido.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-        '404':
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "404":
           description: El customer no existe o no pertenece al usuario autenticado.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
+              examples:
+                notFound:
+                  summary: Recurso no encontrado
+                  value:
+                    success: false
+                    errors:
+                      - message: Customer no encontrado
+        "429":
+          description: Se superó el límite de solicitudes de customers.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+              examples:
+                rateLimit:
+                  summary: Límite de solicitudes superado
+                  value:
+                    success: false
+                    errors:
+                      - message: Demasiadas peticiones de customer. Intenta nuevamente más tarde.
     delete:
       tags:
         - Customers
@@ -1719,32 +1664,53 @@ paths:
             minimum: 1
             example: 1
       responses:
-        '204':
+        "204":
           description: Customer eliminado correctamente. Sin contenido en la respuesta.
-        '400':
+        "400":
           description: Error de validación del path param id.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ValidationErrorResponse'
-        '401':
+                $ref: "#/components/schemas/ValidationErrorResponse"
+        "401":
           description: No se envió un access token válido o el encabezado Authorization es inválido.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-        '404':
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "404":
           description: El customer no existe o no pertenece al usuario autenticado.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
+              examples:
+                notFound:
+                  summary: Recurso no encontrado
+                  value:
+                    success: false
+                    errors:
+                      - message: Customer no encontrado
+        "429":
+          description: Se superó el límite de solicitudes de customers.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+              examples:
+                rateLimit:
+                  summary: Límite de solicitudes superado
+                  value:
+                    success: false
+                    errors:
+                      - message: Demasiadas peticiones de customer. Intenta nuevamente más tarde.
   /api/customers/all:
     delete:
       tags:
         - Customers
       summary: Eliminar todos los customers del usuario autenticado
-      description: Marca como eliminados lógicamente todos los customers activos del usuario autenticado cuando se confirma la acción.
+      description: Marca como eliminados lógicamente todos los customers activos del usuario autenticado
+        cuando se confirma la acción.
       operationId: deleteAllCustomers
       security:
         - bearerAuth: []
@@ -1753,38 +1719,84 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DeleteAllCustomersRequest'
+              $ref: "#/components/schemas/DeleteAllCustomersRequest"
       responses:
-        '200':
+        "200":
           description: Customers eliminados correctamente.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DeleteAllCustomersSuccessResponse'
-        '400':
+                $ref: "#/components/schemas/DeleteAllCustomersSuccessResponse"
+        "400":
           description: Error de validación del cuerpo de la petición o JSON inválido.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ValidationErrorResponse'
-        '401':
-          description: No se envió un access token válido o el encabezado Authorization es inválido.
+                $ref: "#/components/schemas/ValidationErrorResponse"
+        "401":
+          description: No se envió un token válido o confirmDelete fue false.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-        '404':
+                $ref: "#/components/schemas/GenericErrorResponse"
+              examples:
+                missingToken:
+                  summary: Token requerido
+                  value:
+                    success: false
+                    errors:
+                      - message: Token requerido
+                invalidHeader:
+                  summary: Encabezado inválido
+                  value:
+                    success: false
+                    errors:
+                      - message: Encabezado Authorization inválido
+                invalidToken:
+                  summary: Token inválido
+                  value:
+                    success: false
+                    errors:
+                      - message: Token inválido
+                missingConfirmation:
+                  summary: Confirmación requerida
+                  value:
+                    success: false
+                    errors:
+                      - message: "Acción no autorizada: se requiere confirmación explícita para eliminar todos los clientes"
+        "404":
           description: No existen customers activos para eliminar.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
+              examples:
+                notFound:
+                  summary: Recurso no encontrado
+                  value:
+                    success: false
+                    errors:
+                      - message: Customer no encontrado
+        "429":
+          description: Se superó el límite de solicitudes de customers.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+              examples:
+                rateLimit:
+                  summary: Límite de solicitudes superado
+                  value:
+                    success: false
+                    errors:
+                      - message: Demasiadas peticiones de customer. Intenta nuevamente más tarde.
   /api/couriers:
     post:
       tags:
         - Couriers
       summary: Crear courier
-      description: Crea un repartidor asociado al usuario autenticado. El nombre debe ser único dentro del usuario.
+      description: Crea un repartidor asociado al usuario autenticado. El nombre debe ser único dentro del
+        usuario.
       operationId: createCourier
       security:
         - bearerAuth: []
@@ -1793,21 +1805,21 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateCourierRequest'
+              $ref: "#/components/schemas/CreateCourierRequest"
             examples:
               createCourier:
                 summary: Crear courier
                 value:
                   name: Repartidor 1
-                  phone: '1234567890'
+                  phone: "1234567890"
                   note: Disponible en horario comercial
       responses:
-        '201':
+        "201":
           description: Courier creado correctamente.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CreateCourierSuccessResponse'
+                $ref: "#/components/schemas/CreateCourierSuccessResponse"
               examples:
                 created:
                   summary: Courier creado
@@ -1817,16 +1829,16 @@ paths:
                     courier:
                       id_courier: 1
                       name: Repartidor 1
-                      phone: '1234567890'
+                      phone: "1234567890"
                       note: Disponible en horario comercial
-        '400':
+        "400":
           description: Error de validación del cuerpo de la petición o JSON inválido.
           content:
             application/json:
               schema:
                 oneOf:
-                  - $ref: '#/components/schemas/ValidationErrorResponse'
-                  - $ref: '#/components/schemas/GenericErrorResponse'
+                  - $ref: "#/components/schemas/ValidationErrorResponse"
+                  - $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 invalidName:
                   summary: Nombre inválido
@@ -1848,12 +1860,12 @@ paths:
                     success: false
                     errors:
                       - message: JSON inválido o mal formado
-        '401':
+        "401":
           description: No se envió un access token válido o el encabezado Authorization es inválido.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 missingToken:
                   summary: Token requerido
@@ -1873,24 +1885,38 @@ paths:
                     success: false
                     errors:
                       - message: Token inválido
-        '409':
-          description: El nombre de courier ya existe para el usuario autenticado.
+        "409":
+          description: El name ya existe para un courier del usuario autenticado.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
-                duplicatedName:
-                  summary: Nombre duplicado
+                conflict:
+                  summary: Conflicto
                   value:
                     success: false
                     errors:
                       - message: El name ya esta en uso, debe ser unico por courier
+        "429":
+          description: Se superó el límite de solicitudes de courier.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+              examples:
+                rateLimit:
+                  summary: Límite de solicitudes superado
+                  value:
+                    success: false
+                    errors:
+                      - message: Demasiadas peticiones de courier. Intenta nuevamente más tarde.
     get:
       tags:
         - Couriers
       summary: Obtener couriers
-      description: Obtiene los couriers activos asociados al usuario autenticado. Permite paginar la respuesta con los query params page y limit.
+      description: Obtiene los couriers activos asociados al usuario autenticado. Permite paginar la
+        respuesta con los query params page y limit.
       operationId: getCouriers
       security:
         - bearerAuth: []
@@ -1907,7 +1933,8 @@ paths:
         - name: limit
           in: query
           required: false
-          description: Cantidad de couriers por página. Si no se envía, el servicio utiliza 20. El máximo permitido es 50.
+          description: Cantidad de couriers por página. Si no se envía, el servicio utiliza 20. El máximo
+            permitido es 50.
           schema:
             type: integer
             minimum: 1
@@ -1915,12 +1942,12 @@ paths:
             default: 20
             example: 20
       responses:
-        '200':
+        "200":
           description: Couriers obtenidos correctamente.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetCouriersSuccessResponse'
+                $ref: "#/components/schemas/GetCouriersSuccessResponse"
               examples:
                 withCouriers:
                   summary: Couriers encontrados
@@ -1929,7 +1956,7 @@ paths:
                     couriers:
                       - id_courier: 1
                         name: Repartidor 1
-                        phone: '1234567890'
+                        phone: "1234567890"
                         note: Disponible en horario comercial
                       - id_courier: 2
                         name: Repartidor 2
@@ -1940,12 +1967,12 @@ paths:
                   value:
                     success: true
                     couriers: []
-        '400':
+        "400":
           description: Error de validación de los query params.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ValidationErrorResponse'
+                $ref: "#/components/schemas/ValidationErrorResponse"
               examples:
                 invalidPage:
                   summary: Página inválida
@@ -1961,12 +1988,12 @@ paths:
                     errors:
                       - field: limit
                         message: El límite debe ser un número entero
-        '401':
+        "401":
           description: No se envió un access token válido o el encabezado Authorization es inválido.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 missingToken:
                   summary: Token requerido
@@ -1986,25 +2013,26 @@ paths:
                     success: false
                     errors:
                       - message: Token inválido
-        '429':
-          description: Se superó el límite de solicitudes para obtener couriers.
+        "429":
+          description: Se superó el límite de solicitudes de courier.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 rateLimit:
-                  summary: Límite de obtención de couriers superado
+                  summary: Límite de solicitudes superado
                   value:
                     success: false
                     errors:
-                      - message: Demasiadas solicitudes para obtener couriers. Intenta nuevamente más tarde.
+                      - message: Demasiadas peticiones de courier. Intenta nuevamente más tarde.
   /api/couriers/{id}:
     get:
       tags:
         - Couriers
       summary: Obtener courier por identificador
-      description: Obtiene un courier del usuario autenticado usando su identificador. Si el courier no existe o pertenece a otro usuario, devuelve Courier no encontrado.
+      description: Obtiene un courier del usuario autenticado usando su identificador. Si el courier no
+        existe o pertenece a otro usuario, devuelve Courier no encontrado.
       operationId: getCourierById
       security:
         - bearerAuth: []
@@ -2018,12 +2046,12 @@ paths:
             minimum: 1
             example: 1
       responses:
-        '200':
+        "200":
           description: Courier obtenido correctamente.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetCourierByIdSuccessResponse'
+                $ref: "#/components/schemas/GetCourierByIdSuccessResponse"
               examples:
                 found:
                   summary: Courier encontrado
@@ -2032,14 +2060,14 @@ paths:
                     courier:
                       id_courier: 1
                       name: Repartidor 1
-                      phone: '1234567890'
+                      phone: "1234567890"
                       note: Disponible en horario comercial
-        '400':
+        "400":
           description: Error de validación del parámetro id.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ValidationErrorResponse'
+                $ref: "#/components/schemas/ValidationErrorResponse"
               examples:
                 invalidId:
                   summary: Identificador inválido
@@ -2055,12 +2083,12 @@ paths:
                     errors:
                       - field: id
                         message: El identificador debe ser mayor o igual a 1
-        '401':
+        "401":
           description: No se envió un access token válido o el encabezado Authorization es inválido.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 missingToken:
                   summary: Token requerido
@@ -2080,37 +2108,38 @@ paths:
                     success: false
                     errors:
                       - message: Token inválido
-        '404':
+        "404":
           description: El courier no existe o no pertenece al usuario autenticado.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 notFound:
-                  summary: Courier no encontrado
+                  summary: Recurso no encontrado
                   value:
                     success: false
                     errors:
                       - message: Courier no encontrado
-        '500':
-          description: Error interno del servidor.
+        "429":
+          description: Se superó el límite de solicitudes de courier.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
-                internalError:
-                  summary: Error interno
+                rateLimit:
+                  summary: Límite de solicitudes superado
                   value:
                     success: false
                     errors:
-                      - message: Error interno del servidor
+                      - message: Demasiadas peticiones de courier. Intenta nuevamente más tarde.
     patch:
       tags:
         - Couriers
       summary: Actualizar courier por identificador
-      description: Actualiza un courier del usuario autenticado usando su identificador. Devuelve el courier actualizado.
+      description: Actualiza un courier del usuario autenticado usando su identificador. Devuelve el
+        courier actualizado.
       operationId: updateCourierById
       security:
         - bearerAuth: []
@@ -2128,21 +2157,21 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateCourierRequest'
+              $ref: "#/components/schemas/UpdateCourierRequest"
             examples:
               updateCourier:
                 summary: Actualizar courier
                 value:
                   name: Repartidor actualizado
-                  phone: '0987654321'
+                  phone: "0987654321"
                   note: Cambio de turno
       responses:
-        '200':
+        "200":
           description: Courier actualizado correctamente.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UpdateCourierSuccessResponse'
+                $ref: "#/components/schemas/UpdateCourierSuccessResponse"
               examples:
                 updated:
                   summary: Actualización exitosa
@@ -2152,16 +2181,16 @@ paths:
                     courier:
                       id_courier: 1
                       name: Repartidor actualizado
-                      phone: '0987654321'
+                      phone: "0987654321"
                       note: Cambio de turno
-        '400':
+        "400":
           description: Error de validación del parámetro id o JSON inválido.
           content:
             application/json:
               schema:
                 oneOf:
-                  - $ref: '#/components/schemas/ValidationErrorResponse'
-                  - $ref: '#/components/schemas/GenericErrorResponse'
+                  - $ref: "#/components/schemas/ValidationErrorResponse"
+                  - $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 invalidId:
                   summary: Identificador inválido
@@ -2183,12 +2212,12 @@ paths:
                     success: false
                     errors:
                       - message: JSON inválido o mal formado
-        '401':
+        "401":
           description: No se envió un access token válido o el encabezado Authorization es inválido.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 missingToken:
                   summary: Token requerido
@@ -2208,37 +2237,38 @@ paths:
                     success: false
                     errors:
                       - message: Token inválido
-        '404':
+        "404":
           description: El courier no existe o no pertenece al usuario autenticado.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 notFound:
-                  summary: Courier no encontrado
+                  summary: Recurso no encontrado
                   value:
                     success: false
                     errors:
                       - message: Courier no encontrado
-        '500':
-          description: Error interno del servidor.
+        "429":
+          description: Se superó el límite de solicitudes de courier.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
-                internalError:
-                  summary: Error interno
+                rateLimit:
+                  summary: Límite de solicitudes superado
                   value:
                     success: false
                     errors:
-                      - message: Error interno del servidor
+                      - message: Demasiadas peticiones de courier. Intenta nuevamente más tarde.
     delete:
       tags:
         - Couriers
       summary: Eliminar courier por identificador
-      description: Marca como eliminado lógicamente un courier del usuario autenticado usando su identificador. Devuelve una respuesta 204 sin contenido si la operación es exitosa.
+      description: Marca como eliminado lógicamente un courier del usuario autenticado usando su
+        identificador. Devuelve una respuesta 204 sin contenido si la operación es exitosa.
       operationId: deleteCourierById
       security:
         - bearerAuth: []
@@ -2252,14 +2282,14 @@ paths:
             minimum: 1
             example: 1
       responses:
-        '204':
+        "204":
           description: Courier eliminado correctamente. Sin contenido en la respuesta.
-        '400':
+        "400":
           description: Error de validación del path param id.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ValidationErrorResponse'
+                $ref: "#/components/schemas/ValidationErrorResponse"
               examples:
                 invalidId:
                   summary: ID inválido
@@ -2275,12 +2305,12 @@ paths:
                     errors:
                       - field: id
                         message: El identificador debe ser mayor o igual a 1
-        '401':
+        "401":
           description: No se envió un access token válido o el encabezado Authorization es inválido.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 missingToken:
                   summary: Token requerido
@@ -2300,32 +2330,32 @@ paths:
                     success: false
                     errors:
                       - message: Token inválido
-        '404':
+        "404":
           description: El courier no existe o no pertenece al usuario autenticado.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
                 notFound:
-                  summary: Courier no encontrado
+                  summary: Recurso no encontrado
                   value:
                     success: false
                     errors:
                       - message: Courier no encontrado
-        '500':
-          description: Error interno del servidor.
+        "429":
+          description: Se superó el límite de solicitudes de courier.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
               examples:
-                internalError:
-                  summary: Error interno
+                rateLimit:
+                  summary: Límite de solicitudes superado
                   value:
                     success: false
                     errors:
-                      - message: Error interno del servidor
+                      - message: Demasiadas peticiones de courier. Intenta nuevamente más tarde.
   /api/orders:
     get:
       tags:
@@ -2348,7 +2378,8 @@ paths:
         - name: limit
           in: query
           required: false
-          description: Cantidad de orders por pagina. Si no se envia, el servicio utiliza 20. El maximo permitido es 50.
+          description: Cantidad de orders por pagina. Si no se envia, el servicio utiliza 20. El maximo
+            permitido es 50.
           schema:
             type: integer
             minimum: 1
@@ -2367,41 +2398,45 @@ paths:
               - cancelled
             example: pending
       responses:
-        '200':
+        "200":
           description: Orders obtenidas correctamente.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetOrdersSuccessResponse'
-        '400':
+                $ref: "#/components/schemas/GetOrdersSuccessResponse"
+        "400":
           description: Error de validacion de los query params.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ValidationErrorResponse'
-        '401':
+                $ref: "#/components/schemas/ValidationErrorResponse"
+        "401":
           description: No se envio un access token valido o el encabezado Authorization es invalido.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-        '429':
-          description: Se supero el limite de solicitudes para orders.
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "429":
+          description: Se superó el límite de solicitudes de order.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-        '500':
-          description: Error interno del servidor.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
+              examples:
+                rateLimit:
+                  summary: Límite de solicitudes superado
+                  value:
+                    success: false
+                    errors:
+                      - message: Demasiadas peticiones de order. Intenta nuevamente más tarde.
     post:
       tags:
         - Orders
       summary: Crear order
-      description: Crea una order pending para el usuario autenticado, descuenta stock de los productos y calcula el total.
+      description: Crea una order pending para el usuario autenticado, descuenta stock de los productos y
+        calcula el total. Si se reenvia el mismo action_token con el mismo contenido para el mismo
+        usuario, devuelve la order ya creada sin descontar stock nuevamente. Si el mismo
+        action_token se reenvia con contenido diferente, responde 409.
       operationId: createOrder
       security:
         - bearerAuth: []
@@ -2410,12 +2445,12 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateOrderRequest'
+              $ref: "#/components/schemas/CreateOrderRequest"
             examples:
               createOrder:
                 summary: Crear order
                 value:
-                  actionToken: 550e8400-e29b-41d4-a716-446655440000
+                  action_token: 550e8400-e29b-41d4-a716-446655440000
                   id_customer: 1
                   id_courier: 1
                   note: Entregar por la tarde
@@ -2423,50 +2458,104 @@ paths:
                     - id_product: 1
                       quantity: 2
       responses:
-        '201':
-          description: Order creada correctamente.
+        "201":
+          description: Orden creado correctamente.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CreateOrderSuccessResponse'
-        '400':
-          description: Error de validacion del cuerpo de la peticion, stock insuficiente o JSON invalido.
+                $ref: "#/components/schemas/CreateOrderSuccessResponse"
+              examples:
+                created:
+                  summary: Orden creada
+                  value:
+                    success: true
+                    message: Orden creado correctamente
+                    order:
+                      id_order: 1
+                      id_customer: 1
+                      id_courier: 1
+                      note: Entregar por la tarde
+                      status: pending
+                      total_amount: "251.00"
+                      action_token: 550e8400-e29b-41d4-a716-446655440000
+                      orderItems:
+                        - id_item: 1
+                          id_product: 1
+                          unit_price: "125.50"
+                          quantity: 2
+                          subtotal: "251.00"
+        "400":
+          description: Error de validación del cuerpo de la petición, stock insuficiente o JSON inválido.
           content:
             application/json:
               schema:
                 oneOf:
-                  - $ref: '#/components/schemas/ValidationErrorResponse'
-                  - $ref: '#/components/schemas/GenericErrorResponse'
-        '401':
+                  - $ref: "#/components/schemas/ValidationErrorResponse"
+                  - $ref: "#/components/schemas/GenericErrorResponse"
+              examples:
+                invalidRequest:
+                  summary: Solicitud inválida
+                  value:
+                    success: false
+                    errors:
+                      - message: "No hay suficiente stock para el producto 1 solicitado. Disponibles: 0."
+        "401":
           description: No se envio un access token valido o el encabezado Authorization es invalido.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-        '404':
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "404":
           description: El customer, courier o producto no existe para el usuario autenticado.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-        '409':
-          description: Conflicto de idempotencia o item duplicado.
+                $ref: "#/components/schemas/GenericErrorResponse"
+              examples:
+                customerNotFound:
+                  summary: Customer no encontrado
+                  value:
+                    success: false
+                    errors:
+                      - message: Customer no encontrado
+                courierNotFound:
+                  summary: Courier no encontrado
+                  value:
+                    success: false
+                    errors:
+                      - message: Courier no encontrado
+                productNotFound:
+                  summary: Producto no encontrado
+                  value:
+                    success: false
+                    errors:
+                      - message: Producto 1 no encontrado
+        "409":
+          description: El action_token ya fue usado por el mismo usuario con otro contenido.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-        '429':
-          description: Se supero el limite de solicitudes para orders.
+                $ref: "#/components/schemas/GenericErrorResponse"
+              examples:
+                conflict:
+                  summary: Conflicto
+                  value:
+                    success: false
+                    errors:
+                      - message: El action_token ya fue utilizado con un contenido diferente
+        "429":
+          description: Se superó el límite de solicitudes de order.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-        '500':
-          description: Error interno del servidor.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
+              examples:
+                rateLimit:
+                  summary: Límite de solicitudes superado
+                  value:
+                    success: false
+                    errors:
+                      - message: Demasiadas peticiones de order. Intenta nuevamente más tarde.
   /api/orders/{id}:
     get:
       tags:
@@ -2486,41 +2575,57 @@ paths:
             minimum: 1
             example: 1
       responses:
-        '200':
+        "200":
           description: Order obtenida correctamente.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetOrderByIdSuccessResponse'
-        '400':
+                $ref: "#/components/schemas/GetOrderByIdSuccessResponse"
+        "400":
           description: Error de validacion del path param id.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ValidationErrorResponse'
-        '401':
+                $ref: "#/components/schemas/ValidationErrorResponse"
+        "401":
           description: No se envio un access token valido o el encabezado Authorization es invalido.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-        '404':
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "404":
           description: La order no existe o no pertenece al usuario autenticado.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-        '500':
-          description: Error interno del servidor.
+                $ref: "#/components/schemas/GenericErrorResponse"
+              examples:
+                notFound:
+                  summary: Recurso no encontrado
+                  value:
+                    success: false
+                    errors:
+                      - message: Order no encontrado
+        "429":
+          description: Se superó el límite de solicitudes de order.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
+              examples:
+                rateLimit:
+                  summary: Límite de solicitudes superado
+                  value:
+                    success: false
+                    errors:
+                      - message: Demasiadas peticiones de order. Intenta nuevamente más tarde.
     patch:
       tags:
         - Orders
       summary: Actualizar order por identificador
-      description: Actualiza id_courier, note y los items de una order. Solo se permite si la order esta en estado pending. Al eliminar un orderItem se devuelve su quantity al stock del producto; al crear uno nuevo se descuenta stock y se recalcula total_amount.
+      description: Actualiza id_courier, note y los items de una order. Solo se permite si la order esta
+        en estado pending. Al eliminar un orderItem se devuelve su quantity al stock del producto;
+        al crear uno nuevo se descuenta stock y se recalcula total_amount.
       operationId: updateOrder
       security:
         - bearerAuth: []
@@ -2538,7 +2643,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateOrderRequest'
+              $ref: "#/components/schemas/UpdateOrderRequest"
             examples:
               updateOrder:
                 summary: Actualizar datos e items
@@ -2552,50 +2657,111 @@ paths:
                       - id_product: 3
                         quantity: 2
       responses:
-        '200':
-          description: Order actualizada correctamente.
+        "200":
+          description: Orden actualizada correctamente.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UpdateOrderSuccessResponse'
-        '400':
-          description: Error de validacion del path param, cuerpo de la peticion, stock insuficiente o JSON invalido.
+                $ref: "#/components/schemas/UpdateOrderSuccessResponse"
+              examples:
+                updated:
+                  summary: Orden actualizada
+                  value:
+                    success: true
+                    message: Orden actualizado correctamente
+                    order:
+                      id_order: 1
+                      id_customer: 1
+                      id_courier: 2
+                      note: Entregar antes de las 18
+                      status: pending
+                      total_amount: "251.00"
+                      action_token: 550e8400-e29b-41d4-a716-446655440000
+                      orderItems:
+                        - id_item: 2
+                          id_product: 3
+                          unit_price: "125.50"
+                          quantity: 2
+                          subtotal: "251.00"
+        "400":
+          description: Error de validación del path param, cuerpo de la petición, stock insuficiente o JSON
+            inválido.
           content:
             application/json:
               schema:
                 oneOf:
-                  - $ref: '#/components/schemas/ValidationErrorResponse'
-                  - $ref: '#/components/schemas/GenericErrorResponse'
-        '401':
+                  - $ref: "#/components/schemas/ValidationErrorResponse"
+                  - $ref: "#/components/schemas/GenericErrorResponse"
+              examples:
+                invalidRequest:
+                  summary: Solicitud inválida
+                  value:
+                    success: false
+                    errors:
+                      - message: "No hay suficiente stock para el producto 1 solicitado. Disponibles: 0."
+        "401":
           description: No se envio un access token valido o el encabezado Authorization es invalido.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-        '404':
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "404":
           description: La order, courier, producto u orderItem no existe para el usuario autenticado.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-        '409':
-          description: La order no esta pending o se intenta crear un producto duplicado en la misma order.
+                $ref: "#/components/schemas/GenericErrorResponse"
+              examples:
+                orderNotFound:
+                  summary: Order no encontrado
+                  value:
+                    success: false
+                    errors:
+                      - message: Order no encontrado
+                courierNotFound:
+                  summary: Courier no encontrado
+                  value:
+                    success: false
+                    errors:
+                      - message: Courier no encontrado
+                productNotFound:
+                  summary: Producto no encontrado
+                  value:
+                    success: false
+                    errors:
+                      - message: Producto 1 no encontrado
+                itemNotFound:
+                  summary: Order item no encontrado
+                  value:
+                    success: false
+                    errors:
+                      - message: Order item 1 no encontrado
+        "409":
+          description: La order no está en estado pending.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-        '429':
-          description: Se supero el limite de solicitudes para orders.
+                $ref: "#/components/schemas/GenericErrorResponse"
+              examples:
+                conflict:
+                  summary: Conflicto
+                  value:
+                    success: false
+                    errors:
+                      - message: Solo las orders con estado "pending" pueden actualizarse
+        "429":
+          description: Se superó el límite de solicitudes de order.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-        '500':
-          description: Error interno del servidor.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
+              examples:
+                rateLimit:
+                  summary: Límite de solicitudes superado
+                  value:
+                    success: false
+                    errors:
+                      - message: Demasiadas peticiones de order. Intenta nuevamente más tarde.
   /api/orders/status/{id}:
     patch:
       tags:
@@ -2619,57 +2785,72 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateStatusOrderRequest'
+              $ref: "#/components/schemas/UpdateStatusOrderRequest"
             examples:
               completeOrder:
                 summary: Completar order
                 value:
                   status: completed
       responses:
-        '200':
+        "200":
           description: Estado de la order actualizado correctamente.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UpdateStatusOrderSuccessResponse'
-        '400':
+                $ref: "#/components/schemas/UpdateStatusOrderSuccessResponse"
+        "400":
           description: Error de validacion del path param, cuerpo de la peticion o JSON invalido.
           content:
             application/json:
               schema:
                 oneOf:
-                  - $ref: '#/components/schemas/ValidationErrorResponse'
-                  - $ref: '#/components/schemas/GenericErrorResponse'
-        '401':
+                  - $ref: "#/components/schemas/ValidationErrorResponse"
+                  - $ref: "#/components/schemas/GenericErrorResponse"
+        "401":
           description: No se envio un access token valido o el encabezado Authorization es invalido.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-        '404':
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "404":
           description: La order no existe o no pertenece al usuario autenticado.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-        '409':
-          description: La order no esta pending.
+                $ref: "#/components/schemas/GenericErrorResponse"
+              examples:
+                notFound:
+                  summary: Recurso no encontrado
+                  value:
+                    success: false
+                    errors:
+                      - message: Order no encontrado
+        "409":
+          description: La order no está en estado pending.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-        '429':
-          description: Se supero el limite de solicitudes para orders.
+                $ref: "#/components/schemas/GenericErrorResponse"
+              examples:
+                conflict:
+                  summary: Conflicto
+                  value:
+                    success: false
+                    errors:
+                      - message: Solo las orders con estado "pending" pueden actualizarse
+        "429":
+          description: Se superó el límite de solicitudes de order.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-        '500':
-          description: Error interno del servidor.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
+                $ref: "#/components/schemas/GenericErrorResponse"
+              examples:
+                rateLimit:
+                  summary: Límite de solicitudes superado
+                  value:
+                    success: false
+                    errors:
+                      - message: Demasiadas peticiones de order. Intenta nuevamente más tarde.
 components:
   securitySchemes:
     bearerAuth:
@@ -2693,9 +2874,10 @@ components:
           type: string
           minLength: 8
           maxLength: 16
-          pattern: '^\S+$'
-          description: Contraseña del usuario. Debe ser texto, no puede contener espacios y debe incluir al menos una letra mayúscula.
-          example: '123G5678'
+          pattern: ^\S+$
+          description: Contraseña del usuario. Debe ser texto, no puede contener espacios y debe incluir al
+            menos una letra mayúscula.
+          example: 123G5678
         role:
           type: string
           enum:
@@ -2720,8 +2902,9 @@ components:
           type: string
           minLength: 8
           maxLength: 16
-          pattern: '^\S+$'
-          description: Password del usuario. Debe ser texto, no puede contener espacios y debe incluir al menos una letra mayúscula.
+          pattern: ^\S+$
+          description: Password del usuario. Debe ser texto, no puede contener espacios y debe incluir al
+            menos una letra mayúscula.
           example: passwordTest
     UpdateUserRequest:
       type: object
@@ -2737,8 +2920,9 @@ components:
           type: string
           minLength: 8
           maxLength: 16
-          pattern: '^\S+$'
-          description: Nueva contraseña del usuario. Debe ser texto, no puede contener espacios y debe incluir al menos una letra mayúscula.
+          pattern: ^\S+$
+          description: Nueva contraseña del usuario. Debe ser texto, no puede contener espacios y debe incluir
+            al menos una letra mayúscula.
           example: NewPass123
     DeleteUserRequest:
       type: object
@@ -2786,7 +2970,7 @@ components:
         phone:
           type: string
           nullable: true
-          example: '1234567890'
+          example: "1234567890"
         note:
           type: string
           nullable: true
@@ -2806,7 +2990,7 @@ components:
         phone:
           type: string
           description: Número de teléfono del repartidor.
-          example: '1234567890'
+          example: "1234567890"
         note:
           type: string
           maxLength: 500
@@ -2825,7 +3009,7 @@ components:
         phone:
           type: string
           description: Nuevo número de teléfono del repartidor.
-          example: '0987654321'
+          example: "0987654321"
         note:
           type: string
           maxLength: 500
@@ -2845,7 +3029,7 @@ components:
           type: string
           example: Courier creado correctamente
         courier:
-          $ref: '#/components/schemas/Courier'
+          $ref: "#/components/schemas/Courier"
     GetCouriersSuccessResponse:
       type: object
       required:
@@ -2858,7 +3042,7 @@ components:
         couriers:
           type: array
           items:
-            $ref: '#/components/schemas/Courier'
+            $ref: "#/components/schemas/Courier"
     GetCourierByIdSuccessResponse:
       type: object
       required:
@@ -2869,7 +3053,7 @@ components:
           type: boolean
           example: true
         courier:
-          $ref: '#/components/schemas/Courier'
+          $ref: "#/components/schemas/Courier"
     UpdateCourierSuccessResponse:
       type: object
       required:
@@ -2884,7 +3068,7 @@ components:
           type: string
           example: Courier actualizado correctamente
         courier:
-          $ref: '#/components/schemas/Courier'
+          $ref: "#/components/schemas/Courier"
     Customer:
       type: object
       required:
@@ -2909,7 +3093,7 @@ components:
         phone:
           type: string
           nullable: true
-          example: '1122334455'
+          example: "1122334455"
         note:
           type: string
           nullable: true
@@ -2941,7 +3125,7 @@ components:
         phone:
           type: string
           description: Teléfono opcional del cliente.
-          example: '1122334455'
+          example: "1122334455"
         note:
           type: string
           maxLength: 500
@@ -2971,7 +3155,7 @@ components:
         phone:
           type: string
           description: Nuevo teléfono opcional del cliente.
-          example: '1122334455'
+          example: "1122334455"
         note:
           type: string
           maxLength: 500
@@ -2999,7 +3183,7 @@ components:
           type: string
           example: Customer creado correctamente
         customer:
-          $ref: '#/components/schemas/Customer'
+          $ref: "#/components/schemas/Customer"
     GetCustomersSuccessResponse:
       type: object
       required:
@@ -3012,7 +3196,7 @@ components:
         customers:
           type: array
           items:
-            $ref: '#/components/schemas/Customer'
+            $ref: "#/components/schemas/Customer"
     GetCustomerByIdSuccessResponse:
       type: object
       required:
@@ -3023,7 +3207,7 @@ components:
           type: boolean
           example: true
         customer:
-          $ref: '#/components/schemas/Customer'
+          $ref: "#/components/schemas/Customer"
     UpdateCustomerSuccessResponse:
       type: object
       required:
@@ -3038,7 +3222,7 @@ components:
           type: string
           example: Customer actualizado correctamente
         customer:
-          $ref: '#/components/schemas/Customer'
+          $ref: "#/components/schemas/Customer"
     DeleteAllCustomersSuccessResponse:
       type: object
       required:
@@ -3076,8 +3260,8 @@ components:
           example: Café molido
         price:
           type: string
-          pattern: '^\d+(\.\d{1,2})?$'
-          example: '125.50'
+          pattern: ^\d+(\.\d{1,2})?$
+          example: "125.50"
         stock:
           type: integer
           minimum: 0
@@ -3108,8 +3292,8 @@ components:
           example: Producto de prueba
         price:
           type: string
-          pattern: '^\d+(\.\d{1,2})?$'
-          example: '100.00'
+          pattern: ^\d+(\.\d{1,2})?$
+          example: "100.00"
         stock:
           type: integer
           minimum: 0
@@ -3136,11 +3320,11 @@ components:
         price:
           oneOf:
             - type: string
-              pattern: '^\d+(\.\d+)?$'
+              pattern: ^\d+(\.\d+)?$
             - type: number
               format: float
           description: Precio decimal del producto. Debe ser mayor a 0.
-          example: '125.50'
+          example: "125.50"
         stock:
           type: integer
           minimum: 0
@@ -3162,11 +3346,11 @@ components:
         price:
           oneOf:
             - type: string
-              pattern: '^\d+(\.\d+)?$'
+              pattern: ^\d+(\.\d+)?$
             - type: number
               format: float
           description: Nuevo precio decimal del producto.
-          example: '150.00'
+          example: "150.00"
         stock:
           type: integer
           minimum: 0
@@ -3186,7 +3370,7 @@ components:
           type: string
           example: Usuario creado correctamente!
         user:
-          $ref: '#/components/schemas/User'
+          $ref: "#/components/schemas/User"
     LoginSuccessResponse:
       type: object
       required:
@@ -3223,7 +3407,7 @@ components:
           type: string
           example: Producto creado correctamente
         product:
-          $ref: '#/components/schemas/Product'
+          $ref: "#/components/schemas/Product"
     GetUserProductsSuccessResponse:
       type: object
       required:
@@ -3236,7 +3420,7 @@ components:
         products:
           type: array
           items:
-            $ref: '#/components/schemas/Product'
+            $ref: "#/components/schemas/Product"
     GetUserProductByIdSuccessResponse:
       type: object
       required:
@@ -3247,7 +3431,7 @@ components:
           type: boolean
           example: true
         product:
-          $ref: '#/components/schemas/ProductReadById'
+          $ref: "#/components/schemas/ProductReadById"
     UpdateProductsSuccessResponse:
       type: object
       required:
@@ -3264,7 +3448,7 @@ components:
         products:
           type: array
           items:
-            $ref: '#/components/schemas/Product'
+            $ref: "#/components/schemas/Product"
     UpdateProductByIdSuccessResponse:
       type: object
       required:
@@ -3279,7 +3463,7 @@ components:
           type: string
           example: Producto actualizado correctamente
         product:
-          $ref: '#/components/schemas/Product'
+          $ref: "#/components/schemas/Product"
     DeleteProductSuccessResponse:
       type: object
       required:
@@ -3315,16 +3499,16 @@ components:
           example: 1
         unit_price:
           type: string
-          pattern: '^\d+(\.\d{1,2})?$'
-          example: '125.50'
+          pattern: ^\d+(\.\d{1,2})?$
+          example: "125.50"
         quantity:
           type: integer
           minimum: 1
           example: 2
         subtotal:
           type: string
-          pattern: '^\d+(\.\d{1,2})?$'
-          example: '251.00'
+          pattern: ^\d+(\.\d{1,2})?$
+          example: "251.00"
     Order:
       type: object
       required:
@@ -3360,12 +3544,17 @@ components:
           example: pending
         total_amount:
           type: string
-          pattern: '^\d+(\.\d{1,2})?$'
-          example: '251.00'
+          pattern: ^\d+(\.\d{1,2})?$
+          example: "251.00"
+        action_token:
+          type: string
+          format: uuid
+          description: Token idempotente usado al crear la order. No se expone request_fingerprint.
+          example: 550e8400-e29b-41d4-a716-446655440000
         orderItems:
           type: array
           items:
-            $ref: '#/components/schemas/OrderItem'
+            $ref: "#/components/schemas/OrderItem"
     CreateOrderItemRequest:
       type: object
       required:
@@ -3383,16 +3572,18 @@ components:
     CreateOrderRequest:
       type: object
       required:
-        - actionToken
+        - action_token
         - id_customer
         - id_courier
         - items
       additionalProperties: true
       properties:
-        actionToken:
+        action_token:
           type: string
           format: uuid
-          description: Token idempotente de la accion.
+          description: Token idempotente de la accion. Para el mismo usuario, repetir el mismo token con el
+            mismo contenido devuelve la order existente; repetirlo con contenido diferente responde
+            409.
           example: 550e8400-e29b-41d4-a716-446655440000
         id_customer:
           type: integer
@@ -3411,7 +3602,7 @@ components:
           type: array
           minItems: 1
           items:
-            $ref: '#/components/schemas/CreateOrderItemRequest'
+            $ref: "#/components/schemas/CreateOrderItemRequest"
     UpdateOrderItemsRequest:
       type: object
       properties:
@@ -3429,7 +3620,7 @@ components:
           minItems: 1
           description: Items nuevos a crear en la order.
           items:
-            $ref: '#/components/schemas/CreateOrderItemRequest'
+            $ref: "#/components/schemas/CreateOrderItemRequest"
     UpdateOrderRequest:
       type: object
       additionalProperties: true
@@ -3446,7 +3637,7 @@ components:
           description: Nueva nota de la order.
           example: Entregar antes de las 18
         items:
-          $ref: '#/components/schemas/UpdateOrderItemsRequest'
+          $ref: "#/components/schemas/UpdateOrderItemsRequest"
     UpdateStatusOrderRequest:
       type: object
       required:
@@ -3470,9 +3661,9 @@ components:
           example: true
         message:
           type: string
-          example: Orden creada correctamente
+          example: Orden creado correctamente
         order:
-          $ref: '#/components/schemas/Order'
+          $ref: "#/components/schemas/Order"
     GetOrdersSuccessResponse:
       type: object
       required:
@@ -3485,7 +3676,7 @@ components:
         orders:
           type: array
           items:
-            $ref: '#/components/schemas/Order'
+            $ref: "#/components/schemas/Order"
     GetOrderByIdSuccessResponse:
       type: object
       required:
@@ -3496,7 +3687,7 @@ components:
           type: boolean
           example: true
         order:
-          $ref: '#/components/schemas/Order'
+          $ref: "#/components/schemas/Order"
     UpdateOrderSuccessResponse:
       type: object
       required:
@@ -3509,9 +3700,9 @@ components:
           example: true
         message:
           type: string
-          example: Order actualizado correctamente
+          example: Orden actualizado correctamente
         order:
-          $ref: '#/components/schemas/Order'
+          $ref: "#/components/schemas/Order"
     UpdateStatusOrderSuccessResponse:
       type: object
       required:
@@ -3526,7 +3717,7 @@ components:
           type: string
           example: Estado de la orden actualizado correctamente
         order:
-          $ref: '#/components/schemas/Order'
+          $ref: "#/components/schemas/Order"
     RefreshSuccessResponse:
       type: object
       required:
@@ -3573,7 +3764,7 @@ components:
         errors:
           type: array
           items:
-            $ref: '#/components/schemas/FieldError'
+            $ref: "#/components/schemas/FieldError"
     GenericErrorResponse:
       type: object
       required:
@@ -3586,7 +3777,7 @@ components:
         errors:
           type: array
           items:
-            $ref: '#/components/schemas/MessageError'
+            $ref: "#/components/schemas/MessageError"
     FieldError:
       type: object
       required:
@@ -3606,4 +3797,4 @@ components:
       properties:
         message:
           type: string
-          example: Error interno del servidor
+          example: Token requerido

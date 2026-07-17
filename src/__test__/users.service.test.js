@@ -82,7 +82,7 @@ describe('User Service - deleteUser', () => {
     await expect(
       deleteUser(user.id_user, 'ContraseñaIncorrecta')
     ).rejects.toMatchObject({
-      message: 'Password incorrecto',
+      message: 'Contraseña incorrecta',
       status: 401,
     })
   })

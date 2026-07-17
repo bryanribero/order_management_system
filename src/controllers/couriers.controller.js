@@ -14,7 +14,7 @@ export async function createCourierController(req, res, next) {
 
     res.status(201).json({
       success: true,
-      message: 'Courier creado correctamente',
+      message: 'Repartidor creado correctamente',
       courier: {
         id_courier: result.id_courier,
         name: result.name,
@@ -69,7 +69,7 @@ export async function updateCourierByIdController(req, res, next) {
 
     res.status(200).json({
       success: true,
-      message: 'Courier actualizado correctamente',
+      message: 'Repartidor actualizado correctamente',
       courier: result,
     })
   } catch (err) {

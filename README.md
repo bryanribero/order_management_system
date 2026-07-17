@@ -104,28 +104,28 @@ El modelo de datos está centrado en el usuario autenticado. Cada usuario admini
 
 ### Entidades principales
 
-| Entidad        | Tabla           | Descripción |
-| -------------- | --------------- | ----------- |
-| `User`         | `users`         | Representa al usuario del sistema. Guarda email, password hasheado y rol. |
-| `RefreshToken` | `refresh_token` | Almacena hashes de refresh tokens, fecha de expiración y revocación. |
-| `Product`      | `products`      | Producto perteneciente a un usuario, con SKU opcional, precio, stock y borrado lógico. |
-| `Customer`     | `customers`     | Cliente perteneciente a un usuario, con datos de contacto, dirección y borrado lógico. |
-| `Courier`      | `couriers`      | Repartidor perteneciente a un usuario, con datos de contacto y borrado lógico. |
+| Entidad        | Tabla           | Descripción                                                                                  |
+| -------------- | --------------- | -------------------------------------------------------------------------------------------- |
+| `User`         | `users`         | Representa al usuario del sistema. Guarda email, password hasheado y rol.                    |
+| `RefreshToken` | `refresh_token` | Almacena hashes de refresh tokens, fecha de expiración y revocación.                         |
+| `Product`      | `products`      | Producto perteneciente a un usuario, con SKU opcional, precio, stock y borrado lógico.       |
+| `Customer`     | `customers`     | Cliente perteneciente a un usuario, con datos de contacto, dirección y borrado lógico.       |
+| `Courier`      | `couriers`      | Repartidor perteneciente a un usuario, con datos de contacto y borrado lógico.               |
 | `Order`        | `orders`        | Pedido asociado a un cliente y opcionalmente a un repartidor. Controla estado y monto total. |
-| `OrderItem`    | `order_items`   | Detalle de productos incluidos en una orden, con precio unitario, cantidad y subtotal. |
+| `OrderItem`    | `order_items`   | Detalle de productos incluidos en una orden, con precio unitario, cantidad y subtotal.       |
 
 ### Relaciones principales
 
-| Relación | Cardinalidad | Descripción |
-| -------- | ------------ | ----------- |
-| `User -> Product` | Uno a muchos | Un usuario puede tener muchos productos. |
-| `User -> Customer` | Uno a muchos | Un usuario puede registrar muchos clientes. |
-| `User -> Courier` | Uno a muchos | Un usuario puede registrar muchos repartidores. |
-| `User -> RefreshToken` | Uno a muchos | Un usuario puede tener múltiples refresh tokens emitidos o revocados. |
-| `Customer -> Order` | Uno a muchos | Un cliente puede estar asociado a muchas órdenes. |
-| `Courier -> Order` | Uno a muchos | Un repartidor puede estar asignado a muchas órdenes. La asignación puede ser opcional. |
-| `Order -> OrderItem` | Uno a muchos | Una orden puede contener múltiples items. |
-| `Product -> OrderItem` | Uno a muchos | Un producto puede aparecer en múltiples items de órdenes. |
+| Relación               | Cardinalidad | Descripción                                                                            |
+| ---------------------- | ------------ | -------------------------------------------------------------------------------------- |
+| `User -> Product`      | Uno a muchos | Un usuario puede tener muchos productos.                                               |
+| `User -> Customer`     | Uno a muchos | Un usuario puede registrar muchos clientes.                                            |
+| `User -> Courier`      | Uno a muchos | Un usuario puede registrar muchos repartidores.                                        |
+| `User -> RefreshToken` | Uno a muchos | Un usuario puede tener múltiples refresh tokens emitidos o revocados.                  |
+| `Customer -> Order`    | Uno a muchos | Un cliente puede estar asociado a muchas órdenes.                                      |
+| `Courier -> Order`     | Uno a muchos | Un repartidor puede estar asignado a muchas órdenes. La asignación puede ser opcional. |
+| `Order -> OrderItem`   | Uno a muchos | Una orden puede contener múltiples items.                                              |
+| `Product -> OrderItem` | Uno a muchos | Un producto puede aparecer en múltiples items de órdenes.                              |
 
 ### Reglas de dominio relevantes
 
@@ -245,21 +245,21 @@ https://order-management-system-995e.onrender.com
 
 Tabla con los comandos disponibles del proyecto.
 
-| Comando                           | Descripción                                                                 |
-| --------------------------------- | --------------------------------------------------------------------------- |
-| `pnpm dev`                        | Inicia el servidor en modo desarrollo usando Nodemon.                       |
-| `pnpm start`                      | Inicia el servidor en modo producción con `NODE_ENV=prod`.                  |
-| `pnpm test`                       | Ejecuta todas las pruebas automatizadas con Jest y Supertest.               |
-| `pnpm migration-create -- <name>` | Crea una nueva migración con Sequelize CLI.                                 |
-| `pnpm migrate-dev`                | Ejecuta las migraciones pendientes en la base de datos de desarrollo.       |
-| `pnpm migrate-test`               | Ejecuta las migraciones pendientes en la base de datos de pruebas.          |
-| `pnpm migrate-prod`               | Ejecuta las migraciones pendientes en la base de datos de producción.       |
-| `pnpm undo-migrate-dev`           | Revierte la última migración ejecutada en desarrollo.                       |
-| `pnpm undo-migrate-test`          | Revierte la última migración ejecutada en pruebas.                          |
-| `pnpm undo-migrate-prod`          | Revierte la última migración ejecutada en producción.                       |
-| `pnpm all-undo-migrate-dev`       | Revierte todas las migraciones ejecutadas en desarrollo.                    |
-| `pnpm all-undo-migrate-test`      | Revierte todas las migraciones ejecutadas en pruebas.                       |
-| `pnpm all-undo-migrate-prod`      | Revierte todas las migraciones ejecutadas en producción. Usar con cuidado.  |
+| Comando                           | Descripción                                                                |
+| --------------------------------- | -------------------------------------------------------------------------- |
+| `pnpm dev`                        | Inicia el servidor en modo desarrollo usando Nodemon.                      |
+| `pnpm start`                      | Inicia el servidor en modo producción con `NODE_ENV=prod`.                 |
+| `pnpm test`                       | Ejecuta todas las pruebas automatizadas con Jest y Supertest.              |
+| `pnpm migration-create -- <name>` | Crea una nueva migración con Sequelize CLI.                                |
+| `pnpm migrate-dev`                | Ejecuta las migraciones pendientes en la base de datos de desarrollo.      |
+| `pnpm migrate-test`               | Ejecuta las migraciones pendientes en la base de datos de pruebas.         |
+| `pnpm migrate-prod`               | Ejecuta las migraciones pendientes en la base de datos de producción.      |
+| `pnpm undo-migrate-dev`           | Revierte la última migración ejecutada en desarrollo.                      |
+| `pnpm undo-migrate-test`          | Revierte la última migración ejecutada en pruebas.                         |
+| `pnpm undo-migrate-prod`          | Revierte la última migración ejecutada en producción.                      |
+| `pnpm all-undo-migrate-dev`       | Revierte todas las migraciones ejecutadas en desarrollo.                   |
+| `pnpm all-undo-migrate-test`      | Revierte todas las migraciones ejecutadas en pruebas.                      |
+| `pnpm all-undo-migrate-prod`      | Revierte todas las migraciones ejecutadas en producción. Usar con cuidado. |
 
 <br>
 
@@ -271,11 +271,11 @@ La administración del esquema de la base de datos y la ejecución de migracione
 
 ### Ambientes soportados
 
-| Ambiente    | Variables utilizadas        | Comando de migración |
-| ----------- | --------------------------- | -------------------- |
-| Desarrollo  | `.env` y `.env.dev`         | `pnpm migrate-dev`   |
-| Pruebas     | `.env` y `.env.test`        | `pnpm migrate-test`  |
-| Producción  | `.env` y `.env.prod`        | `pnpm migrate-prod`  |
+| Ambiente   | Variables utilizadas | Comando de migración |
+| ---------- | -------------------- | -------------------- |
+| Desarrollo | `.env` y `.env.dev`  | `pnpm migrate-dev`   |
+| Pruebas    | `.env` y `.env.test` | `pnpm migrate-test`  |
+| Producción | `.env` y `.env.prod` | `pnpm migrate-prod`  |
 
 Para desarrollo y pruebas se requiere una instancia de PostgreSQL accesible y la creación previa de las bases de datos correspondientes a cada ambiente.
 
@@ -360,10 +360,10 @@ La documentación interactiva de la API está disponible mediante Swagger UI.
 
 Swagger permite visualizar los endpoints disponibles, sus parámetros, cuerpos de solicitud y posibles respuestas.
 
-| Entorno          | URL                                                                |
-| ---------------- | ------------------------------------------------------------------ |
-| Desarrollo local | <http://localhost:3000/api-docs>                                   |
-| Producción       | <https://order-management-system-995e.onrender.com/api-docs>       |
+| Entorno          | URL                                                          |
+| ---------------- | ------------------------------------------------------------ |
+| Desarrollo local | <http://localhost:3000/api-docs>                             |
+| Producción       | <https://order-management-system-995e.onrender.com/api-docs> |
 
 Los archivos relacionados con la documentación se encuentran en:
 
@@ -405,15 +405,15 @@ Ambos endpoints requieren un `accessToken` válido en el encabezado `Authorizati
 
 Los endpoints de couriers disponibles actualmente son:
 
-| Método | Endpoint            | Descripción                                                                                             |
-| ------ | ------------------- | ------------------------------------------------------------------------------------------------------- |
-| POST   | `/api/couriers`     | Crea un courier asociado al usuario autenticado. El nombre es obligatorio y debe ser único por usuario. |
-| GET    | `/api/couriers`     | Obtiene los couriers del usuario autenticado con paginación.                                            |
-| GET    | `/api/couriers/:id` | Obtiene un courier del usuario autenticado por su identificador.                                        |
-| PATCH  | `/api/couriers/:id` | Actualiza un courier del usuario autenticado por su identificador.                                      |
-| DELETE | `/api/couriers/:id` | Marca como eliminado lógicamente un courier del usuario autenticado por su identificador.               |
+| Método | Endpoint            | Descripción                                                                                                |
+| ------ | ------------------- | ---------------------------------------------------------------------------------------------------------- |
+| POST   | `/api/couriers`     | Crea un repartidor asociado al usuario autenticado. El nombre es obligatorio y debe ser único por usuario. |
+| GET    | `/api/couriers`     | Obtiene los repartidores del usuario autenticado con paginación.                                           |
+| GET    | `/api/couriers/:id` | Obtiene un repartidor del usuario autenticado por su identificador.                                        |
+| PATCH  | `/api/couriers/:id` | Actualiza un repartidor del usuario autenticado por su identificador.                                      |
+| DELETE | `/api/couriers/:id` | Marca como eliminado lógicamente un repartidor del usuario autenticado por su identificador.               |
 
-Los couriers eliminados lógicamente se excluyen de las consultas activas y no se eliminan físicamente de la base de datos.
+Los repartidores eliminados lógicamente se excluyen de las consultas activas y no se eliminan físicamente de la base de datos.
 
 Los endpoints de couriers requieren un `accessToken` válido en el encabezado `Authorization` con el esquema `Bearer`.
 
@@ -421,28 +421,28 @@ Los endpoints de couriers requieren un `accessToken` válido en el encabezado `A
 
 ### Query params para `GET /api/couriers`
 
-| Query param | Descripción                                               | Valor por defecto | Límite |
-| ----------- | --------------------------------------------------------- | ----------------- | ------ |
-| `page`      | Número de página a consultar. Debe ser mayor o igual a 1. | `1`               | -      |
-| `limit`     | Cantidad de couriers por página. Debe estar entre 1 y 50. | `20`              | `50`   |
+| Query param | Descripción                                                   | Valor por defecto | Límite |
+| ----------- | ------------------------------------------------------------- | ----------------- | ------ |
+| `page`      | Número de página a consultar. Debe ser mayor o igual a 1.     | `1`               | -      |
+| `limit`     | Cantidad de repartidores por página. Debe estar entre 1 y 50. | `20`              | `50`   |
 
 <br>
 
 ### Path params para `/api/couriers/:id`
 
-| Path param | Descripción                                                             |
-| ---------- | ----------------------------------------------------------------------- |
-| `id`       | Identificador del courier. Debe ser un número entero mayor o igual a 1. |
+| Path param | Descripción                                                                |
+| ---------- | -------------------------------------------------------------------------- |
+| `id`       | Identificador del repartidor. Debe ser un número entero mayor o igual a 1. |
 
 <br>
 
 ### Body para `POST /api/couriers` y `PATCH /api/couriers/:id`
 
-| Campo   | Descripción                                  |
-| ------- | -------------------------------------------- |
-| `name`  | Nombre del courier. Obligatorio en creación. |
-| `phone` | Teléfono del courier. Opcional.              |
-| `note`  | Nota adicional sobre el courier. Opcional.   |
+| Campo   | Descripción                                     |
+| ------- | ----------------------------------------------- |
+| `name`  | Nombre del repartidor. Obligatorio en creación. |
+| `phone` | Teléfono del repartidor. Opcional.              |
+| `note`  | Nota adicional sobre el repartidor. Opcional.   |
 
 <br>
 
@@ -450,16 +450,16 @@ Los endpoints de couriers requieren un `accessToken` válido en el encabezado `A
 
 Los endpoints de customers disponibles actualmente son:
 
-| Método | Endpoint             | Descripción                                                                                                         |
-| ------ | -------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| POST   | `/api/customers`     | Crea un customer asociado al usuario autenticado. Los campos `name` y `address` son obligatorios.                   |
-| GET    | `/api/customers`     | Obtiene los customers activos del usuario autenticado con paginación.                                               |
-| GET    | `/api/customers/:id` | Obtiene un customer del usuario autenticado por su identificador.                                                   |
-| PATCH  | `/api/customers/:id` | Actualiza un customer del usuario autenticado por su identificador.                                                 |
-| DELETE | `/api/customers/all` | Marca como eliminados lógicamente todos los customers activos del usuario autenticado cuando se confirma la acción. |
-| DELETE | `/api/customers/:id` | Marca como eliminado lógicamente un customer del usuario autenticado por su identificador.                          |
+| Método | Endpoint             | Descripción                                                                                                        |
+| ------ | -------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| POST   | `/api/customers`     | Crea un cliente asociado al usuario autenticado. Los campos `name` y `address` son obligatorios.                   |
+| GET    | `/api/customers`     | Obtiene los clientes activos del usuario autenticado con paginación.                                               |
+| GET    | `/api/customers/:id` | Obtiene un cliente del usuario autenticado por su identificador.                                                   |
+| PATCH  | `/api/customers/:id` | Actualiza un cliente del usuario autenticado por su identificador.                                                 |
+| DELETE | `/api/customers/all` | Marca como eliminados lógicamente todos los clientes activos del usuario autenticado cuando se confirma la acción. |
+| DELETE | `/api/customers/:id` | Marca como eliminado lógicamente un cliente del usuario autenticado por su identificador.                          |
 
-Los customers eliminados lógicamente se excluyen de las consultas activas y no se eliminan físicamente de la base de datos.
+Los clientes eliminados lógicamente se excluyen de las consultas activas y no se eliminan físicamente de la base de datos.
 
 Los endpoints de customers requieren un `accessToken` válido en el encabezado `Authorization` con el esquema `Bearer`.
 
@@ -467,10 +467,10 @@ Los endpoints de customers requieren un `accessToken` válido en el encabezado `
 
 ### Query params para `GET /api/customers`
 
-| Query param | Descripción                                                | Valor por defecto | Límite |
-| ----------- | ---------------------------------------------------------- | ----------------- | ------ |
-| `page`      | Número de página a consultar. Debe ser mayor o igual a 1.  | `1`               | -      |
-| `limit`     | Cantidad de customers por página. Debe estar entre 1 y 50. | `20`              | `50`   |
+| Query param | Descripción                                               | Valor por defecto | Límite |
+| ----------- | --------------------------------------------------------- | ----------------- | ------ |
+| `page`      | Número de página a consultar. Debe ser mayor o igual a 1. | `1`               | -      |
+| `limit`     | Cantidad de clientes por página. Debe estar entre 1 y 50. | `20`              | `50`   |
 
 <br>
 
@@ -554,13 +554,13 @@ El endpoint `DELETE /api/products/:id` acepta el siguiente path param:
 
 Los endpoints de orders disponibles actualmente son:
 
-| Metodo | Endpoint                 | Descripcion                                                                                                        |
-| ------ | ------------------------ | ------------------------------------------------------------------------------------------------------------------ |
-| POST   | `/api/orders`            | Crea una order asociada al usuario autenticado, descuenta stock de productos y calcula el total.                   |
-| GET    | `/api/orders`            | Obtiene las orders del usuario autenticado con paginacion y filtro opcional por estado.                            |
-| GET    | `/api/orders/:id`        | Obtiene una order del usuario autenticado por su identificador.                                                    |
-| PATCH  | `/api/orders/status/:id` | Actualiza el estado de una order `pending` a `completed` o `cancelled`.                                            |
-| PATCH  | `/api/orders/:id`        | Actualiza `id_courier`, `note` y los items de una order. Solo se permite cuando la order esta en estado `pending`. |
+| Metodo | Endpoint                 | Descripcion                                                                                                         |
+| ------ | ------------------------ | ------------------------------------------------------------------------------------------------------------------- |
+| POST   | `/api/orders`            | Crea un pedido asociado al usuario autenticado, descuenta stock de productos y calcula el total.                    |
+| GET    | `/api/orders`            | Obtiene los pedidos del usuario autenticado con paginacion y filtro opcional por estado.                            |
+| GET    | `/api/orders/:id`        | Obtiene un pedido del usuario autenticado por su identificador.                                                     |
+| PATCH  | `/api/orders/status/:id` | Actualiza el estado de un pedido `pending` a `completed` o `cancelled`.                                             |
+| PATCH  | `/api/orders/:id`        | Actualiza `id_courier`, `note` y los items de un pedido. Solo se permite cuando el pedido esta en estado `pending`. |
 
 Los endpoints de orders requieren un `accessToken` valido en el encabezado `Authorization` con el esquema `Bearer`.
 
@@ -571,28 +571,30 @@ Los endpoints de orders requieren un `accessToken` valido en el encabezado `Auth
 | Query param | Descripcion                                               | Valor por defecto | Limite                              |
 | ----------- | --------------------------------------------------------- | ----------------- | ----------------------------------- |
 | `page`      | Numero de pagina a consultar. Debe ser mayor o igual a 1. | `1`               | -                                   |
-| `limit`     | Cantidad de orders por pagina. Debe estar entre 1 y 50.   | `20`              | `50`                                |
-| `status`    | Estado usado para filtrar orders.                         | -                 | `pending`, `completed`, `cancelled` |
+| `limit`     | Cantidad de pedidos por pagina. Debe estar entre 1 y 50.  | `20`              | `50`                                |
+| `status`    | Estado usado para filtrar pedidos.                        | -                 | `pending`, `completed`, `cancelled` |
 
 <br>
 
 ### Path params para `/api/orders/:id` y `/api/orders/status/:id`
 
-| Path param | Descripcion                                                             |
-| ---------- | ----------------------------------------------------------------------- |
-| `id`       | Identificador de la order. Debe ser un numero entero mayor o igual a 1. |
+| Path param | Descripcion                                                            |
+| ---------- | ---------------------------------------------------------------------- |
+| `id`       | Identificador del pedido. Debe ser un numero entero mayor o igual a 1. |
 
 <br>
 
 ### Body para `POST /api/orders`
 
-| Campo         | Descripcion                                                      |
-| ------------- | ---------------------------------------------------------------- |
-| `actionToken` | UUID usado para idempotencia de la creacion. Obligatorio.        |
-| `id_customer` | Identificador del customer de la order. Obligatorio.             |
-| `id_courier`  | Identificador del courier asignado a la order. Obligatorio.      |
-| `note`        | Nota adicional de la order. Opcional.                            |
-| `items`       | Array de productos de la order. Debe tener al menos un elemento. |
+| Campo          | Descripcion                                                     |
+| -------------- | --------------------------------------------------------------- |
+| `action_token` | UUID usado para idempotencia de la creacion. Obligatorio.       |
+| `id_customer`  | Identificador del cliente de la order. Obligatorio.             |
+| `id_courier`   | Identificador del repartidor asignado al pedido. Obligatorio.   |
+| `note`         | Nota adicional del pedido. Opcional.                            |
+| `items`        | Array de productos del pedido. Debe tener al menos un elemento. |
+
+El campo `action_token` es unico por intento de creacion dentro del usuario autenticado. Si se reenvia el mismo `action_token` con el mismo contenido, la API devuelve la order ya creada sin crear otra ni descontar stock nuevamente. Si se reenvia el mismo `action_token` con contenido diferente, responde `409 Conflict`.
 
 Cada elemento de `items` debe incluir:
 
@@ -607,8 +609,8 @@ Cada elemento de `items` debe incluir:
 
 | Campo        | Descripcion                                                                                |
 | ------------ | ------------------------------------------------------------------------------------------ |
-| `id_courier` | Nuevo courier asignado a la order. Opcional.                                               |
-| `note`       | Nueva nota de la order. Opcional.                                                          |
+| `id_courier` | Nuevo Repartidor asignado al pedido. Opcional.                                             |
+| `note`       | Nueva nota del pedido. Opcional.                                                           |
 | `items`      | Objeto opcional con operaciones sobre items: `delete` para eliminar y `create` para crear. |
 
 El campo `items.delete` debe ser un array con identificadores de `order_items` a eliminar. Cuando se elimina un item, la cantidad vuelve al stock del producto correspondiente.
@@ -619,6 +621,6 @@ El campo `items.create` debe ser un array de items nuevos con `id_product` y `qu
 
 ### Body para `PATCH /api/orders/status/:id`
 
-| Campo    | Descripcion                                                    |
-| -------- | -------------------------------------------------------------- |
-| `status` | Nuevo estado de la order. Puede ser `completed` o `cancelled`. |
+| Campo    | Descripcion                                                   |
+| -------- | ------------------------------------------------------------- |
+| `status` | Nuevo estado del pedido. Puede ser `completed` o `cancelled`. |

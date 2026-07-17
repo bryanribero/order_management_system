@@ -125,7 +125,7 @@ describe('DELETE /api/users/delete', () => {
       success: false,
       errors: [
         {
-          message: 'Password incorrecto',
+          message: 'Contraseña incorrecta',
         },
       ],
     })

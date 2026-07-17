@@ -48,7 +48,7 @@ export async function getCustomerById(idUser, idCustomer) {
   })
 
   if (!customer) {
-    throw new NotFoundError('Customer no encontrado')
+    throw new NotFoundError('Cliente no encontrado')
   }
 
   return customer
@@ -72,7 +72,7 @@ export async function updateCustomerById(
   )
 
   if (affectedRow === 0) {
-    throw new NotFoundError('Customer no encontrado')
+    throw new NotFoundError('Cliente no encontrado')
   }
 
   const editCustomer = {
@@ -105,7 +105,7 @@ export async function deleteAllCustomers(idUser, { confirmDelete }) {
   )
 
   if (affectedRows === 0) {
-    throw new NotFoundError('Customer no encontrado')
+    throw new NotFoundError('Cliente no encontrado')
   }
 
   return affectedRows
@@ -124,6 +124,6 @@ export async function deleteCustomerById(idUser, idCustomer) {
   )
 
   if (affectedRow === 0) {
-    throw new NotFoundError('Customer no encontrado')
+    throw new NotFoundError('Cliente no encontrado')
   }
 }

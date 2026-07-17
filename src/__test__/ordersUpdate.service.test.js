@@ -55,6 +55,11 @@ async function createOrderFixture(user) {
     id_courier: firstCourier.id_courier,
     note: 'Nota original',
     total_amount: '30.00',
+    action_token: crypto.randomUUID(),
+    request_fingerprint: crypto
+      .createHash('sha256')
+      .update(`order-update-service-${crypto.randomUUID()}`)
+      .digest('hex'),
   })
 
   const orderItem = await OrderItem.create({

@@ -1,40 +1,103 @@
 import { ConflictError } from '../../../errors/ConflictError.js'
+import crypto from 'crypto'
+import Order from '../../../db/models/Order.js'
+import OrderItem from '../../../db/models/OrderItem.js'
+import Customer from '../../../db/models/Customer.js'
 
-const cache = {}
+async function findExistingOrder(where, idUser, transaction) {
+  return Order.findOne({
+    where,
+    include: [
+      {
+        model: Customer,
+        as: 'customer',
+        where: {
+          id_user: idUser,
+        },
+        attributes: [],
+      },
+      {
+        model: OrderItem,
+        as: 'orderItems',
+        attributes: {
+          exclude: ['createdAt', 'updatedAt', 'id_order'],
+        },
+      },
+    ],
+    attributes: [
+      'id_order',
+      'id_customer',
+      'id_courier',
+      'note',
+      'status',
+      'total_amount',
+      'action_token',
+      'request_fingerprint',
+    ],
+    transaction,
+  })
+}
+
+function ensureSameRequest(existingOrder, requestFingerprint) {
+  if (existingOrder.request_fingerprint !== requestFingerprint) {
+    throw new ConflictError(
+      'El action_token ya fue utilizado con un contenido diferente'
+    )
+  }
+}
+
+function hideInternalOrderFields(order) {
+  if (order?.dataValues) {
+    delete order.dataValues.request_fingerprint
+  }
+
+  return order
+}
 
 export async function createIdemPotent(
-  actionToken,
-  userId,
+  action_token,
+  idUser,
   requestFingerprint,
+  transaction,
   action
 ) {
-  if (!actionToken) {
+  if (!action_token) {
     throw new Error('El token de accion es obligatorio')
   }
 
-  if (cache[actionToken]) {
-    const stored = cache[actionToken]
+  const existingOrderWithSameToken = await findExistingOrder(
+    {
+      action_token,
+    },
+    idUser,
+    transaction
+  )
 
-    if (stored.userId !== userId) {
-      throw new ConflictError('El actionToken ya fue usado por otro usuario')
-    }
+  if (existingOrderWithSameToken) {
+    ensureSameRequest(existingOrderWithSameToken, requestFingerprint)
 
-    if (stored.requestFingerprint !== requestFingerprint) {
-      throw new ConflictError(
-        'El actionToken ya fue usado con un contenido diferente'
-      )
-    }
-
-    return stored.result
+    return hideInternalOrderFields(existingOrderWithSameToken)
   }
 
-  const result = await action()
+  const existingOrder = await findExistingOrder(
+    {
+      request_fingerprint: requestFingerprint,
+    },
+    idUser,
+    transaction
+  )
 
-  cache[actionToken] = {
-    userId,
-    requestFingerprint,
-    result,
+  if (existingOrder) {
+    return hideInternalOrderFields(existingOrder)
   }
 
-  return result
+  return await action()
+}
+
+export function fingerprintHash(fingerprint) {
+  if (typeof fingerprint !== 'string') {
+    throw new Error('fingerprint tiene que ser un texto')
+  }
+
+  return crypto.createHash('sha256').update(fingerprint).digest('hex')
 }

@@ -588,11 +588,13 @@ Order endpoints require a valid `accessToken` in the `Authorization` header with
 
 | Field         | Description |
 | ------------- | ----------- |
-| `actionToken` | UUID used for creation idempotency. Required. |
+| `action_token` | UUID used for creation idempotency. Required. |
 | `id_customer` | Order customer identifier. Required. |
 | `id_courier`  | Assigned courier identifier. Required. |
 | `note`        | Additional order note. Optional. |
 | `items`       | Array of order products. Must contain at least one item. |
+
+The `action_token` field is unique per creation attempt for the authenticated user. If the same `action_token` is resent with the same content, the API returns the already-created order without creating another one or decreasing stock again. If the same `action_token` is resent with different content, the API responds with `409 Conflict`.
 
 Each `items` element must include:
 

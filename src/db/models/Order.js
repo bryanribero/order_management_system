@@ -38,6 +38,14 @@ Order.init(
         min: 0,
       },
     },
+    action_token: {
+      type: DataTypes.UUID,
+      allowNull: false,
+    },
+    request_fingerprint: {
+      type: DataTypes.STRING(64),
+      allowNull: false,
+    },
   },
   {
     sequelize,

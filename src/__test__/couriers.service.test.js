@@ -10,7 +10,6 @@ import {
   updateCourierById,
   deleteCourierById,
 } from '../services/couriers/couriers.service.js'
-import { ConflictError } from '../errors/ConflictError.js'
 import { NotFoundError } from '../errors/NotFoundError.js'
 
 async function createUser() {
@@ -99,7 +98,7 @@ describe('Courier Service', () => {
           phone: '0987654321',
         })
       ).rejects.toMatchObject({
-        message: 'El name ya esta en uso, debe ser unico por courier',
+        message: 'El nombre ya está en uso, debe ser único por repartidor',
         status: 409,
       })
     })
@@ -112,7 +111,6 @@ describe('Courier Service', () => {
 
       const couriers = []
       for (let i = 1; i <= 3; i += 1) {
-        // eslint-disable-next-line no-await-in-loop
         couriers.push(
           await createCourier(user.id_user, {
             name: `Repartidor ${i}`,

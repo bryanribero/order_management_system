@@ -17,7 +17,7 @@ export async function createCustomerController(req, res, next) {
 
     res.status(201).json({
       success: true,
-      message: 'Customer creado correctamente',
+      message: 'Cliente creado correctamente',
       customer: {
         id_customer,
         name,
@@ -74,7 +74,7 @@ export async function updateCustomerByIdController(req, res, next) {
 
     res.status(200).json({
       success: true,
-      message: 'Customer actualizado correctamente',
+      message: 'Cliente actualizado correctamente',
       customer: result,
     })
   } catch (error) {
@@ -91,7 +91,7 @@ export async function deleteAllCustomersController(req, res, next) {
 
     res.status(200).json({
       success: true,
-      message: 'Customers eliminados correctamente',
+      message: 'Clientes eliminados correctamente',
       deletedCount: result,
     })
   } catch (error) {

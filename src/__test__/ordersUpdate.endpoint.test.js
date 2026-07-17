@@ -63,6 +63,11 @@ async function createOrderFixture(user) {
     id_courier: firstCourier.id_courier,
     note: 'Nota original',
     total_amount: '30.00',
+    action_token: crypto.randomUUID(),
+    request_fingerprint: crypto
+      .createHash('sha256')
+      .update(`order-update-endpoint-${crypto.randomUUID()}`)
+      .digest('hex'),
   })
 
   const orderItem = await OrderItem.create({
@@ -123,7 +128,7 @@ describe('PATCH /orders/:id', () => {
     expect(response.body).toEqual(
       expect.objectContaining({
         success: true,
-        message: 'Order actualizado correctamente',
+        message: 'Pedido actualizado correctamente',
         order: expect.objectContaining({
           id_order: fixture.order.id_order,
           id_courier: fixture.secondCourier.id_courier,
@@ -171,7 +176,7 @@ describe('PATCH /orders/:id', () => {
       success: false,
       errors: [
         {
-          message: 'Solo las orders con estado "pending" pueden actualizarse',
+          message: 'Solo los pedidos con estado "pending" pueden actualizarse',
         },
       ],
     })

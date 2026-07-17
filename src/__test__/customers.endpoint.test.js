@@ -54,7 +54,7 @@ describe('Customer Endpoints', () => {
       expect(response.body).toEqual(
         expect.objectContaining({
           success: true,
-          message: 'Customer creado correctamente',
+          message: 'Cliente creado correctamente',
           customer: expect.objectContaining({
             id_customer: expect.any(Number),
             name: customerData.name,
@@ -101,7 +101,7 @@ describe('Customer Endpoints', () => {
           errors: expect.arrayContaining([
             expect.objectContaining({
               field: 'name',
-              message: 'El campo name no puede estar vacio',
+              message: 'El nombre no puede estar vacio',
             }),
           ]),
         })
@@ -208,7 +208,7 @@ describe('Customer Endpoints', () => {
       expect(response.status).toBe(404)
       expect(response.body).toEqual({
         success: false,
-        errors: [{ message: 'Customer no encontrado' }],
+        errors: [{ message: 'Cliente no encontrado' }],
       })
     })
   })
@@ -231,7 +231,7 @@ describe('Customer Endpoints', () => {
       expect(response.body).toEqual(
         expect.objectContaining({
           success: true,
-          message: 'Customer actualizado correctamente',
+          message: 'Cliente actualizado correctamente',
           customer: expect.objectContaining({
             id_customer: customer.id_customer,
             name: 'Cliente actualizado',
@@ -258,7 +258,7 @@ describe('Customer Endpoints', () => {
       expect(response.status).toBe(404)
       expect(response.body).toEqual({
         success: false,
-        errors: [{ message: 'Customer no encontrado' }],
+        errors: [{ message: 'Cliente no encontrado' }],
       })
     })
   })
@@ -287,7 +287,7 @@ describe('Customer Endpoints', () => {
       expect(response.body).toEqual(
         expect.objectContaining({
           success: true,
-          message: 'Customers eliminados correctamente',
+          message: 'Clientes eliminados correctamente',
           deletedCount: 2,
         })
       )
