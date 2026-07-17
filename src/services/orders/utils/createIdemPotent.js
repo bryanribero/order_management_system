@@ -79,18 +79,6 @@ export async function createIdemPotent(
     return hideInternalOrderFields(existingOrderWithSameToken)
   }
 
-  const existingOrder = await findExistingOrder(
-    {
-      request_fingerprint: requestFingerprint,
-    },
-    idUser,
-    transaction
-  )
-
-  if (existingOrder) {
-    return hideInternalOrderFields(existingOrder)
-  }
-
   return await action()
 }
 
