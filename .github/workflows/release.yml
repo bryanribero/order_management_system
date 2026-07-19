@@ -20,6 +20,6 @@ jobs:
         with:
           node-version: 24.x
 
-      - run: pnpm changlogithub
+      - run: pnpm changelogithub
         env:
           GITHUB_TOKEN: ${{secrets.PAT.GITHUB_TOKEN}}
