@@ -1,6 +1,6 @@
 {
   "name": "order_management_system",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "Un sistema gestor de pedidos, el cual un dueño va a poder almacenar productos, clientes y getionar los pedidos de esos clientes por estado",
   "scripts": {
     "dev": "nodemon server.js",
