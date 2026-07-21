@@ -36,10 +36,6 @@ app.use(helmet())
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
-app.get('/api/ping', (req, res) => {
-  res.sendStatus(200)
-})
-
 app.use('/api/auth', authRoutes)
 
 app.use('/api/products', productsRoutes)
