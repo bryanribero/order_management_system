@@ -13,6 +13,7 @@ import ordersRoutes from './src/routes/orders.routes.js'
 import fs from 'fs'
 import YAML from 'yaml'
 import swaggerUi from 'swagger-ui-express'
+import cookieParser from 'cookie-parser'
 
 const swaggerFile = fs.readFileSync('./docs/swagger.yml', 'utf-8')
 const swaggerDocument = YAML.parse(swaggerFile)
@@ -23,12 +24,15 @@ app.set('trust proxy', 1)
 
 app.use(express.json())
 
+app.use(cookieParser())
+
 app.use(globalRateLimit)
 
 app.use(
   cors({
-    origin: '*',
+    origin: 'http://localhost:5173',
     allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
   })
 )
 

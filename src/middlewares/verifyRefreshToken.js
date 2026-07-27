@@ -6,19 +6,12 @@ import {
 } from '../services/auth/utils/tokens.utils.js'
 
 export async function verifyRefreshToken(req, res, next) {
-  const authHeader = req.headers.authorization
-
-  if (!authHeader) {
-    return next(new AuthError('Token requerido'))
-  }
-
-  const [schema, token] = authHeader.split(' ')
-
-  if (schema.toLowerCase() !== 'bearer') {
-    return next(new AuthError('Encabezado Authorization inválido'))
-  }
-
   try {
+    const token = req.cookies.refreshToken
+
+    if (!token) {
+      return next(new AuthError('Refresh token requerido'))
+    }
     const payload = verifyToken(token, 'refresh')
 
     const resfreshTokenDB = await RefreshToken.findOne({
