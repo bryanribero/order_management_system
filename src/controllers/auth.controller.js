@@ -73,3 +73,7 @@ export async function refreshController(req, res, next) {
     next(err)
   }
 }
+
+export function getStatusRefreshController(req, res) {
+  res.status(200).end()
+}

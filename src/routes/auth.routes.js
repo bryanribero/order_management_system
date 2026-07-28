@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import {
+  getStatusRefreshController,
   loginController,
   logoutController,
   refreshController,
@@ -36,5 +37,12 @@ router.post(
 router.post('/logout', verifyAccessToken, logoutController)
 
 router.post('/refresh', refreshRateLimit, verifyRefreshToken, refreshController)
+
+router.get(
+  '/me',
+  refreshRateLimit,
+  verifyRefreshToken,
+  getStatusRefreshController
+)
 
 export default router
