@@ -38,11 +38,6 @@ router.post('/logout', verifyAccessToken, logoutController)
 
 router.post('/refresh', refreshRateLimit, verifyRefreshToken, refreshController)
 
-router.get(
-  '/me',
-  refreshRateLimit,
-  verifyRefreshToken,
-  getStatusRefreshController
-)
+router.get('/me', verifyRefreshToken, getStatusRefreshController)
 
 export default router

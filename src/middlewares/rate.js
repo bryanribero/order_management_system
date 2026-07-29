@@ -3,7 +3,7 @@ import rateLimit from 'express-rate-limit'
 const isTest = process.env.NODE_ENV === 'test'
 
 export const globalRateLimit = rateLimit({
-  windowMs: 15 * 60 * 1000,
+  windowMs: 1 * 60 * 1000,
   limit: 100,
   message: {
     success: false,
@@ -18,8 +18,8 @@ export const globalRateLimit = rateLimit({
 })
 
 export const registerRateLimit = rateLimit({
-  windowMs: 10 * 60 * 1000,
-  limit: isTest ? 24 : 10,
+  windowMs: 1 * 60 * 1000,
+  limit: isTest ? 24 : 25,
   message: {
     success: false,
     errors: [
@@ -34,8 +34,8 @@ export const registerRateLimit = rateLimit({
 })
 
 export const loginRateLimit = rateLimit({
-  windowMs: 10 * 60 * 1000,
-  limit: isTest ? 100 : 10,
+  windowMs: 1 * 60 * 1000,
+  limit: isTest ? 100 : 25,
   message: {
     success: false,
     errors: [
@@ -47,8 +47,8 @@ export const loginRateLimit = rateLimit({
 })
 
 export const refreshRateLimit = rateLimit({
-  windowMs: 10 * 60 * 1000,
-  limit: isTest ? 100 : 5,
+  windowMs: 1 * 60 * 1000,
+  limit: isTest ? 100 : 20,
   message: {
     success: false,
     errors: [
@@ -62,7 +62,7 @@ export const refreshRateLimit = rateLimit({
 
 export const productsRateLimit = rateLimit({
   windowMs: 60 * 1000,
-  limit: isTest ? 100 : 20,
+  limit: isTest ? 100 : 40,
   message: {
     success: false,
     errors: [
