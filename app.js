@@ -10,6 +10,7 @@ import usersRoutes from './src/routes/users.routes.js'
 import couriersRoutes from './src/routes/couriers.routes.js'
 import customersRoutes from './src/routes/customers.routes.js'
 import ordersRoutes from './src/routes/orders.routes.js'
+import categoriesRouter from './src/routes/categories.routes.js'
 import fs from 'fs'
 import YAML from 'yaml'
 import swaggerUi from 'swagger-ui-express'
@@ -43,6 +44,8 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 app.use('/api/auth', authRoutes)
 
 app.use('/api/products', productsRoutes)
+
+app.use('/api/categories', categoriesRouter)
 
 app.use('/api/users', usersRoutes)
 
