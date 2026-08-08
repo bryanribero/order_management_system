@@ -31,6 +31,11 @@ export const createProductValidator = [
     .bail()
     .isInt({ gt: -1 })
     .withMessage('El stock del producto no puede ser negativo'),
+
+  body('id_category')
+    .exists()
+    .isInt({ min: 1 })
+    .withMessage('id_category debe ser un entero válido'),
 ]
 
 export const updateProductValidator = [

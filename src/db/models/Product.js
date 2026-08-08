@@ -73,7 +73,7 @@ User.hasMany(Product, {
 
 Product.belongsTo(Category, {
   foreignKey: 'id_category',
-  sourceKey: 'id_category',
+  targetKey: 'id_category',
   as: 'category',
 })
 
