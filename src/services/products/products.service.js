@@ -49,6 +49,12 @@ export async function getUserProducts(
   idUser,
   { page, limit, name, id_category }
 ) {
+  const category = await Category.findByPk(id_category)
+
+  if (!category) {
+    throw new NotFoundError('La categoria no existe')
+  }
+
   const safePage = page || 1
   const safeLimit = limit || 20
 
@@ -106,65 +112,105 @@ export async function getUserProductById(idUser, idProduct) {
 export async function updateProduct(
   idUser,
   filter,
-  { sku, name, price, stock }
+  { sku, name, price, stock, id_category }
 ) {
-  const [affectedRows, updatedProducts] = await Product.update(
-    { sku, name, price, stock },
-    {
-      where: {
-        id_user: idUser,
-        deleted_at: null,
-        name: {
-          [Op.iLike]: `${filter}%`,
-        },
-      },
-      returning: true,
+  if (id_category) {
+    const category = await Category.findByPk(id_category)
+
+    if (!category) {
+      throw new NotFoundError('La categoria no existe')
     }
-  )
+  }
+
+  const data = {}
+
+  if (sku !== undefined) data.sku = sku
+  if (name !== undefined) data.name = name
+  if (price !== undefined) data.price = price
+  if (stock !== undefined) data.stock = stock
+  if (id_category !== undefined) data.id_category = id_category
+
+  const [affectedRows, updatedProducts] = await Product.update(data, {
+    where: {
+      id_user: idUser,
+      deleted_at: null,
+      name: {
+        [Op.iLike]: `${filter}%`,
+      },
+    },
+    returning: true,
+  })
 
   if (affectedRows === 0) {
     throw new NotFoundError('Producto no encontrado')
   }
 
-  const response = updatedProducts.map((product) => ({
-    id_product: product.id_product,
-    sku: product.sku,
-    name: product.name,
-    price: product.price,
-    stock: product.stock,
-  }))
+  const productIds = updatedProducts.map((product) => product.id_product)
 
-  return response
+  const products = await Product.findAll({
+    where: {
+      id_product: {
+        [Op.in]: productIds,
+      },
+      id_user: idUser,
+      deleted_at: null,
+    },
+    attributes: ['id_product', 'sku', 'name', 'price', 'stock'],
+    include: [
+      {
+        model: Category,
+        as: 'category',
+        attributes: ['name'],
+      },
+    ],
+  })
+
+  return products
 }
 
 export async function updateProductById(
   idUser,
   idProduct,
-  { sku, name, price, stock }
+  { sku, name, price, stock, id_category }
 ) {
-  const [affectedRow, updatedProduct] = await Product.update(
-    { sku, name, price, stock },
-    {
-      where: {
-        id_user: idUser,
-        id_product: idProduct,
-        deleted_at: null,
-      },
-      returning: true,
-    }
-  )
+  const category = await Category.findByPk(id_category)
+
+  if (!category) {
+    throw new NotFoundError('La categoria no existe')
+  }
+
+  const data = {}
+
+  if (sku !== undefined) data.sku = sku
+  if (name !== undefined) data.name = name
+  if (price !== undefined) data.price = price
+  if (stock !== undefined) data.stock = stock
+  if (id_category !== undefined) data.id_category = id_category
+
+  const [affectedRow] = await Product.update(data, {
+    where: {
+      id_user: idUser,
+      id_product: idProduct,
+      deleted_at: null,
+    },
+    returning: true,
+  })
 
   if (affectedRow === 0) {
     throw new NotFoundError('Producto no encontrado')
   }
 
-  return {
-    id_product: updatedProduct[0].id_product,
-    sku: updatedProduct[0].sku,
-    name: updatedProduct[0].name,
-    price: updatedProduct[0].price,
-    stock: updatedProduct[0].stock,
-  }
+  const product = await Product.findByPk(idProduct, {
+    include: [
+      {
+        model: Category,
+        as: 'category',
+        attributes: ['name'],
+      },
+    ],
+  })
+
+  return product
 }
 
 export async function deleteProducts(idUser, filter) {
