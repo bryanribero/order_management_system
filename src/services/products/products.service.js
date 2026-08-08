@@ -49,10 +49,12 @@ export async function getUserProducts(
   idUser,
   { page, limit, name, id_category }
 ) {
-  const category = await Category.findByPk(id_category)
+  if (id_category) {
+    const category = await Category.findByPk(id_category)
 
-  if (!category) {
-    throw new NotFoundError('La categoria no existe')
+    if (!category) {
+      throw new NotFoundError('La categoria no existe')
+    }
   }
 
   const safePage = page || 1
