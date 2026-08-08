@@ -44,6 +44,8 @@ app.use('/api/auth', authRoutes)
 
 app.use('/api/products', productsRoutes)
 
+app.use('/api/categorys')
+
 app.use('/api/users', usersRoutes)
 
 app.use('/api/couriers', couriersRoutes)
