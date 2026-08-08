@@ -1,6 +1,7 @@
 import { Model, DataTypes } from 'sequelize'
 import sequelize from '../database.js'
 import User from './User.js'
+import Category from './Category.js'
 
 class Product extends Model {}
 
@@ -22,6 +23,10 @@ Product.init(
     },
     name: {
       type: DataTypes.TEXT,
+      allowNull: false,
+    },
+    id_category: {
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
     price: {
@@ -63,6 +68,18 @@ Product.belongsTo(User, {
 User.hasMany(Product, {
   foreignKey: 'id_user',
   sourceKey: 'id_user',
+  as: 'products',
+})
+
+Product.belongsTo(Category, {
+  foreignKey: 'id_category',
+  sourceKey: 'id_category',
+  as: 'category',
+})
+
+Category.hasMany(Product, {
+  foreignKey: 'id_category',
+  sourceKey: 'id_category',
   as: 'products',
 })
 
