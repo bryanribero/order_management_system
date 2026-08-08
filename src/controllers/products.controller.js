@@ -21,6 +21,7 @@ export async function createProductsController(req, res, next) {
         id_product: result.id_product,
         sku: result.sku,
         name: result.name,
+        category: result.category.name,
         price: result.price,
         stock: result.stock,
       },
@@ -33,9 +34,14 @@ export async function createProductsController(req, res, next) {
 export async function getUserProductsController(req, res, next) {
   const idUser = req.user.id_user
 
-  const pagination = req.query
+  const { page, limit, name, id_category } = req.query
   try {
-    const result = await getUserProducts(idUser, pagination)
+    const result = await getUserProducts(idUser, {
+      page,
+      limit,
+      name,
+      id_category,
+    })
 
     res.status(200).json({
       success: true,

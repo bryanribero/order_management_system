@@ -16,7 +16,14 @@
     "all-undo-migrate-test": "cross-env NODE_ENV=test sequelize-cli db:migrate:undo:all --env test",
     "migrate-prod": "cross-env NODE_ENV=prod sequelize-cli db:migrate --env production",
     "undo-migrate-prod": "cross-env NODE_ENV=prod sequelize-cli db:migrate:undo --env production",
-    "all-undo-migrate-prod": "cross-env NODE_ENV=prod sequelize-cli db:migrate:undo:all --env production"
+    "all-undo-migrate-prod": "cross-env NODE_ENV=prod sequelize-cli db:migrate:undo:all --env production",
+    "seed-create": "sequelize-cli seed:generate --name",
+    "seed-generate-all-dev": "cross-env NODE_ENV=dev sequelize-cli db:seed:all --env development",
+    "seed-undo-all-dev": "cross-env NODE_ENV=dev sequelize-cli db:seed:undo:all --env development",
+    "seed-generate-all-test": "cross-env NODE_ENV=test sequelize-cli db:seed:all --env test",
+    "seed-undo-all-test": "cross-env NODE_ENV=test sequelize-cli db:seed:undo:all --env test",
+    "seed-generate-all-prod": "cross-env NODE_ENV=prod sequelize-cli db:seed:all --env production",
+    "seed-undo-all-prod": "cross-env NODE_ENV=prod sequelize-cli db:seed:undo:all --env production"
   },
   "keywords": [],
   "type": "module",
