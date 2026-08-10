@@ -22,10 +22,8 @@ export const createProductValidator = [
     .withMessage('El precio del producto debe ser mayor a 0'),
 
   body('stock')
+    .optional()
     .trim()
-    .notEmpty()
-    .withMessage('El stock del producto es obligatorio')
-    .bail()
     .isInt()
     .withMessage('El stock del producto debe ser entero')
     .bail()
@@ -36,6 +34,17 @@ export const createProductValidator = [
     .exists()
     .isInt({ min: 1 })
     .withMessage('id_category debe ser un entero válido'),
+
+  body('sku')
+    .optional()
+    .trim()
+    .isLength({ max: 50 })
+    .withMessage('El SKU debe tener entre 1 y 50 caracteres')
+    .bail()
+    .matches(/^[a-zA-Z0-9\- ]+$/)
+    .withMessage(
+      'El SKU solo puede contener letras, números, espacios y guiones'
+    ),
 ]
 
 export const updateProductValidator = [
@@ -78,6 +87,17 @@ export const updateProductValidator = [
     .exists()
     .isInt({ min: 1 })
     .withMessage('id_category debe ser un entero válido'),
+
+  body('sku')
+    .optional()
+    .trim()
+    .isLength({ max: 50 })
+    .withMessage('El SKU debe tener entre 1 y 50 caracteres')
+    .bail()
+    .matches(/^[a-zA-Z0-9\- ]+$/)
+    .withMessage(
+      'El SKU solo puede contener letras, números, espacios y guiones'
+    ),
 ]
 
 export const queryProductValidator = [

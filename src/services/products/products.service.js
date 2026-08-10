@@ -15,6 +15,8 @@ export async function createProduct(
     throw new NotFoundError('La categoria no existe')
   }
 
+  if (!stock) stock = 0
+
   try {
     const product = await Product.create({
       id_user,
