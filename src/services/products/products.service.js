@@ -74,7 +74,7 @@ export async function getUserProducts(
     where.id_category = id_category
   }
 
-  const products = await Product.findAll({
+  const { count, rows } = await Product.findAndCountAll({
     where,
     include: [
       {
@@ -85,10 +85,19 @@ export async function getUserProducts(
     ],
     attributes: ['id_product', 'sku', 'name', 'price', 'stock'],
     limit: safeLimit,
-    offset: offset,
+    offset,
   })
 
-  return products
+  const totalPages = Math.ceil(count / safeLimit)
+
+  return {
+    products: rows,
+    pagination: {
+      currentPage: safePage,
+      limit: safeLimit,
+      totalPages,
+    },
+  }
 }
 
 export async function getUserProductById(idUser, idProduct) {

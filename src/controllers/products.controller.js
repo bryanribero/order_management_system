@@ -45,7 +45,8 @@ export async function getUserProductsController(req, res, next) {
 
     res.status(200).json({
       success: true,
-      products: result,
+      products: result.products,
+      pagination: result.pagination,
     })
   } catch (err) {
     next(err)
