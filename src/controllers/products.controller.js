@@ -34,12 +34,12 @@ export async function createProductsController(req, res, next) {
 export async function getUserProductsController(req, res, next) {
   const idUser = req.user.id_user
 
-  const { page, limit, name, id_category } = req.query
+  const { page, limit, word, id_category } = req.query
   try {
     const result = await getUserProducts(idUser, {
       page,
       limit,
-      name,
+      word,
       id_category,
     })
 

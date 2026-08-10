@@ -102,8 +102,9 @@ export const updateProductValidator = [
 
 export const queryProductValidator = [
   query('word')
+    .optional()
     .notEmpty()
     .withMessage(
-      'El campo "word" es obligatorio y debe contener un valor para filtrar los productos.'
+      'El campo "word" debe contener un valor para filtrar los productos.'
     ),
 ]

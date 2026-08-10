@@ -49,7 +49,7 @@ export async function createProduct(
 
 export async function getUserProducts(
   idUser,
-  { page, limit, name, id_category }
+  { page, limit, word, id_category }
 ) {
   if (id_category) {
     const category = await Category.findByPk(id_category)
@@ -66,9 +66,9 @@ export async function getUserProducts(
 
   const where = { id_user: idUser, deleted_at: null }
 
-  if (name) {
+  if (word) {
     where.name = {
-      [Op.iLike]: `${name}%`,
+      [Op.iLike]: `${word}%`,
     }
   }
 

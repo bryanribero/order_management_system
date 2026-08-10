@@ -37,6 +37,7 @@ router.get(
   productsRateLimit,
   verifyAccessToken,
   paginationValidator,
+  queryProductValidator,
   validateFields,
   getUserProductsController
 )
