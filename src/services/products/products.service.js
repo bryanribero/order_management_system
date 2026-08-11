@@ -186,19 +186,21 @@ export async function updateProductById(
   idProduct,
   { sku, name, price, stock, id_category }
 ) {
-  const category = await Category.findByPk(id_category)
-
-  if (!category) {
-    throw new NotFoundError('La categoria no existe')
-  }
-
   const data = {}
 
   if (sku !== undefined) data.sku = sku
   if (name !== undefined) data.name = name
   if (price !== undefined) data.price = price
   if (stock !== undefined) data.stock = stock
-  if (id_category !== undefined) data.id_category = id_category
+  if (id_category !== undefined) {
+    const category = await Category.findByPk(id_category)
+
+    if (!category) {
+      throw new NotFoundError('La categoria no existe')
+    }
+
+    data.id_category = id_category
+  }
 
   const [affectedRow] = await Product.update(data, {
     where: {
