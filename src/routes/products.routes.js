@@ -6,6 +6,7 @@ import {
   deleteProductsController,
   getUserProductByIdController,
   getUserProductsController,
+  statProductsController,
   updateProductByIdController,
   updateProductController,
 } from '../controllers/products.controller.js'
@@ -40,6 +41,13 @@ router.get(
   queryProductValidator,
   validateFields,
   getUserProductsController
+)
+
+router.get(
+  '/stats',
+  productsRateLimit,
+  verifyAccessToken,
+  statProductsController
 )
 
 router.get(

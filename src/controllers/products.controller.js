@@ -6,6 +6,7 @@ import {
   updateProductById,
   deleteProducts,
   deleteProductsById,
+  statProducts,
 } from '../services/products/products.service.js'
 
 export async function createProductsController(req, res, next) {
@@ -133,5 +134,23 @@ export async function deletedProductByIdController(req, res, next) {
     res.status(204).end()
   } catch (err) {
     next(err)
+  }
+}
+
+export async function statProductsController(req, res, next) {
+  const idUser = req.user.id_user
+  try {
+    const { count, lowStock, outOfStock, TotalInventoryValue } =
+      await statProducts(idUser)
+
+    res.status(200).json({
+      success: true,
+      count,
+      lowStock,
+      outOfStock,
+      TotalInventoryValue,
+    })
+  } catch (error) {
+    next(error)
   }
 }

@@ -263,3 +263,28 @@ export async function deleteProductsById(idUser, idProduct) {
     throw new NotFoundError('Producto no encontrado')
   }
 }
+
+export async function statProducts(idUser) {
+  const { count, rows: products } = await Product.findAndCountAll({
+    where: {
+      id_user: idUser,
+      deleted_at: null,
+    },
+  })
+
+  const lowStock = products.filter((p) => p.stock > 0 && p.stock < 10).length
+
+  const outOfStock = products.filter((p) => p.stock === 0).length
+
+  const TotalInventoryValue = products.reduce(
+    (sum, p) => sum + p.price * p.stock,
+    0
+  )
+
+  return {
+    count,
+    lowStock,
+    outOfStock,
+    TotalInventoryValue,
+  }
+}
