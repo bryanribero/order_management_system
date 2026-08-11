@@ -140,7 +140,7 @@ export async function deletedProductByIdController(req, res, next) {
 export async function statProductsController(req, res, next) {
   const idUser = req.user.id_user
   try {
-    const { count, lowStock, outOfStock, TotalInventoryValue } =
+    const { count, lowStock, outOfStock, totalInventoryValue } =
       await statProducts(idUser)
 
     res.status(200).json({
@@ -148,7 +148,7 @@ export async function statProductsController(req, res, next) {
       count,
       lowStock,
       outOfStock,
-      TotalInventoryValue,
+      totalInventoryValue,
     })
   } catch (error) {
     next(error)

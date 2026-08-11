@@ -276,7 +276,7 @@ export async function statProducts(idUser) {
 
   const outOfStock = products.filter((p) => p.stock === 0).length
 
-  const TotalInventoryValue = products.reduce(
+  const totalInventoryValue = products.reduce(
     (sum, p) => sum + p.price * p.stock,
     0
   )
@@ -285,6 +285,6 @@ export async function statProducts(idUser) {
     count,
     lowStock,
     outOfStock,
-    TotalInventoryValue,
+    totalInventoryValue,
   }
 }
