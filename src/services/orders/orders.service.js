@@ -124,7 +124,7 @@ export async function createOrder(
               model: OrderItem,
               as: 'orderItems',
               attributes: {
-                exclude: ['createdAt', 'updatedAt', 'id_order'],
+                exclude: ['updatedAt', 'id_order'],
               },
             },
           ],
@@ -136,6 +136,7 @@ export async function createOrder(
             'status',
             'total_amount',
             'action_token',
+            'created_at',
           ],
         })
 
@@ -172,7 +173,7 @@ export async function getOrders(idUser, { limit, page, status }) {
         model: OrderItem,
         as: 'orderItems',
         attributes: {
-          exclude: ['createdAt', 'updatedAt', 'id_order'],
+          exclude: ['updatedAt', 'id_order'],
         },
       },
     ],
@@ -184,6 +185,7 @@ export async function getOrders(idUser, { limit, page, status }) {
       'status',
       'total_amount',
       'action_token',
+      'created_at',
     ],
     order: [['id_order', 'DESC']],
     limit: safeLimit,
