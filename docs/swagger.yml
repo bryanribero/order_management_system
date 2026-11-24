@@ -2556,6 +2556,82 @@ paths:
                     success: false
                     errors:
                       - message: Demasiadas peticiones de order. Intenta nuevamente más tarde.
+  /api/orders/customer/{id_customer}:
+    get:
+      tags:
+        - Orders
+      summary: Obtener orders por customer
+      description: Obtiene las orders de un customer activo perteneciente al usuario autenticado, con paginación y filtro opcional por estado.
+      operationId: getOrdersByCustomer
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id_customer
+          in: path
+          required: true
+          description: Identificador del customer.
+          schema:
+            type: integer
+            minimum: 1
+            example: 1
+        - name: page
+          in: query
+          required: false
+          description: Número de página. Por defecto es 1.
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          required: false
+          description: Cantidad de orders por página. Por defecto es 20 y el máximo es 50.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+        - name: status
+          in: query
+          required: false
+          description: Estado usado para filtrar orders.
+          schema:
+            type: string
+            enum:
+              - pending
+              - completed
+              - cancelled
+      responses:
+        "200":
+          description: Orders del customer obtenidas correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetOrdersSuccessResponse"
+        "400":
+          description: Error de validación de parámetros.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+        "401":
+          description: No se envió un access token válido.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "404":
+          description: El customer no existe, está eliminado o no pertenece al usuario autenticado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "429":
+          description: Se superó el límite de solicitudes de order.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
   /api/orders/{id}:
     get:
       tags:

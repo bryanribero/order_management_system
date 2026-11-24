@@ -195,6 +195,59 @@ export async function getOrders(idUser, { limit, page, status }) {
   return orders
 }
 
+export async function getOrdersByCustomer(
+  idUser,
+  idCustomer,
+  { limit, page, status }
+) {
+  const customer = await Customer.findOne({
+    where: {
+      id_customer: idCustomer,
+      id_user: idUser,
+      deleted_at: null,
+    },
+    attributes: ['id_customer'],
+  })
+
+  if (!customer) {
+    throw new NotFoundError('Cliente no encontrado')
+  }
+
+  const safeLimit = limit || 20
+  const safePage = page || 1
+  const where = { id_customer: idCustomer }
+
+  if (status) {
+    where.status = status
+  }
+
+  return Order.findAll({
+    where,
+    include: [
+      {
+        model: OrderItem,
+        as: 'orderItems',
+        attributes: {
+          exclude: ['updatedAt', 'id_order'],
+        },
+      },
+    ],
+    attributes: [
+      'id_order',
+      'id_customer',
+      'id_courier',
+      'note',
+      'status',
+      'total_amount',
+      'action_token',
+      'created_at',
+    ],
+    order: [['id_order', 'DESC']],
+    limit: safeLimit,
+    offset: (safePage - 1) * safeLimit,
+  })
+}
+
 export async function getOrderById(idUser, idOrder) {
   const order = await Order.findOne({
     where: {

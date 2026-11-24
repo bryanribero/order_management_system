@@ -558,6 +558,7 @@ Currently available order endpoints:
 | ------ | ------------------------ | ----------- |
 | POST   | `/api/orders`            | Creates an order associated with the authenticated user, decreases product stock, and calculates the total. |
 | GET    | `/api/orders`            | Gets authenticated user's orders with pagination and optional status filter. |
+| GET    | `/api/orders/customer/:id_customer` | Gets an authenticated user's orders for one customer, with pagination and optional status filter. |
 | GET    | `/api/orders/:id`        | Gets one authenticated user's order by identifier. |
 | PATCH  | `/api/orders/status/:id` | Updates a `pending` order status to `completed` or `cancelled`. |
 | PATCH  | `/api/orders/:id`        | Updates `id_courier`, `note`, and order items. Only allowed when the order is `pending`. |
@@ -574,13 +575,16 @@ Order endpoints require a valid `accessToken` in the `Authorization` header with
 | `limit`     | Number of orders per page. Must be between 1 and 50. | `20` | `50` |
 | `status`    | Status used to filter orders. | - | `pending`, `completed`, `cancelled` |
 
+`GET /api/orders/customer/:id_customer` accepts the same query parameters (`page`, `limit`, and `status`) and returns the same response format. It responds with `404` if the customer does not exist, has been deleted, or does not belong to the authenticated user.
+
 <br>
 
-### Path Params for `/api/orders/:id` and `/api/orders/status/:id`
+### Path Params for `/api/orders/:id`, `/api/orders/status/:id`, and `/api/orders/customer/:id_customer`
 
 | Path param | Description |
 | ---------- | ----------- |
 | `id`       | Order identifier. Must be an integer greater than or equal to 1. |
+| `id_customer` | Customer identifier. Must be an integer greater than or equal to 1. |
 
 <br>
 

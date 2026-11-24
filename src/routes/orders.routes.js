@@ -11,11 +11,13 @@ import { validateFields } from '../middlewares/validateFields.js'
 import {
   createOrderController,
   getOrderByIdController,
+  getOrdersByCustomerController,
   getOrdersController,
   statusUpdateOrderController,
   updateOrderController,
 } from '../controllers/orders.controller.js'
 import {
+  customerIdParamValidator,
   paginationValidator,
   paramsValidator,
 } from '../validators/request.validator.js'
@@ -39,6 +41,17 @@ router.get(
   statusOrderValidator,
   validateFields,
   getOrdersController
+)
+
+router.get(
+  '/customer/:id_customer',
+  orderRateLimit,
+  verifyAccessToken,
+  customerIdParamValidator,
+  paginationValidator,
+  statusOrderValidator,
+  validateFields,
+  getOrdersByCustomerController
 )
 
 router.get(

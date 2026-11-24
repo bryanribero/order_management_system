@@ -29,3 +29,13 @@ export const paramsValidator = [
     .withMessage('El identificador debe ser mayor o igual a 1')
     .toInt(),
 ]
+
+export const customerIdParamValidator = [
+  param('id_customer')
+    .isInt()
+    .withMessage('El identificador del cliente debe ser un número entero')
+    .bail()
+    .isInt({ gt: 0 })
+    .withMessage('El identificador del cliente debe ser mayor o igual a 1')
+    .toInt(),
+]

@@ -2,6 +2,7 @@ import {
   createOrder,
   getOrderById,
   getOrders,
+  getOrdersByCustomer,
   updateOrder,
   updateStatusOrder,
 } from '../services/orders/orders.service.js'
@@ -29,6 +30,23 @@ export async function getOrdersController(req, res, next) {
 
   try {
     const result = await getOrders(idUser, data)
+
+    res.status(200).json({
+      success: true,
+      orders: result,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export async function getOrdersByCustomerController(req, res, next) {
+  const idUser = req.user.id_user
+  const idCustomer = req.params.id_customer
+  const data = req.query
+
+  try {
+    const result = await getOrdersByCustomer(idUser, idCustomer, data)
 
     res.status(200).json({
       success: true,

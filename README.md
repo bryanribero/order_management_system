@@ -558,6 +558,7 @@ Los endpoints de orders disponibles actualmente son:
 | ------ | ------------------------ | ------------------------------------------------------------------------------------------------------------------- |
 | POST   | `/api/orders`            | Crea un pedido asociado al usuario autenticado, descuenta stock de productos y calcula el total.                    |
 | GET    | `/api/orders`            | Obtiene los pedidos del usuario autenticado con paginacion y filtro opcional por estado.                            |
+| GET    | `/api/orders/customer/:id_customer` | Obtiene las órdenes de un cliente del usuario autenticado, con paginación y filtro opcional por estado. |
 | GET    | `/api/orders/:id`        | Obtiene un pedido del usuario autenticado por su identificador.                                                     |
 | PATCH  | `/api/orders/status/:id` | Actualiza el estado de un pedido `pending` a `completed` o `cancelled`.                                             |
 | PATCH  | `/api/orders/:id`        | Actualiza `id_courier`, `note` y los items de un pedido. Solo se permite cuando el pedido esta en estado `pending`. |
@@ -574,13 +575,16 @@ Los endpoints de orders requieren un `accessToken` valido en el encabezado `Auth
 | `limit`     | Cantidad de pedidos por pagina. Debe estar entre 1 y 50.  | `20`              | `50`                                |
 | `status`    | Estado usado para filtrar pedidos.                        | -                 | `pending`, `completed`, `cancelled` |
 
+El endpoint `GET /api/orders/customer/:id_customer` acepta los mismos query params (`page`, `limit` y `status`) y devuelve el mismo formato de respuesta. Si el cliente no existe, fue eliminado o no pertenece al usuario autenticado, responde `404`.
+
 <br>
 
-### Path params para `/api/orders/:id` y `/api/orders/status/:id`
+### Path params para `/api/orders/:id`, `/api/orders/status/:id` y `/api/orders/customer/:id_customer`
 
 | Path param | Descripcion                                                            |
 | ---------- | ---------------------------------------------------------------------- |
 | `id`       | Identificador del pedido. Debe ser un numero entero mayor o igual a 1. |
+| `id_customer` | Identificador del cliente. Debe ser un número entero mayor o igual a 1. |
 
 <br>
 
