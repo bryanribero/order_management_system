@@ -15,6 +15,7 @@ import fs from 'fs'
 import YAML from 'yaml'
 import swaggerUi from 'swagger-ui-express'
 import cookieParser from 'cookie-parser'
+import dashboardRouter from './src/routes/dashboard.routes.js'
 
 const swaggerFile = fs.readFileSync('./docs/swagger.yml', 'utf-8')
 const swaggerDocument = YAML.parse(swaggerFile)
@@ -57,6 +58,8 @@ app.use('/api/couriers', couriersRoutes)
 app.use('/api/customers', customersRoutes)
 
 app.use('/api/orders', ordersRoutes)
+
+app.use('/api/dashboard', dashboardRouter)
 
 app.use((req, res) => {
   res.status(404).json({

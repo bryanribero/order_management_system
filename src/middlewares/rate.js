@@ -129,3 +129,17 @@ export const orderRateLimit = rateLimit({
     ],
   },
 })
+
+export const statsLimit = rateLimit({
+  windowMs: 60 * 1000,
+  limit: isTest ? 100 : 30,
+  message: {
+    success: false,
+    errors: [
+      {
+        message:
+          'Demasiadas peticiones de status. Intenta nuevamente más tarde.',
+      },
+    ],
+  },
+})
