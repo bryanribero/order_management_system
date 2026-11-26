@@ -31,7 +31,10 @@ app.use(globalRateLimit)
 
 app.use(
   cors({
-    origin: 'http://localhost:5173',
+    origin: [
+      'http://localhost:5173',
+      'https://order-management-system-frontend-sigma.vercel.app/',
+    ],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
   })
