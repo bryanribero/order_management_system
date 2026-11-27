@@ -91,7 +91,7 @@ export async function getStatsService(idUser) {
     })
 
     return {
-      totalSales: totalSales ?? 0,
+      totalSales: totalSales ?? '0.00',
       totalOrders,
       totalPending,
       totalCompleted,

@@ -628,3 +628,28 @@ The `items.create` field must be an array of new items with `id_product` and `qu
 | Field    | Description |
 | -------- | ----------- |
 | `status` | New order status. Can be `completed` or `cancelled`. |
+
+<br>
+
+## Dashboard Endpoint
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/api/dashboard` | Returns order statistics for the authenticated user. |
+
+The request requires a valid `accessToken` in the `Authorization` header using the `Bearer` scheme. Statistics include sales from completed orders, the total order count, and counts by status (`pending`, `completed`, and `cancelled`). Results are scoped to the authenticated user's active customers.
+
+The response has this shape:
+
+```json
+{
+  "success": true,
+  "stats": {
+    "totalSales": "251.00",
+    "totalOrders": 3,
+    "totalPending": 1,
+    "totalCompleted": 1,
+    "totalCancelled": 1
+  }
+}
+```

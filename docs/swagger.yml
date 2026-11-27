@@ -19,6 +19,8 @@ tags:
     description: Endpoints para gestionar clientes del usuario autenticado.
   - name: Orders
     description: Endpoints para gestionar orders del usuario autenticado.
+  - name: Dashboard
+    description: Estadísticas de las órdenes del usuario autenticado.
   - name: Users
     description: Endpoints para actualizar y eliminar el usuario autenticado.
 paths:
@@ -2927,6 +2929,85 @@ paths:
                     success: false
                     errors:
                       - message: Demasiadas peticiones de order. Intenta nuevamente más tarde.
+  /api/dashboard:
+    get:
+      tags:
+        - Dashboard
+      summary: Obtener estadísticas del dashboard
+      description: Obtiene ventas de orders completadas y cantidades de orders por estado para el usuario autenticado.
+      operationId: getDashboardStats
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Estadísticas obtenidas correctamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - success
+                  - stats
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  stats:
+                    type: object
+                    required:
+                      - totalSales
+                      - totalOrders
+                      - totalPending
+                      - totalCompleted
+                      - totalCancelled
+                    properties:
+                      totalSales:
+                        type: string
+                        pattern: '^\\d+(\\.\\d{1,2})?$'
+                        description: Suma de total_amount para orders completadas del usuario.
+                        example: "251.00"
+                      totalOrders:
+                        type: integer
+                        description: Cantidad total de orders del usuario.
+                        example: 3
+                      totalPending:
+                        type: integer
+                        example: 1
+                      totalCompleted:
+                        type: integer
+                        example: 1
+                      totalCancelled:
+                        type: integer
+                        example: 1
+              examples:
+                dashboardStats:
+                  summary: Estadísticas del usuario
+                  value:
+                    success: true
+                    stats:
+                      totalSales: "251.00"
+                      totalOrders: 3
+                      totalPending: 1
+                      totalCompleted: 1
+                      totalCancelled: 1
+        "401":
+          description: No se envió un access token válido.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "429":
+          description: Se superó el límite de solicitudes de dashboard.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "500":
+          description: Error interno al consultar las estadísticas.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
 components:
   securitySchemes:
     bearerAuth:

@@ -628,3 +628,28 @@ El campo `items.create` debe ser un array de items nuevos con `id_product` y `qu
 | Campo    | Descripcion                                                   |
 | -------- | ------------------------------------------------------------- |
 | `status` | Nuevo estado del pedido. Puede ser `completed` o `cancelled`. |
+
+<br>
+
+## Endpoint de dashboard
+
+| Metodo | Endpoint | Descripcion |
+| ------ | -------- | ----------- |
+| GET | `/api/dashboard` | Devuelve las estadísticas de órdenes del usuario autenticado. |
+
+La petición requiere un `accessToken` válido en el encabezado `Authorization` con el esquema `Bearer`. Las estadísticas incluyen ventas de órdenes completadas, cantidad total de órdenes y cantidades por estado (`pending`, `completed` y `cancelled`). Los datos se limitan al usuario autenticado mediante sus clientes activos.
+
+La respuesta tiene esta estructura:
+
+```json
+{
+  "success": true,
+  "stats": {
+    "totalSales": "251.00",
+    "totalOrders": 3,
+    "totalPending": 1,
+    "totalCompleted": 1,
+    "totalCancelled": 1
+  }
+}
+```

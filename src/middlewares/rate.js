@@ -138,7 +138,7 @@ export const statsLimit = rateLimit({
     errors: [
       {
         message:
-          'Demasiadas peticiones de status. Intenta nuevamente más tarde.',
+          'Demasiadas peticiones de dashboard. Intenta nuevamente más tarde.',
       },
     ],
   },
